@@ -1,0 +1,1 @@
+docker run -d -v ${PWD}:/root --security-opt seccomp:unconfined -it --rm agodio/itba-so-multi-platform:3.0
