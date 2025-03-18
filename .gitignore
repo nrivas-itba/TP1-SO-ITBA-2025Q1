@@ -1,0 +1,25 @@
+#Binary Files
+*.bin
+*.sys
+
+#The images
+*.img
+*.qcow2
+*.vmdk
+
+#Object files
+*.o
+
+#VSCODE
+**/.vscode/
+**/.vscode/**
+.vscode/
+.gdb_history
+
+#Custom
+compileCustom.sh
+runCustom.sh
+.bash_history
+*.raw
+*.iso
+*.elf
