@@ -10,7 +10,7 @@
 //TODO Ninguno de estos define esta verificado que sea necesario. Por favor revisar si se puede sacar alguno
 
 
-#include "desordenado.h"
+#include "utils.h"
 
 void* openmem(char* name, uint64_t size, char readOnly){
     int fd = shm_open(name, O_RDWR, 0);
@@ -44,6 +44,6 @@ game_t openGame(int argc, char* argv[]){
     }
 
     ret.sync = openmem("/game_sync", sizeof(*ret.sync), 0);
-    ret.yyy = openmem("/game_state",sizeof(*ret.yyy), 1);
+    ret.state = openmem("/game_state",sizeof(*ret.state), 1);
     return ret;
 }

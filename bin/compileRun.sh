@@ -1,1 +1,0 @@
-gcc player10.c desordenado.c -Wall -std=c99 -o player10.o && gcc vista.c desordenado.c -Wall -std=c99 -o vista.o && sleep 1 && ./originales/ChompChamps -d 0 -t 1 -v vista.o -p player10.o
