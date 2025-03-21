@@ -44,6 +44,6 @@ game_t openGame(int argc, char* argv[]){
     }
 
     ret.sync = openmem("/game_sync", sizeof(*ret.sync), 0);
-    ret.state = openmem("/game_state",sizeof(*ret.state), 1);
+    ret.state = openmem("/game_state",sizeof(*ret.state) + (ret.gameWidth * ret.gameHeight) * sizeof((ret.state->board)[0]), 1);
     return ret;
 }
