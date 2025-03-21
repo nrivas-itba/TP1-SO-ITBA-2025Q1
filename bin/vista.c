@@ -1,16 +1,8 @@
 //Inspired from
-#include <fcntl.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <sys/mman.h>
-#include <unistd.h>
 #include <stdint.h>
-
-#include <sys/stat.h>        /* For mode constants */
 #include <semaphore.h>
-
 #include "desordenado.h"
 
 uint64_t main(uint64_t argc, char* argv[]){

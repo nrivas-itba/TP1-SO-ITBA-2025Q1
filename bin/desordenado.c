@@ -30,7 +30,7 @@ void* openmem(char* name, uint64_t size, char readOnly){
     return ret;
 }
 
-game_t openGame(uint64_t argc, uint64_t char* argv[]){
+game_t openGame(uint64_t argc, char* argv[]){
     game_t ret;
     if (argc != 3){
         errExit("invalid argc");
@@ -42,7 +42,7 @@ game_t openGame(uint64_t argc, uint64_t char* argv[]){
     if (ret.gameWidth < 0 || ret.gameWidth < 0){
         errExit("invalid argc");
     }
-    
+
     ret.sync = openmem("/game_sync", sizeof(*ret.sync), 0);
     ret.yyy = openmem("/game_state",sizeof(*ret.yyy), 1);
     return ret;
