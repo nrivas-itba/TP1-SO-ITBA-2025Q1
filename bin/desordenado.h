@@ -38,8 +38,11 @@ int n[]; // Puntero al comienzo del tablero. fila-0, fila-1, ..., fila-n-1
 } YYY;
 
 
+typedef struct {
+    GameSync_t* sync;
+    YYY* yyy;
+} game_t;
 
-
-void* openmem(char* name, uint64_t size, char readOnly);
+game_t openGame(uint64_t gameWidth, uint64_t gameHeight);
 
 #endif

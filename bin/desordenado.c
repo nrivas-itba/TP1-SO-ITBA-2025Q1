@@ -6,8 +6,9 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <stdint.h>
-
 #include <sys/stat.h>        /* For mode constants */
+//TODO Ninguno de estos define esta verificado que sea necesario. Por favor revisar si se puede sacar alguno
+
 
 #include "desordenado.h"
 
@@ -26,5 +27,12 @@ void* openmem(char* name, uint64_t size, char readOnly){
     if (ret == MAP_FAILED){
         errExit("mmap");
     }
+    return ret;
+}
+
+game_t openGame(uint64_t gameWidth, uint64_t gameHeight){
+    game_t ret;
+    ret.sync = openmem("/game_sync", sizeof(*ret.sync), 0);
+    ret.yyy = openmem("/game_state",sizeof(*ret.yyy), 1);
     return ret;
 }
