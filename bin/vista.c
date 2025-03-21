@@ -7,7 +7,10 @@
 
 uint64_t main(uint64_t argc, char* argv[]){
     game_t game = openGame(argc, argv);
-    while(!game.yyy->m){
+    while(1){
+        if(game.yyy->m){ //TODO pienso q solo deberiamos leer esta variable mientras tenemos permitido acceder al tablero, es decir: Durante "printNeeded"... Pero si muevo el if a desp de "printNeeded": No termina nunca
+            return 0;
+        }
         fprintf(stderr,"Wstart\n");
         if (sem_wait(&(game.sync->A_printNeeded)) == -1){ //Waint until master wants to print
             errExit("sem_wait");
