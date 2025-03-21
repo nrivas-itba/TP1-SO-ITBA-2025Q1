@@ -53,8 +53,8 @@ int main(int argc, char* argv[]){
         if (sem_wait(&(game.sync->printNeeded)) == -1){ //Waint until master wants to print
             errExit("sem_wait");
         }
-        
-        moveCursor(0,0);
+
+        moveCursor(0,13);
         printf("ChompChamps!\n");
         print_game(game.gameWidth, game.gameHeight, (void*)(game.state->board));
         printf(".....\n");

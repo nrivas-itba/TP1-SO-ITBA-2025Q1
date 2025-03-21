@@ -44,7 +44,7 @@ CSI 6n	DSR	Device Status Report	Reports the cursor position (CPR) by transmittin
 #define WHITE color("255", "255", "255")
 #define GRAY color("127", "127", "127")
 
-#define moveCursor(x,y) printf("\033[%d;%dH",y,x);
+#define moveCursor(x,y) printf("\033[%d;%dH",y,x); //TODO esto es movimiento ABSOLUTO, tamb seria facil implementar movimiento RELATIVO
 typedef struct {
     sem_t printNeeded; // Se usa para indicarle a la vista que hay cambios por imprimir
     sem_t printDone; // Se usa para indicarle al master que la vista terminó de imprimir
