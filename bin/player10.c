@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "desordenado.h"
 
-uint64_t main(uint64_t argc, char* argv[]){
+int main(int argc, char* argv[]){
     game_t game = openGame(argc, argv);
 
     FILE *fp = fopen("/dev/random", "rb");

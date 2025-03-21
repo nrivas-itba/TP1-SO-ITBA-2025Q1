@@ -5,7 +5,7 @@
 #include <semaphore.h>
 #include "desordenado.h"
 
-uint64_t main(uint64_t argc, char* argv[]){
+int main(int argc, char* argv[]){
     game_t game = openGame(argc, argv);
     while(1){
         if(game.yyy->m){ //TODO pienso q solo deberiamos leer esta variable mientras tenemos permitido acceder al tablero, es decir: Durante "printNeeded"... Pero si muevo el if a desp de "printNeeded": No termina nunca

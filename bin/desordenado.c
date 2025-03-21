@@ -30,7 +30,7 @@ void* openmem(char* name, uint64_t size, char readOnly){
     return ret;
 }
 
-game_t openGame(uint64_t argc, char* argv[]){
+game_t openGame(int argc, char* argv[]){
     game_t ret;
     if (argc != 3){
         errExit("invalid argc");
