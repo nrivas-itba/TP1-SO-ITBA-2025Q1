@@ -6,16 +6,32 @@
 #include "../utils/utils.h"
 
 void print_game(int gameWidth, int gameHeight, int matrix[gameWidth][gameHeight]){
+    static const char* playerColors[]= {
+        RED,
+        RED,
+        GREEN,
+        BLUE,
+        CYAN,
+        MAGENTA,
+        YELLOW,
+        WHITE,
+        GRAY
+    };
     // Upper boarder
     printf("╭");
     for (int i = 0; i < gameWidth; i++)
-        printf("══");
+        printf("═══");
     printf("╮\n");
 
     for (int i = 0; i < gameWidth; i++){
         printf("║");    // Left border
         for (int j = 0; j < gameHeight; j++){
-            printf("%i ", matrix[i][j]);
+            if(matrix[i][j]>0){
+                printf(" %d ", matrix[i][j]);
+            }
+            else{
+                printf("%s███%s", playerColors[-matrix[i][j]],WHITE);
+            }
         }
     //printf("%d ", matrix[i][j] <= 0 ? matrix[i][j] : 'a'-'0');
         printf("║\n");  // Right border
@@ -24,7 +40,7 @@ void print_game(int gameWidth, int gameHeight, int matrix[gameWidth][gameHeight]
     // Lower border
     printf("╰");
     for (int i = 0; i < gameWidth; i++)
-        printf("══");
+        printf("═══");
     printf("╯\n");
 }
 

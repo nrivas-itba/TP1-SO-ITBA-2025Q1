@@ -7,6 +7,19 @@
 #define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
                                    } while (0)
 
+#define color(R,G,B) "\033[38;2;" R ";"G";"B"m"
+
+
+#define BLACK color(,,)
+#define RED color("255", , )
+#define GREEN color(, "255", )
+#define BLUE color(, , "255")
+#define CYAN color(, "255", "255")
+#define MAGENTA color("255", , "255")
+#define YELLOW color("255", "255", )
+#define WHITE color("255", "255", "255")
+#define GRAY color("127", "127", "127")
+
 
 typedef struct {
     sem_t printNeeded; // Se usa para indicarle a la vista que hay cambios por imprimir
