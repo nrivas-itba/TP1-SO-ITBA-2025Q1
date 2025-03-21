@@ -39,10 +39,12 @@ int n[]; // Puntero al comienzo del tablero. fila-0, fila-1, ..., fila-n-1
 
 
 typedef struct {
+    int gameWidth;
+    int gameHeight;
     GameSync_t* sync;
     YYY* yyy;
 } game_t;
 
-game_t openGame(uint64_t gameWidth, uint64_t gameHeight);
+game_t openGame(uint64_t argc, uint64_t char* argv[]); //TODO no me gusta que una funcion reciva argc y argv
 
 #endif
