@@ -1,1 +1,1 @@
-docker run -d -v ${PWD}:/root --security-opt seccomp:unconfined -it --rm agodio/itba-so-multi-platform:3.0
+docker run --rm -v ${PWD}:/root --security-opt seccomp:unconfined -it agodio/itba-so-multi-platform:3.0 bash -c "cd ~ && make run"
