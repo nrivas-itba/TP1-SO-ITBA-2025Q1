@@ -50,17 +50,18 @@ int main(int argc, char* argv[]){
         if(game.state->isOver){ //TODO pienso q solo deberiamos leer esta variable mientras tenemos permitido acceder al tablero, es decir: Durante "printNeeded"... Pero si muevo el if a desp de "printNeeded": No termina nunca
             return 0;
         }
-        fprintf(stderr,"Wstart\n");
         if (sem_wait(&(game.sync->printNeeded)) == -1){ //Waint until master wants to print
             errExit("sem_wait");
         }
-
+        
+        moveCursor(0,0);
+        printf("ChompChamps!\n");
         print_game(game.gameWidth, game.gameHeight, (void*)(game.state->board));
+        printf(".....\n");
 
         if (sem_post(&(game.sync->printDone)) == -1){ //Tell the master that we have finished printing.
             errExit("sem_post");
         }
-        fprintf(stderr,"Wend\n");
     }
     return 0;
 };
