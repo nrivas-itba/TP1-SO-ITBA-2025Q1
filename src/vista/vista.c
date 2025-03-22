@@ -8,7 +8,6 @@
 void print_game(int gameWidth, int gameHeight, int matrix[gameWidth][gameHeight]){
     static const char* playerColors[]= {
         RED,
-        RED,
         GREEN,
         BLUE,
         CYAN,
@@ -16,6 +15,7 @@ void print_game(int gameWidth, int gameHeight, int matrix[gameWidth][gameHeight]
         YELLOW,
         WHITE,
         GRAY
+        BLACK,
     };
     // Upper boarder
     printf("╭");
@@ -50,18 +50,14 @@ int main(int argc, char* argv[]){
         if(game.state->isOver){ //TODO pienso q solo deberiamos leer esta variable mientras tenemos permitido acceder al tablero, es decir: Durante "printNeeded"... Pero si muevo el if a desp de "printNeeded": No termina nunca
             return 0;
         }
-        if (sem_wait(&(game.sync->printNeeded)) == -1){ //Waint until master wants to print
-            errExit("sem_wait");
-        }
+        sWait(&(game.sync->printNeeded)); //Waint until master wants to print
 
         moveCursor(0,13);
         printf("ChompChamps!\n");
         print_game(game.gameWidth, game.gameHeight, (void*)(game.state->board));
         printf(".....\n");
 
-        if (sem_post(&(game.sync->printDone)) == -1){ //Tell the master that we have finished printing.
-            errExit("sem_post");
-        }
+        sPost(&(game.sync->printDone)); //Tell the master that we have finished printing.
     }
     return 0;
-};
+}

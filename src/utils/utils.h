@@ -35,16 +35,19 @@ CSI 6n	DSR	Device Status Report	Reports the cursor position (CPR) by transmittin
 
 
 #define BLACK color(,,)
-#define RED color("255", , )
-#define GREEN color(, "255", )
 #define BLUE color(, , "255")
+#define GREEN color(, "255", )
 #define CYAN color(, "255", "255")
+#define RED color("255", , )
 #define MAGENTA color("255", , "255")
 #define YELLOW color("255", "255", )
 #define WHITE color("255", "255", "255")
 #define GRAY color("127", "127", "127")
 
 #define moveCursor(x,y) printf("\033[%d;%dH",y,x); //TODO esto es movimiento ABSOLUTO, tamb seria facil implementar movimiento RELATIVO
+
+#define MAX_PLAYERS 9
+
 typedef struct {
     sem_t printNeeded; // Se usa para indicarle a la vista que hay cambios por imprimir
     sem_t printDone; // Se usa para indicarle al master que la vista terminó de imprimir
@@ -81,5 +84,8 @@ typedef struct {
 } game_t;
 
 game_t openGame(int argc, char* argv[]); //TODO no me gusta que una funcion reciva argc y argv
+
+void sWait(sem_t* sem);
+void sPost(sem_t* sem);
 
 #endif

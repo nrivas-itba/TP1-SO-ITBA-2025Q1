@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <sys/stat.h>        /* For mode constants */
+#include <semaphore.h>
 //TODO Ninguno de estos define esta verificado que sea necesario. Por favor revisar si se puede sacar alguno
 
 
@@ -46,4 +47,15 @@ game_t openGame(int argc, char* argv[]){
     ret.sync = openmem("/game_sync", sizeof(*ret.sync), 0);
     ret.state = openmem("/game_state",sizeof(*ret.state) + (ret.gameWidth * ret.gameHeight) * sizeof((ret.state->board)[0]), 1);
     return ret;
+}
+
+void sWait(sem_t* sem){
+    if (sem_wait(sem) == -1){ //Waint until master wants to print
+        errExit("sem_wait");
+    }
+}
+void sPost(sem_t* sem){
+    if (sem_post(sem) == -1){ //Tell the master that we have finished printing.
+        errExit("sem_post");
+    }
 }

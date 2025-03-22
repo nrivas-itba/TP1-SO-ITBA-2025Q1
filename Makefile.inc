@@ -1,5 +1,5 @@
 GCC = gcc
-GCC_FLAGS = -Wall -std=c99
+GCC_FLAGS = -Wall -pedantic # todo falta el -std=c99
 
 VISTA_O = $(BIN_DIR)/vista.o
 PLAYER10_O = $(BIN_DIR)/player10.o
