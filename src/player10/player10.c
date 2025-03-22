@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
         fread(&random_byte, 1, 1, fp);
         printf("%c", random_byte%8); // Print each byte as hexadecimal
         fflush(stdout);
-        usleep(500000); //TODO
+        usleep(250000); //TODO sacar esto y el include
 
 
         /////////////Readers exit

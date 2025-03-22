@@ -14,7 +14,7 @@
 #include "utils.h"
 
 void* openmem(char* name, uint64_t size, char readOnly){
-    int fd = shm_open(name, O_RDWR, 0);
+    int fd = shm_open(name, readOnly ? O_RDONLY : O_RDWR, 0);
     if (fd == -1){
         errExit("shm_open");
     }
