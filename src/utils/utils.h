@@ -64,7 +64,7 @@ unsigned int invalidMovementRequestsCount; // Cantidad de solicitudes de movimie
 unsigned int validMovementRequestsCount; // Cantidad de solicitudes de movimientos válidas realizadas
 unsigned short x, y; // Coordenadas x e y en el tablero
 pid_t pid; // Identificador de proceso
-char hasValidMovements; // Indica si el jugador tiene movimientos válidos disponibles
+char notHasAnyValidMovements; // Indica si el jugador tiene movimientos válidos disponibles
 } player_t;
 
 typedef struct {

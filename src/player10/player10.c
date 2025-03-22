@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <semaphore.h> //TODO sacar esto
-#include <unistd.h> // For sleep function //TODO sacar cuando saquemos el work arround temporal
+#include <unistd.h>
 #include "../utils/utils.h"
 
 player_t* getMe(game_t* game){
@@ -15,15 +14,26 @@ player_t* getMe(game_t* game){
     errExit("I dont exist in the board");
 }
 
+char shouldITryToMove(player_t* me){
+    static int invalidMovementRequestsCount = -1;
+    static int validMovementRequestsCount = -1;
+    if (!me->notHasAnyValidMovements && (me->invalidMovementRequestsCount != invalidMovementRequestsCount || me->validMovementRequestsCount != validMovementRequestsCount)){
+        invalidMovementRequestsCount = me->invalidMovementRequestsCount;
+        validMovementRequestsCount = me->validMovementRequestsCount;
+        return 1;
+    }
+    return 0;
+}
+
 int main(int argc, char* argv[]){
     game_t game = openGame(argc, argv);
+    player_t* me = getMe(&game);
 
     FILE *fp = fopen("/dev/random", "rb");
     if (fp == NULL) {
         errExit("Error opening /dev/random");
     }
 
-//    player_t* me = (void*)0;
 
     unsigned char random_byte;
     while(!game.state->isOver) { // Read and print 10 random bytes //TODO we should not read this var while we dont have read permissions
@@ -41,11 +51,11 @@ int main(int argc, char* argv[]){
         /////////////Readers entrance
 
         /////////////Read
-        fread(&random_byte, 1, 1, fp);
-        printf("%c", random_byte%8); // Print each byte as hexadecimal
-        fflush(stdout);
-        usleep(250000); //TODO sacar esto y el include
-
+        if(shouldITryToMove(me)){
+            fread(&random_byte, 1, 1, fp);
+            printf("%c", random_byte%8); // Print each byte as hexadecimal
+            fflush(stdout);
+        }
 
         /////////////Readers exit
         sWait(&(game.sync->readersCountMutex));
