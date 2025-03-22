@@ -15,4 +15,4 @@ run:
 	make all && sleep 1 && $(MASTER_O) -d 0 -t 1 -v $(VISTA_O) -p $(PLAYER10_O)
 
 run_mult:
-	make all && sleep 1 && $(MASTER_O) -d 100 -t 3 -v $(VISTA_O) -p $(PLAYER10_O) $(PLAYER10_O) $(PLAYER10_O) $(PLAYER10_O)
+	make all && sleep 1 && $(MASTER_O) -d 100 -t 1 -v $(VISTA_O) -p $(PLAYER10_O) $(PLAYER10_O) $(PLAYER10_O) $(PLAYER10_O)
