@@ -31,7 +31,7 @@ CSI 6n	DSR	Device Status Report	Reports the cursor position (CPR) by transmittin
 #define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
                                    } while (0)
 
-#define color(R,G,B) "\033[38;2;" R ";"G";"B"m"
+#define color(R,G,B) "\033[38;2;" R ";" G ";" B "m"
 
 
 #define BLACK color(,,)
@@ -83,9 +83,19 @@ typedef struct {
     gameState_t* state;
 } game_t;
 
+typedef struct {
+    int xWidth;
+    int yWidth;
+    int xOffset;
+    int yOffset;
+} screen_t;
+
 game_t openGame(int argc, char* argv[]); //TODO no me gusta que una funcion reciva argc y argv
 
 void sWait(sem_t* sem);
 void sPost(sem_t* sem);
+
+screen_t buildScreen(int xOffset, int yOffset);
+int moveCursorScreen(screen_t screen, int x, int y);
 
 #endif

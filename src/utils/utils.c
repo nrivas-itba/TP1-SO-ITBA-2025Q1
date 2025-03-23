@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <sys/stat.h>        /* For mode constants */
 #include <semaphore.h>
+#include <sys/ioctl.h>
 //TODO Ninguno de estos define esta verificado que sea necesario. Por favor revisar si se puede sacar alguno
 
 
@@ -58,4 +59,22 @@ void sPost(sem_t* sem){
     if (sem_post(sem) == -1){ //Tell the master that we have finished printing.
         errExit("sem_post");
     }
+}
+
+screen_t buildScreen(int xOffset,int yOffset){
+        screen_t ret;
+        struct winsize w;
+        // Query terminal size
+        if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1) {
+            errExit("ioctl, is the stdOut connected to a console?");
+        }
+        ret.xWidth = w.ws_col-xOffset;
+        ret.yWidth = w.ws_row-yOffset;
+        ret.xOffset = xOffset;
+        ret.yOffset = yOffset;
+        return ret;
+}
+
+int moveCursorScreen(screen_t screen, int x, int y){
+    return moveCursor(screen.xOffset+x, screen.yOffset+y);
 }

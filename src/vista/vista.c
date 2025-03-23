@@ -5,7 +5,9 @@
 #include <semaphore.h>
 #include "../utils/utils.h"
 
-void print_game(int gameWidth, int gameHeight, int matrix[gameWidth][gameHeight]){
+#define NOT_ENOUGH_SPACE_TO_PRINT_MATRIX "Not enough space"
+
+void print_game(int gameWidth, int gameHeight, int matrix[gameWidth][gameHeight], screen_t screen){
     static const char* playerColors[]= {
         RED,
         GREEN,
@@ -17,13 +19,32 @@ void print_game(int gameWidth, int gameHeight, int matrix[gameWidth][gameHeight]
         GRAY
         BLACK,
     };
+    
+    if(screen.xWidth < gameWidth+2 || screen.yWidth < gameHeight+2){
+        for(int x=0; x<screen.xWidth;x++){
+            for(int y=0; y<screen.yWidth; y++){
+                moveCursorScreen(screen, x, y);
+                putchar(' ');
+            }
+        }
+        if(screen.yWidth && screen.xWidth >= sizeof(NOT_ENOUGH_SPACE_TO_PRINT_MATRIX)){
+            moveCursorScreen(screen,0,0);
+            puts(NOT_ENOUGH_SPACE_TO_PRINT_MATRIX);
+        }
+        fflush(stderr);
+        return;
+    }
+
     // Upper boarder
+    moveCursorScreen(screen,0,0);
     printf("╭");
     for (int i = 0; i < gameWidth; i++)
         printf("═══");
-    printf("╮\n");
+    printf("╮");
+
 
     for (int i = 0; i < gameWidth; i++){
+        moveCursorScreen(screen,0,1+i);
         printf("║");    // Left border
         for (int j = 0; j < gameHeight; j++){
             if(matrix[i][j]>0){
@@ -33,15 +54,16 @@ void print_game(int gameWidth, int gameHeight, int matrix[gameWidth][gameHeight]
                 printf("%s███%s", playerColors[-matrix[i][j]],WHITE);
             }
         }
-    //printf("%d ", matrix[i][j] <= 0 ? matrix[i][j] : 'a'-'0');
-        printf("║\n");  // Right border
+        printf("║");  // Right border
     }
 
+    moveCursorScreen(screen,0,1+gameWidth);
     // Lower border
     printf("╰");
     for (int i = 0; i < gameWidth; i++)
         printf("═══");
-    printf("╯\n");
+    printf("╯");
+    fflush(stdout);
 }
 
 int main(int argc, char* argv[]){
@@ -53,9 +75,8 @@ int main(int argc, char* argv[]){
         sWait(&(game.sync->printNeeded)); //Waint until master wants to print
 
         moveCursor(0,13);
-        printf("ChompChamps!\n");
-        print_game(game.gameWidth, game.gameHeight, (void*)(game.state->board));
-        printf(".....\n");
+        //printf("ChompChamps!\n");
+        print_game(game.gameWidth, game.gameHeight, (void*)(game.state->board), buildScreen(5,14));
 
         sPost(&(game.sync->printDone)); //Tell the master that we have finished printing.
     }
