@@ -8,10 +8,18 @@
 #define NOT_ENOUGH_SPACE_TO_PRINT_MATRIX "Not enough space"
 
 /*
+    Prints the player stats table
+    Returns how many lines where printed.
+*/
+int printPlayerStats(player_t* players,  const screen_t screen){
+    return 0;
+}
+
+/*
     Prints the board
     Returns how many lines where printed.
 */
-int print_game(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], screen_t screen){
+int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], const screen_t screen){
     static const char* playerColors[]= {
         RED,
         GREEN,
@@ -121,9 +129,9 @@ int main(int argc, char* argv[]){
         }
         sWait(&(game.sync->printNeeded)); //Waint until master wants to print
 
-        //moveCursor(0,13);
-        //printf("ChompChamps!\n");
-        print_game(game.gameWidth, game.gameHeight, (void*)(game.state->board), buildScreen(5,14));
+        screen_t screen = buildScreen(1,14);
+        screen.yOffset += printPlayerStats(game.state->playerList, screen);
+        screen.yOffset += printGame(game.gameWidth, game.gameHeight, (void*)(game.state->board), screen);
 
         sPost(&(game.sync->printDone)); //Tell the master that we have finished printing.
     }
