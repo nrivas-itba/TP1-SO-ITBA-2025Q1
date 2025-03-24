@@ -1,12 +1,15 @@
 include Makefile.inc
 
-all: vista player10
+all: vista player10 master
 
 vista:
 	cd $(VISTA_DIR) && make all
 
 player10:
 	cd $(PLAYER10_DIR) && make all
+
+master:
+	cd $(MASTER_DIR) && make all
 
 clean:
 	cd $(BIN_DIR) && rm *.o

@@ -124,10 +124,10 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], c
 int main(int argc, char* argv[]){
     game_t game = openGame(argc, argv);
     while(1){
+        sWait(&(game.sync->printNeeded)); //Waint until master wants to print
         if(game.state->isOver){ //TODO pienso q solo deberiamos leer esta variable mientras tenemos permitido acceder al tablero, es decir: Durante "printNeeded"... Pero si muevo el if a desp de "printNeeded": No termina nunca
             return 0;
         }
-        sWait(&(game.sync->printNeeded)); //Waint until master wants to print
 
         moveCursor(1,14);
         screen_t screen = buildScreen(1,14);
