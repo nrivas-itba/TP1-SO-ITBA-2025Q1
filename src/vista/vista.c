@@ -19,6 +19,8 @@ int printPlayerStats(player_t* players,  const screen_t screen){
         // print iterating players til max
         // print separator
         // return lines printed (minimum of 5)
+
+    
     
     return 0;
 }
