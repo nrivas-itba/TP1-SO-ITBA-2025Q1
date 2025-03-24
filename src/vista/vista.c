@@ -5,13 +5,21 @@
 #include <semaphore.h>
 #include "../utils/utils.h"
 
-#define NOT_ENOUGH_SPACE_TO_PRINT_MATRIX "Not enough space"
+#define NOT_ENOUGH_SPACE_TO_PRINT_MATRIX "Not enough space for matrix"
+#define NOT_ENOUGH_SPACE_TO_PRINT_TABLE "Not enough space for table"
 
 /*
     Prints the player stats table
     Returns how many lines where printed.
 */
 int printPlayerStats(player_t* players,  const screen_t screen){
+
+    // check width and heigth (max_players) -> ERR_MSG
+        // print header
+        // print iterating players til max
+        // print separator
+        // return lines printed (minimum of 5)
+    
     return 0;
 }
 
