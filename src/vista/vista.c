@@ -13,9 +13,9 @@
     Returns binary.
 */
 int checkPrintable(int srcWidth, int srcHeight, int myWidth, int myHeight, char* myFailMsg, const screen_t screen){
-    int ret = 0;
+    int ret = -1;
     if(srcWidth < myWidth || srcHeight < myHeight){
-        
+        ret = 0;
         for(int x=0; x<screen.xWidth;x++){
             for(int y=0; y<screen.yWidth; y++){
                 moveCursorScreen(screen, x, y);
@@ -45,7 +45,15 @@ int printPlayerStats(player_t* players,  const screen_t screen){
         // print separator
         // return lines printed (minimum of 5)
 
-    
+    int xWidth = screen.xWidth-2;
+    int yHeight = screen.yWidth-2;
+
+    int ret;
+
+    //fix magic numbers
+    if( (ret=checkPrintable(xWidth,yHeight,25,MAX_PLAYERS+3,NOT_ENOUGH_SPACE_TO_PRINT_TABLE,screen)) >= 0 ){
+        return ret;
+    }
     
     return 0;
 }
@@ -70,9 +78,10 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], c
     int xWidth = screen.xWidth-2;
     int yHeight = screen.yWidth-2;
 
-    // replace with function checkPrintable(srcWidth, srcHeight, myWidth, myHeight, myFailMsg, screen)
-    if(checkPrintable(xWidth,yHeight,gameWidth,gameHeight,NOT_ENOUGH_SPACE_TO_PRINT_MATRIX,screen)){
-        return EXIT_FAILURE;
+    int ret;
+
+    if( (ret=checkPrintable(xWidth,yHeight,gameWidth,gameHeight,NOT_ENOUGH_SPACE_TO_PRINT_MATRIX,screen)) >= 0 ){
+        return ret;
     }
 
     int xMult = xWidth/gameWidth;
