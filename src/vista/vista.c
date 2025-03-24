@@ -129,6 +129,7 @@ int main(int argc, char* argv[]){
         }
         sWait(&(game.sync->printNeeded)); //Waint until master wants to print
 
+        moveCursor(1,14);
         screen_t screen = buildScreen(1,14);
         screen.yOffset += printPlayerStats(game.state->playerList, screen);
         screen.yOffset += printGame(game.gameWidth, game.gameHeight, (void*)(game.state->board), screen);
