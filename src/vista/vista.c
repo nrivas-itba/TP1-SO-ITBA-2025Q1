@@ -9,6 +9,31 @@
 #define NOT_ENOUGH_SPACE_TO_PRINT_TABLE "Not enough space for table"
 
 /*
+    Check if there is enough space in screen to print something
+    Returns binary.
+*/
+int checkPrintable(int srcWidth, int srcHeight, int myWidth, int myHeight, char* myFailMsg, const screen_t screen){
+    int ret = 0;
+    if(srcWidth < myWidth || srcHeight < myHeight){
+        
+        for(int x=0; x<screen.xWidth;x++){
+            for(int y=0; y<screen.yWidth; y++){
+                moveCursorScreen(screen, x, y);
+                putchar(' ');
+            }
+        }
+        if(screen.yWidth >= 1 && screen.xWidth >= sizeof(myFailMsg)){
+            moveCursorScreen(screen,0,0);
+            puts(myFailMsg);
+            ret = 1;
+        }
+        fflush(stderr);
+    }
+    return ret;
+}
+
+
+/*
     Prints the player stats table
     Returns how many lines where printed.
 */
@@ -44,22 +69,12 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], c
     
     int xWidth = screen.xWidth-2;
     int yHeight = screen.yWidth-2;
-    if(xWidth < gameWidth || yHeight < gameHeight){
-        int ret = 0;
-        for(int x=0; x<screen.xWidth;x++){
-            for(int y=0; y<screen.yWidth; y++){
-                moveCursorScreen(screen, x, y);
-                putchar(' ');
-            }
-        }
-        if(screen.yWidth >= 1 && screen.xWidth >= sizeof(NOT_ENOUGH_SPACE_TO_PRINT_MATRIX)){
-            moveCursorScreen(screen,0,0);
-            puts(NOT_ENOUGH_SPACE_TO_PRINT_MATRIX);
-            ret = 1;
-        }
-        fflush(stderr);
-        return ret;
+
+    // replace with function checkPrintable(srcWidth, srcHeight, myWidth, myHeight, myFailMsg, screen)
+    if(checkPrintable(xWidth,yHeight,gameWidth,gameHeight,NOT_ENOUGH_SPACE_TO_PRINT_MATRIX,screen)){
+        return EXIT_FAILURE;
     }
+
     int xMult = xWidth/gameWidth;
     int yMult = yHeight/gameHeight;
 
