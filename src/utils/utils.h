@@ -51,7 +51,7 @@ CSI 6n	DSR	Device Status Report	Reports the cursor position (CPR) by transmittin
 typedef struct {
     sem_t printNeeded; // Se usa para indicarle a la vista que hay cambios por imprimir
     sem_t printDone; // Se usa para indicarle al master que la vista terminó de imprimir
-    sem_t C; // Mutex para evitar inanición del master al acceder al estado
+    sem_t masterWantsToReadMutex; // Mutex para evitar inanición del master al acceder al estado
     sem_t readGameStateMutex; // Mutex para el estado del juego
     sem_t readersCountMutex; // Mutex para la siguiente variable
     unsigned int readersCount; // Cantidad de jugadores leyendo el estado
