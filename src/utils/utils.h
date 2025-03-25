@@ -44,7 +44,7 @@ CSI 6n	DSR	Device Status Report	Reports the cursor position (CPR) by transmittin
 #define WHITE color("255", "255", "255")
 #define GRAY color("127", "127", "127")
 
-#define moveCursor(x,y) printf("\033[%d;%dH",y,x); //TODO esto es movimiento ABSOLUTO, tamb seria facil implementar movimiento RELATIVO
+#define moveCursor(x,y) printf("\033[%d;%dH",y,x); //TODO esto es movimiento ABSOLUTO, tamb seria facil implementar movimiento RELATIVO (creo q este todo no es necesario, creo q no necesitamos movimiento relativo) //TODO macros solo deberian generar strings, no ejecutar codigo. Si se quiere ejecutar codigo, meterlo en funcion
 
 #define MAX_PLAYERS 9
 
