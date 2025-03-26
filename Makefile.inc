@@ -3,7 +3,7 @@ GCC_FLAGS = -Wall -pedantic # todo falta el -std=c99
 
 VISTA_O = $(BIN_DIR)/vista.o
 PLAYER10_O = $(BIN_DIR)/player10.o
-_MASTER_O = $(BIN_DIR)/originales/ChompChampsAMD-v25_3_2025
+_MASTER_O = $(BIN_DIR)/originales/ChompChampsAMD-v26_3_2025
 MASTER_O = $(BIN_DIR)/master.o
 
 SOURCES = *.c
