@@ -126,10 +126,11 @@ int main(int argc, char* argv[]){
     char isGameOver = 0;
     while(!isGameOver){
         sWait(&(game.sync->printNeeded)); //Waint until master wants to print
-        moveCursor(1,14);
         screen_t screen = buildScreen(1,14);
+        moveCursor(1,screen.yOffset);
         screen.yOffset += printPlayerStats(game.state->playerList, screen);
         screen.yOffset += printGame(game.gameWidth, game.gameHeight, (void*)(game.state->board), screen);
+        moveCursor(1,screen.yOffset);
         isGameOver = game.state->isOver;
         sPost(&(game.sync->printDone)); //Tell the master that we have finished printing.
 
