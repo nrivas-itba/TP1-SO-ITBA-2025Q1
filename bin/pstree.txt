@@ -1,0 +1,8 @@
+  │   │       └─bash,2213
+  │   │           └─strace,167544 --trace=all ./originales/ChompChampsAMD-v19_3_2025 -d 1 -t 10 -v ./vista.o -p ...
+  │   │               └─ChompChampsAMD-,167547 -d 1 -t 10 -v ./vista.o -p ./player10.o ./player10.o ./player10.o ...
+  │   │                   ├─player10.o,167559 10 10
+  │   │                   ├─player10.o,167560 10 10
+  │   │                   ├─player10.o,167561 10 10
+  │   │                   ├─player10.o,167562 10 10
+  │   │                   └─vista.o,167558 10 10
