@@ -24,15 +24,12 @@ CSI 4i		AUX Port Off	Disable aux serial port usually for local serial printer
 CSI 6n	DSR	Device Status Report	Reports the cursor position (CPR) by transmitting ESC[n;mR, where n is the row and m is the column.
 */
 
-
 #include <semaphore.h>
-
 
 #define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
                                    } while (0)
 
 #define color(R,G,B) "\033[38;2;" R ";" G ";" B "m"
-
 
 #define BLACK color(,,)
 #define BLUE color(, , "255")
@@ -44,34 +41,39 @@ CSI 6n	DSR	Device Status Report	Reports the cursor position (CPR) by transmittin
 #define WHITE color("255", "255", "255")
 #define GRAY color("127", "127", "127")
 
-#define moveCursor(x,y) printf("\033[%d;%dH",y,x); //TODO esto es movimiento ABSOLUTO, tamb seria facil implementar movimiento RELATIVO
+#define moveCursor(x,y) printf("\033[%d;%dH",y,x); //TODO esto es movimiento ABSOLUTO, tamb seria facil implementar movimiento RELATIVO (creo q este todo no es necesario, creo q no necesitamos movimiento relativo) //TODO macros solo deberian generar strings, no ejecutar codigo. Si se quiere ejecutar codigo, meterlo en funcion
 
 #define MAX_PLAYERS 9
+
+#define MAX_PLAYER_NAME_LEN 16
+
+#define GAME_SYNC "/game_sync"
+#define GAME_STATE "/game_state"
 
 typedef struct {
     sem_t printNeeded; // Se usa para indicarle a la vista que hay cambios por imprimir
     sem_t printDone; // Se usa para indicarle al master que la vista terminó de imprimir
-    sem_t C; // Mutex para evitar inanición del master al acceder al estado
+    sem_t masterWantsToReadMutex; // Mutex para evitar inanición del master al acceder al estado
     sem_t readGameStateMutex; // Mutex para el estado del juego
     sem_t readersCountMutex; // Mutex para la siguiente variable
     unsigned int readersCount; // Cantidad de jugadores leyendo el estado
 } gameSync_t;
 
 typedef struct {
-char name[16]; // Nombre del jugador
+char name[MAX_PLAYER_NAME_LEN]; // Nombre del jugador
 unsigned int score; // Puntaje
 unsigned int invalidMovementRequestsCount; // Cantidad de solicitudes de movimientos inválidas realizadas
 unsigned int validMovementRequestsCount; // Cantidad de solicitudes de movimientos válidas realizadas
 unsigned short x, y; // Coordenadas x e y en el tablero
 pid_t pid; // Identificador de proceso
-char notHasAnyValidMovements; // Indica si el jugador tiene movimientos válidos disponibles
+char canMove; // Indica si el jugador tiene movimientos válidos disponibles
 } player_t;
 
 typedef struct {
 unsigned short width; // Ancho del tablero
 unsigned short height; // Alto del tablero
 unsigned int playerCount; // Cantidad de jugadores
-player_t playerList[9]; // Lista de jugadores
+player_t playerList[MAX_PLAYERS]; // Lista de jugadores
 char isOver; // Indica si el juego se ha terminado
 int board[]; // Puntero al comienzo del tablero. fila-0, fila-1, ..., fila-n-1
 } gameState_t;
