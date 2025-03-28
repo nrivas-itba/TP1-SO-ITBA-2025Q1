@@ -9,23 +9,34 @@
 #define NOT_ENOUGH_SPACE_TO_PRINT_TABLE "Not enough space for table"
 
 /*
+    Check if there is enough space in screen to write something
+    Returns binary.
+*/
+int checkWritable(const screen_t screen, char* myMsg){
+    int ret = 0;
+    if(screen.yWidth >= 1 && screen.xWidth >= sizeof(myMsg)){
+            moveCursorScreen(screen,0,0);
+            puts(myMsg);
+            ret = 1;
+    }
+    return ret;
+}
+
+/*
     Check if there is enough space in screen to print something
     Returns binary.
 */
-int checkPrintable(int srcWidth, int srcHeight, int myWidth, int myHeight, char* myFailMsg, const screen_t screen){
-    int ret = -1;
+int checkPrintable(int srcWidth, int srcHeight, int myWidth, int myHeight, const screen_t screen){
+    // can print
+    int ret = 1;
     if(srcWidth < myWidth || srcHeight < myHeight){
+        // cannot print
         ret = 0;
         for(int x=0; x<screen.xWidth;x++){
             for(int y=0; y<screen.yWidth; y++){
                 moveCursorScreen(screen, x, y);
                 putchar(' ');
             }
-        }
-        if(screen.yWidth >= 1 && screen.xWidth >= sizeof(myFailMsg)){
-            moveCursorScreen(screen,0,0);
-            puts(myFailMsg);
-            ret = 1;
         }
         fflush(stderr);
     }
@@ -48,11 +59,9 @@ int printPlayerStats(player_t* players,  const screen_t screen){
     int xWidth = screen.xWidth-2;
     int yHeight = screen.yWidth-2;
 
-    int ret;
-
     //fix magic numbers
-    if( (ret=checkPrintable(xWidth,yHeight,25,MAX_PLAYERS+3,NOT_ENOUGH_SPACE_TO_PRINT_TABLE,screen)) >= 0 ){
-        return ret;
+    if( !checkPrintable(xWidth,yHeight,25,MAX_PLAYERS+3,screen) ){
+        return checkWritable(screen, NOT_ENOUGH_SPACE_TO_PRINT_TABLE);
     }
     
     return 0;
@@ -78,10 +87,8 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], c
     int xWidth = screen.xWidth-2;
     int yHeight = screen.yWidth-2;
 
-    int ret;
-
-    if( (ret=checkPrintable(xWidth,yHeight,gameWidth,gameHeight,NOT_ENOUGH_SPACE_TO_PRINT_MATRIX,screen)) >= 0 ){
-        return ret;
+    if( !checkPrintable(xWidth,yHeight,gameWidth,gameHeight,screen) ){
+        return checkWritable(screen, NOT_ENOUGH_SPACE_TO_PRINT_MATRIX);
     }
 
     int xMult = xWidth/gameWidth;
