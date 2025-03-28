@@ -14,6 +14,32 @@
 
 #include "utils.h"
 
+#define MODE_RW0_R00_R00 S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH
+#define MODE_RW0_RW0_RW0 MODE_RW0_R00_R00 | S_IWGRP | S_IWOTH
+
+void* createShm(char* name, uint64_t size, char isPublic){
+    int fd = shm_open(name, O_RDWR | O_CREAT | O_EXCL, isPublic ? MODE_RW0_RW0_RW0 : MODE_RW0_R00_R00);
+    if (fd == -1){
+        errExit("shm_open");
+    }
+
+    if (-1 == ftruncate(fd, size))
+    {
+        errExit("ftruncate");
+    }
+
+    void* ret = mmap(NULL,
+                size,
+                PROT_READ | PROT_WRITE,
+                MAP_SHARED,
+                fd,
+                0);
+    if (ret == MAP_FAILED){
+        errExit("mmap");
+    }
+    return ret;
+}
+
 void* openmem(char* name, uint64_t size, char readOnly){
     int fd = shm_open(name, readOnly ? O_RDONLY : O_RDWR, 0);
     if (fd == -1){
@@ -45,8 +71,8 @@ game_t openGame(int argc, char* argv[]){
         errExit("invalid argc");
     }
 
-    ret.sync = openmem("/game_sync", sizeof(*ret.sync), 0);
-    ret.state = openmem("/game_state",sizeof(*ret.state) + (ret.gameWidth * ret.gameHeight) * sizeof((ret.state->board)[0]), 1);
+    ret.sync = openmem(GAME_SYNC, sizeof(*ret.sync), 0);
+    ret.state = openmem(GAME_STATE,sizeof(*ret.state) + (ret.gameWidth * ret.gameHeight) * sizeof((ret.state->board)[0]), 1);
     return ret;
 }
 
