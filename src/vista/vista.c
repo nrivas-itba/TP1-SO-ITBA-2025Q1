@@ -65,7 +65,7 @@ int checkPrintable(int srcWidth, int srcHeight, int myWidth, int myHeight, const
 */
 int printPlayerStats(player_t* players, unsigned int playerCount, const screen_t screen){
 
-    // aux arr with indexes -> sort with criteria (complex) ?
+    // TODO aux arr with indexes -> sort with criteria (complex)
 
     int xWidth = screen.xWidth-2;
     int yHeight = screen.yWidth-2;
