@@ -65,12 +65,7 @@ int checkPrintable(int srcWidth, int srcHeight, int myWidth, int myHeight, const
 */
 int printPlayerStats(player_t* players, unsigned int playerCount, const screen_t screen){
 
-    // check width and heigth (max_players) -> ERR_MSG
-        // print header
-        // print iterating players til max (indicate padding to printf and # of chars i want,data type)
-        // print separator
-        // return lines printed (minimum of 5)
-        // aux arr with indexes -> sort with criteria (complex)
+    // aux arr with indexes -> sort with criteria (complex) ?
 
     int xWidth = screen.xWidth-2;
     int yHeight = screen.yWidth-2;
