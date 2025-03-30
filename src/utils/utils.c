@@ -45,7 +45,7 @@ void unlinkMem(void* address, size_t size, int* fd, char* name){
     perror("munmap");
     exit(1);
   }
-    *fd[f]
+  
   if (close(*fd) == -1) {
     perror("close");
     exit(1);
