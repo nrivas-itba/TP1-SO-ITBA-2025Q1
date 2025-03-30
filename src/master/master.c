@@ -41,7 +41,8 @@ typedef struct {
     char* view;
     char* playerPaths[9];
     gameState_t* gameState;
-
+    size_t gameStateSize;
+    int gameStateFd;
 } gameConfig_t;
 
 void validateArgs(gameConfig_t* gameConfig, int playerCount, int width, int height){
@@ -129,11 +130,14 @@ void processArgs(int argc, char* argv[], gameConfig_t* gameConfig){
 
     validateArgs(gameConfig, playerCount, width, height);
 
+    gameConfig->gameStateSize=sizeof(gameState_t)+sizeof(int)*width*height;
+    gameConfig->gameState = createShm(GAME_STATE, gameConfig->gameStateSize, 1, &gameConfig->gameStateFd);
+
     return;
 }
 
 int main(int argc, char* argv[]){
-    //printf("%d\n\n",sizeof(gameConfig_t));
+    // printf("%d\n\n",sizeof(gameConfig_t));
     // char* temp[sizeof(gameState_t) + (width * height)*sizeof(int)];
     // gameConfig_t gameConfig = (gameState_t*)((void*)temp);
 

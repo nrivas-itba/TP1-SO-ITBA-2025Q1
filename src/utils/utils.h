@@ -92,6 +92,8 @@ typedef struct {
     int yOffset;
 } screen_t;
 
+void* createShm(char* name, size_t size, char isPublic, int* fd);
+
 game_t openGame(int argc, char* argv[]); //TODO no me gusta que una funcion reciva argc y argv
 
 void sWait(sem_t* sem);

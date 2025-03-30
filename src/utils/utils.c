@@ -17,14 +17,13 @@
 #define MODE_RW0_R00_R00 S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH
 #define MODE_RW0_RW0_RW0 MODE_RW0_R00_R00 | S_IWGRP | S_IWOTH
 
-void* createShm(char* name, uint64_t size, char isPublic){
-    int fd = shm_open(name, O_RDWR | O_CREAT | O_EXCL, isPublic ? MODE_RW0_RW0_RW0 : MODE_RW0_R00_R00);
-    if (fd == -1){
+void* createShm(char* name, size_t size, char isPublic, int* fd){
+    *fd = shm_open(name, O_RDWR | O_CREAT | O_EXCL, isPublic ? MODE_RW0_RW0_RW0 : MODE_RW0_R00_R00);
+    if (*fd == -1){
         errExit("shm_open");
     }
-
-    if (-1 == ftruncate(fd, size))
-    {
+    
+    if (-1 == ftruncate(*fd, size)){
         errExit("ftruncate");
     }
 
@@ -32,15 +31,35 @@ void* createShm(char* name, uint64_t size, char isPublic){
                 size,
                 PROT_READ | PROT_WRITE,
                 MAP_SHARED,
-                fd,
+                *fd,
                 0);
+    
     if (ret == MAP_FAILED){
         errExit("mmap");
-    }
+    }    
     return ret;
 }
 
-void* openmem(char* name, uint64_t size, char readOnly){
+void unlinkMem(void* address, size_t size, int* fd, char* name){
+  if (munmap(address, size) == -1) {
+    perror("munmap");
+    exit(1);
+  }
+    *fd[f]
+  if (close(*fd) == -1) {
+    perror("close");
+    exit(1);
+  }
+
+  if (shm_unlink(name) == -1) {
+    perror("shm_unlink");
+    exit(1);
+  }
+  return;
+}
+
+
+void* openmem(char* name, size_t size, char readOnly){
     int fd = shm_open(name, readOnly ? O_RDONLY : O_RDWR, 0);
     if (fd == -1){
         errExit("shm_open");

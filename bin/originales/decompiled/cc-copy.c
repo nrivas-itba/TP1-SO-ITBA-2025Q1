@@ -1072,9 +1072,9 @@ undefined8 FUN_001013c9(undefined4 param_1,undefined8 param_2)
   (&uStack_120)[uVar4 * -2] = 0x101586;
   FUN_0010340e(uVar3);
   (&uStack_120)[uVar4 * -2] = 0x101595;
-  FUN_00103af0(local_c8);
+  unlinkMem(local_c8);
   (&uStack_120)[uVar4 * -2] = 0x1015a4;
-  FUN_00103af0(local_108);
+  unlinkMem(local_108);
   return 0;
 }
 
@@ -2258,7 +2258,7 @@ void FUN_001039e4(undefined8 *param_1)
 
 
 
-void validateArgs(undefined8 *param_1)
+void unlinkMem(undefined8 *param_1)
 
 {
   int iVar1;
