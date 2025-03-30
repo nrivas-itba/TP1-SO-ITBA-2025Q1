@@ -9,6 +9,21 @@
 #define NOT_ENOUGH_SPACE_TO_PRINT_TABLE "Not enough space for table"
 
 /*
+    Check digits of int -> off limit is set to -1
+    Returns int or -1.
+*/
+int numberSize(int number, int size){
+    int currentSize=0;
+    for(; number>=10;currentSize++){
+        number/=10; // 100 -> 10 ...
+    }
+    if (currentSize >= size){
+        return -1;
+    }
+    return number;
+}
+
+/*
     Check if there is enough space in screen to write something
     Returns binary.
 */
@@ -48,23 +63,49 @@ int checkPrintable(int srcWidth, int srcHeight, int myWidth, int myHeight, const
     Prints the player stats table
     Returns how many lines where printed.
 */
-int printPlayerStats(player_t* players,  const screen_t screen){
+int printPlayerStats(player_t* players, unsigned int playerCount, const screen_t screen){
 
     // check width and heigth (max_players) -> ERR_MSG
         // print header
-        // print iterating players til max
+        // print iterating players til max (indicate padding to printf and # of chars i want,data type)
         // print separator
         // return lines printed (minimum of 5)
+        // aux arr with indexes -> sort with criteria (complex)
 
     int xWidth = screen.xWidth-2;
     int yHeight = screen.yWidth-2;
 
+    int myWidth = 25 + MAX_PLAYER_NAME_LEN;
+
     //fix magic numbers
-    if( !checkPrintable(xWidth,yHeight,25,MAX_PLAYERS+3,screen) ){
+    if( !checkPrintable(xWidth,yHeight,myWidth,playerCount,screen) ){
         return checkWritable(screen, NOT_ENOUGH_SPACE_TO_PRINT_TABLE);
     }
-    
-    return 0;
+
+    // Header
+    moveCursorScreen(screen,0,0);
+    for (int x = 0; x < myWidth; x++){
+        printf("═");
+    }
+    moveCursorScreen(screen,0,1);
+    printf(" %16s %5s %5s %5s %s \n", "Name", "Score", "InvRq", "ValRq", "❤️");
+    moveCursorScreen(screen,0,2);
+    for (int x = 0; x < myWidth; x++){
+        printf("═");
+    }
+
+    for (int fila = 0; fila < playerCount; fila++){
+        moveCursorScreen(screen,0,3+fila);
+        printf(" %16.16s %5d %5d %5d %s \n", players[fila].name, numberSize(players[fila].score, 5), numberSize(players[fila].invalidMovementRequestsCount, 5), numberSize(players[fila].validMovementRequestsCount, 5), (players[fila].canMove ? "💀" : "😀")); 
+    }
+
+    // Lowe border
+    moveCursorScreen(screen,0,3+playerCount);
+    for (int x = 0; x < myWidth; x++){
+        printf("═");
+    }
+
+    return 4+playerCount;
 }
 
 /*
@@ -143,7 +184,7 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], c
                 }
                 if(columna == gameWidth-1){
                     moveCursorScreen(screen,1+gameWidth*xMult,1+fila*yMult+filaInner);
-                    printf("║");    // Left border
+                    printf("║");    // Right border
                     fflush(stdout);
                 }
             }
@@ -159,7 +200,8 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], c
     }
     printf("╯");
     fflush(stdout);
-    return 2+gameWidth*yMult;
+
+    return 2+gameHeight*yMult;
 }
 
 int main(int argc, char* argv[]){
@@ -169,7 +211,7 @@ int main(int argc, char* argv[]){
         sWait(&(game.sync->printNeeded)); //Waint until master wants to print
         screen_t screen = buildScreen(1,14);
         moveCursor(1,screen.yOffset);
-        screen.yOffset += printPlayerStats(game.state->playerList, screen);
+        screen.yOffset += printPlayerStats(game.state->playerList, game.state->playerCount, screen);
         screen.yOffset += printGame(game.gameWidth, game.gameHeight, (void*)(game.state->board), screen);
         moveCursor(1,screen.yOffset);
         isGameOver = game.state->isOver;
