@@ -41,13 +41,14 @@ int main(int argc, char* argv[]){
         
         /////////////Readers entrance
         sWait(&(game.sync->masterWantsToReadMutex));
+        sPost(&(game.sync->masterWantsToReadMutex)); //In the 31/3/2025 we saw that it should have this order
+
         sWait(&(game.sync->readersCountMutex));
         game.sync->readersCount++;
         if(game.sync->readersCount == 1){
             sWait(&(game.sync->readGameStateMutex)); //First reader locks writes
         }
         
-        sPost(&(game.sync->masterWantsToReadMutex));
         sPost(&(game.sync->readersCountMutex));
         /////////////Readers entrance
 
