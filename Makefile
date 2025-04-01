@@ -25,6 +25,9 @@ run:
 		make all && sleep 1 && $(_MASTER_O) -d 0 -t 1 -v $(VISTA_O) -p $(PLAYER10_O); \
 	fi
 
+runARM:
+	make all && sleep 1 && $(_MASTER_O_ARM) -d 0 -t 1 -v $(VISTA_O) -p $(PLAYER10_O)
+
 run_mult:
 	@if [ "$(m)" = "custom" ] || [ "$(m)" = "c" ]; then \
 		echo Running with custom master...; \
@@ -33,3 +36,6 @@ run_mult:
 		echo Running with original master...; \
 		make all && sleep 1 && $(_MASTER_O) -d 1 -t 10 -v $(VISTA_O) -p $(PLAYER10_O) $(PLAYER10_O) $(PLAYER10_O) $(PLAYER10_O); \
 	fi
+
+run_multARM:
+	make all && sleep 1 && $(_MASTER_O_ARM) -d 100 -t 10 -v $(VISTA_O) -p $(PLAYER10_O) $(PLAYER10_O) $(PLAYER10_O) $(PLAYER10_O)
