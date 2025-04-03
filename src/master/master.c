@@ -25,6 +25,7 @@
 #define ARI_TOO_MANY_PLAYERS "Error: At most %d players can be specified using -p.\n"
 #define ARI_WRONG_BOARD_DIMENSIONS "Error: Minimal board dimensions: %dx%d. Given %dx%d\n"
 
+#define ARI_CLEAR "clear"
 #define ARI_WIDTH "width: %d\n"
 #define ARI_HEIGHT "height: %d\n"
 #define ARI_DELAY "delay: %u\n"
@@ -40,9 +41,11 @@ typedef struct {
     int timeout;
     char* view;
     char* playerPaths[9];
-    gameState_t* gameState;
+    gameState_t* State;
+    gameSync_t* Sync;
     size_t gameStateSize;
-    int gameStateFd;
+    int StateFd;
+    int SyncFd;
 } gameConfig_t;
 
 void validateArgs(gameConfig_t* gameConfig, int playerCount, int width, int height){
@@ -69,10 +72,18 @@ void createPlayer(char* name, player_t* player){
     player->invalidMovementRequestsCount = 0;
     player->validMovementRequestsCount = 0;
     player->canMove = 1;
-    return;
 }
 
-void processArgs(int argc, char* argv[], gameConfig_t* gameConfig){
+void initializeGameSync(gameSync_t* gameSync){
+  semInit(&(gameSync->printNeeded), 0);
+  semInit(&(gameSync->printDone), 0);
+  semInit(&(gameSync->masterWantsToReadMutex), 1);
+  semInit(&(gameSync->readGameStateMutex), 1);
+  semInit(&(gameSync->readersCountMutex), 1);
+  gameSync->readersCount = 0;
+}
+
+void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
 
     int opt;
     int playerCount = 0;
@@ -83,10 +94,10 @@ void processArgs(int argc, char* argv[], gameConfig_t* gameConfig){
     while ((opt = getopt(argc, argv, ARI_OPTARG)) != -1) {
         switch (opt) {
             case 'w':
-                gameConfig->gameState->width = atoi(optarg);
+                gameConfig->State->width = atoi(optarg);
                 break;
             case 'h':
-                gameConfig->gameState->height = atoi(optarg);
+                gameConfig->State->height = atoi(optarg);
                 break;
             case 'd':
                 gameConfig->delay = atoi(optarg);
@@ -130,10 +141,34 @@ void processArgs(int argc, char* argv[], gameConfig_t* gameConfig){
 
     validateArgs(gameConfig, playerCount, width, height);
 
-    gameConfig->gameStateSize=sizeof(gameState_t)+sizeof(int)*width*height;
-    gameConfig->gameState = createShm(GAME_STATE, gameConfig->gameStateSize, 1, &gameConfig->gameStateFd);
+    gameConfig->gameStateSize=sizeof(gameConfig->State)+sizeof(int)*width*height;
+    gameConfig->State = createShm(GAME_STATE, gameConfig->gameStateSize, 1, &gameConfig->StateFd);
 
+    gameConfig->Sync = createShm(GAME_SYNC, sizeof(gameConfig->Sync), 0, &gameConfig->SyncFd);
+
+    gameConfig->State->width=width;
+    gameConfig->State->height=height;
+    gameConfig->State->playerCount=playerCount;
+    
+    player_t* playerListDest = &(gameConfig->State->playerList[0]); //TODO no se si es necesario el &(dato[0])
+    for(int i = 0; i<MAX_PLAYERS; i++){
+        playerListDest[i] = playerList[i];
+    }
     return;
+}
+
+void printArgs(gameConfig_t* gameConfig){
+    printf(ARI_WIDTH, gameConfig->State->width);
+    printf(ARI_HEIGHT, gameConfig->State->height);
+    printf(ARI_DELAY, gameConfig->delay);
+    printf(ARI_TIMEOUT, gameConfig->timeout);
+    printf(ARI_SEED, gameConfig->seed);
+    printf(ARI_VIEW, gameConfig->view ? gameConfig->view : "-");
+    printf(ARI_NUM_PLAYERS, gameConfig->State->playerCount);
+    for (int i = 0; i < gameConfig->State->playerCount; i++) {
+        printf(ARI_PLAYER_NAME_STRING_FORMAT, gameConfig->playerPaths[i]);
+    }
+    sleep(2);
 }
 
 int main(int argc, char* argv[]){
@@ -149,20 +184,10 @@ int main(int argc, char* argv[]){
         .playerPaths = {0},
     };
     
-    processArgs(argc, argv, &gameConfig);
+    configureGame(argc, argv, &gameConfig);
 
-    printf("Configuración:\n");
-    printf("  Ancho: %d\n", gameConfig.gameState->width);
-    printf("  Alto: %d\n", gameConfig.gameState->height);
-    printf("  Delay: %d ms\n", gameConfig.delay);
-    printf("  Timeout: %d s\n", gameConfig.timeout);
-    printf("  Semilla: %d\n", gameConfig.seed);
-    printf("  Vista: %s\n", gameConfig.view ? gameConfig.view : "Sin vista");
-    printf("  Jugadores:\n");
-    for (int i = 0; i < gameConfig.gameState->playerCount; i++) {
-        printf("    - %s\n", gameConfig.playerPaths[i]);
-    }
+    system(ARI_CLEAR); //I dont like this, I would use CSI 2 J, But the profesor's bynary uses system()
+    printArgs(&gameConfig);
 
     return 0;
-
 }

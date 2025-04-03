@@ -1026,13 +1026,13 @@ undefined8 FUN_001013c9(undefined4 param_1,undefined8 param_2)
   uStack_120 = 0x101426;
   validateArgs(local_88);
   uStack_120 = 0x101432;
-  FUN_0010389c(local_88);
+  printArgs(local_88);
   uStack_120 = 0x101441;
-  local_48 = FUN_00101fea(local_c8);
+  local_48 = openGameSync(local_c8);
   uStack_120 = 0x101451;
-  FUN_001031a1(local_48);
+  initializeGameSync(local_48);
   uStack_120 = 0x101467;
-  local_50 = FUN_00102081(local_88,local_108);
+  local_50 = openGameState(local_88,local_108);
   uStack_120 = 0x10147e;
   FUN_00103039(local_88,local_50);
   uStack_120 = 0x10148a;
@@ -1414,7 +1414,7 @@ undefined8 FUN_00101f48(ushort param_1,ushort param_2,undefined8 *param_3)
 
 
 
-undefined8 FUN_00101fea(undefined8 *param_1)
+undefined8 openGameSync(undefined8 *param_1)
 
 {
   __mode_t __mask;
@@ -1435,7 +1435,7 @@ undefined8 FUN_00101fea(undefined8 *param_1)
 
 
 
-undefined8 FUN_00102081(ushort *param_1,undefined8 *param_2)
+undefined8 openGameState(ushort *param_1,undefined8 *param_2)
 
 {
   *param_2 = "/game_state";
@@ -1956,7 +1956,7 @@ void FUN_00103039(ushort *param_1,ushort *param_2)
 
 
 
-void FUN_001031a1(sem_t *param_1)
+void initializeGameSync(sem_t *param_1)
 
 {
   int iVar1;
@@ -2196,7 +2196,7 @@ void validateArgs(ushort *param_1)
 
 
 
-void FUN_0010389c(ushort *param_1)
+void printArgs(ushort *param_1)
 
 {
   undefined *puVar1;

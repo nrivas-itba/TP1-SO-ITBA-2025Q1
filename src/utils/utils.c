@@ -18,7 +18,7 @@
 #define MODE_RW0_RW0_RW0 MODE_RW0_R00_R00 | S_IWGRP | S_IWOTH
 
 void* createShm(char* name, size_t size, char isPublic, int* fd){
-    *fd = shm_open(name, O_RDWR | O_CREAT | O_EXCL, isPublic ? MODE_RW0_RW0_RW0 : MODE_RW0_R00_R00);
+    *fd = shm_open(name, O_RDWR | O_CREAT, isPublic ? MODE_RW0_RW0_RW0 : MODE_RW0_R00_R00);
     if (*fd == -1){
         errExit("shm_open");
     }
@@ -40,24 +40,26 @@ void* createShm(char* name, size_t size, char isPublic, int* fd){
     return ret;
 }
 
-void unlinkMem(void* address, size_t size, int* fd, char* name){
+void unlinkMem(char* name, size_t size, void* address, int* fd){
   if (munmap(address, size) == -1) {
-    perror("munmap");
-    exit(1);
+    errExit("munmap");
   }
   
   if (close(*fd) == -1) {
-    perror("close");
-    exit(1);
+    errExit("close");
   }
 
-  if (shm_unlink(name) == -1) {
-    perror("shm_unlink");
-    exit(1);
+  if (shm_unlink(name) == -1){
+    errExit("shm_unlink");
   }
   return;
 }
 
+void semInit(sem_t* sem, unsigned int value){
+  if (sem_init(sem,!0,value) == -1) {
+    errExit("sem_init");
+  }
+}
 
 void* openmem(char* name, size_t size, char readOnly){
     int fd = shm_open(name, readOnly ? O_RDONLY : O_RDWR, 0);

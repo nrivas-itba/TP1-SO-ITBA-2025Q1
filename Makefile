@@ -37,5 +37,5 @@ run_mult:
 		make all && sleep 1 && $(_MASTER_O) -d 1 -t 10 -v $(VISTA_O) -p $(PLAYER10_O) $(PLAYER10_O) $(PLAYER10_O) $(PLAYER10_O); \
 	fi
 
-run_multARM:
+run_multARM: #TODO la arquitectura se deberia determinar automaticamente
 	make all && sleep 1 && $(_MASTER_O_ARM) -d 100 -t 10 -v $(VISTA_O) -p $(PLAYER10_O) $(PLAYER10_O) $(PLAYER10_O) $(PLAYER10_O)
