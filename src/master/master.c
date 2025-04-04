@@ -255,6 +255,43 @@ void createPipes(unsigned int playerCount, pipefd_t* pipefd) {
   }
 }
 
+void closeForeignPipes(unsigned int playerId, unsigned int playerCount, pipefd_t* pipefd) {
+  for (unsigned int i = 0; i < playerCount; i++) {
+    if (playerId != i) {
+      close(pipefd[i].read);
+      close(pipefd[i].write);
+    }
+  }
+}
+
+void spawnPlayerProcesses(gameState_t* gameState, char** playerPaths, pipefd_t* pipefd){
+  for(unsigned int i = 0; i < gameState->playerCount; i++){
+    pid_t pid = fork();
+    if (pid == -1){
+        errExit(ARI_FORK);
+    }
+    if (pid == 0) {
+      if (setuid(1000) == -1) {
+        errExit(ARI_SETUID);
+      }
+      closeForeignPipes(i, gameState->playerCount, pipefd);
+      close(pipefd[i].read);
+      dup2(pipefd[i].write,1);
+      close(pipefd[i].write); //ChompChamps (6b398ab0f1be541975002579f26f509f) no valida errores de close2 ni dup2 ni execve
+      execveWithArgs(playerPaths[i], gameState->width, decimalLen(gameState->width), gameState->height, decimalLen(gameState->height));
+    }
+    else {
+      gameState->playerList[i].pid = pid;
+    }
+  }
+}
+
+void closeWritePipes(unsigned int playerCount,pipefd_t* pipefd) {
+  for (unsigned int i = 0; i < playerCount; i++) {
+    close(pipefd[i].write);
+  }
+}
+
 int main(int argc, char* argv[]){
     // printf("%d\n\n",sizeof(gameConfig_t));
     // char* temp[sizeof(gameState_t) + (width * height)*sizeof(int)];
@@ -283,6 +320,10 @@ int main(int argc, char* argv[]){
     pipefd_t pipefd[MAX_PLAYERS];
 
     createPipes(gameConfig.state->playerCount, pipefd);
+
+    spawnPlayerProcesses(gameConfig.state, gameConfig.playerPaths, pipefd);
+
+    closeWritePipes(gameConfig.state->playerCount, pipefd);
 
     return 0;
 }

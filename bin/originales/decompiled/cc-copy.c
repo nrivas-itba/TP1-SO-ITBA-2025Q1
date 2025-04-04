@@ -1051,10 +1051,10 @@ undefined8 FUN_001013c9(undefined4 param_1,undefined8 param_2)
   lVar2 = local_50;
   lVar5 = local_60;
   (&uStack_120)[uVar4 * -2] = 0x101532;
-  FUN_00101cd1(local_88,lVar2,lVar5);
+  spawnPlayerProcesses(local_88,lVar2,lVar5);
   lVar5 = local_60;
   (&uStack_120)[uVar4 * -2] = 0x101543;
-  FUN_001021fe(local_78,lVar5);
+  closeWritePipes(local_78,lVar5);
   uVar3 = local_48;
   lVar2 = local_50;
   lVar5 = local_60;
@@ -1314,7 +1314,7 @@ void execveWithArgs(char *param_1,ushort param_2,ushort param_3)
 
 
 
-void FUN_00101cd1(undefined2 *param_1,long param_2,long param_3)
+void spawnPlayerProcesses(undefined2 *param_1,long param_2,long param_3)
 
 {
   __pid_t _Var1;
@@ -1335,7 +1335,7 @@ void FUN_00101cd1(undefined2 *param_1,long param_2,long param_3)
                     // WARNING: Subroutine does not return
         exit(1);
       }
-      FUN_0010218a(local_c,*(undefined4 *)(param_1 + 8),param_3);
+      closeForeignPipes(local_c,*(undefined4 *)(param_1 + 8),param_3);
       close(*(int *)(param_3 + (ulong)(local_c * 2) * 4));
       dup2(*(int *)(param_3 + (ulong)(local_c * 2 + 1) * 4),1);
       close(*(int *)(param_3 + (ulong)(local_c * 2 + 1) * 4));
@@ -1343,7 +1343,7 @@ void FUN_00101cd1(undefined2 *param_1,long param_2,long param_3)
                    param_1[1]);
     }
     else {
-      *(__pid_t *)((ulong)local_c * 0x28 + param_2 + 0x28) = _Var1;
+      *(__pid_t *)((ulong)local_c * 0x28 + param_2 + 0x28) = _Var1; //game state set pid
     }
     local_c = local_c + 1;
   }
@@ -1474,7 +1474,7 @@ void createPipes(uint param_1,long param_2)
 
 
 
-void FUN_0010218a(uint param_1,uint param_2,long param_3)
+void closeForeignPipes(uint param_1,uint param_2,long param_3)
 
 {
   undefined4 local_c;
@@ -1490,7 +1490,7 @@ void FUN_0010218a(uint param_1,uint param_2,long param_3)
 
 
 
-void FUN_001021fe(uint param_1,long param_2)
+void closeWritePipes(uint param_1,long param_2)
 
 {
   undefined4 local_c;
