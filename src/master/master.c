@@ -39,6 +39,13 @@
 #define ARI_NUM_PLAYERS "num_players: %u\n"
 #define ARI_PLAYER_NAME_STRING_FORMAT "  %s\n"
 
+#define ARI_PIPE "pipe"
+#define ARI_EXECVE "execve"
+#define ARI_FORK "fork"
+#define ARI_SETUID "setuid"
+
+#define ARI_SNPRINTF "%d"
+
 typedef struct {
     int delay;
     unsigned int seed; //TODO este dato viene de atoi, q retorna int. Pero lo usa srand, q toma unsigned int :(
@@ -51,6 +58,11 @@ typedef struct {
     int stateFd;
     int syncFd;
 } gameConfig_t;
+
+typedef struct {
+    int read;
+    int write;
+} pipefd_t;
 
 void validateArgs(gameConfig_t* gameConfig, int playerCount, int width, int height){
     if (playerCount < MIN_PLAYERS){
@@ -71,7 +83,7 @@ void validateArgs(gameConfig_t* gameConfig, int playerCount, int width, int heig
 }
 
 void createPlayer(char* name, player_t* player){
-    //memset(dest,0,sizeof(dest[0])*MAX_PLAYERS); The chomp champs original implementation uses memset to initialize players to 0. But it is not neccesary since strncpy guarantees to write "count" characters, filling with 0 if source is shorter than len.
+    //memset(dest,0,sizeof(dest[0])*MAX_PLAYERS); The chomp champs original implementation uses memset to initialize players to 0. But it is not neccesary since strncpy guarantees to write 'count' characters, filling with 0 if source is shorter than len.
     strncpy(player->name, __xpg_basename(name), MAX_PLAYER_NAME_LEN);
     player->name[MAX_PLAYER_NAME_LEN-1] = 0; //strncpy does not guarantee a null terminated string
     player->score = 0;
@@ -213,27 +225,36 @@ void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int 
   char arg2[decimalLenHeight];
   char* argv[] = {process, arg1, arg2,(char*)0};
   
-  snprintf(arg1,decimalLenWidth,"%d",width);
-  snprintf(arg2,decimalLenHeight,"%d",height);
+  snprintf(arg1,decimalLenWidth,ARI_SNPRINTF,width);
+  snprintf(arg2,decimalLenHeight,ARI_SNPRINTF,height);
   char* envp[] = {(char*)0};
   if (execve(process,argv,envp) == -1) {
-    errExit("execve");
+    errExit(ARI_EXECVE);
   }
 }
 
 pid_t forkToView(char* view, unsigned int width, unsigned int height) {
   pid_t pid = fork();
   if (pid == -1) {
-    errExit("fork");
+    errExit(ARI_FORK);
   }
   if (pid == 0) {
     if (setuid(1000) == -1) {
-      errExit("setuid");
+      errExit(ARI_SETUID);
     }
     execveWithArgs(view, width, decimalLen(width), height, decimalLen(height));
   }
   return pid;
 }
+
+void createPipes(unsigned int playerCount, pipefd_t* pipefd) {
+  for(unsigned int i = 0; i<playerCount; i++){
+    if(pipe((int*)&(pipefd[i])) == -1){
+        errExit(ARI_PIPE);
+    }
+  }
+}
+
 int main(int argc, char* argv[]){
     // printf("%d\n\n",sizeof(gameConfig_t));
     // char* temp[sizeof(gameState_t) + (width * height)*sizeof(int)];
@@ -258,6 +279,10 @@ int main(int argc, char* argv[]){
     if (gameConfig.view){
         forkToView(gameConfig.view, gameConfig.state->width, gameConfig.state->height);
     }
+
+    pipefd_t pipefd[MAX_PLAYERS];
+
+    createPipes(gameConfig.state->playerCount, pipefd);
 
     return 0;
 }

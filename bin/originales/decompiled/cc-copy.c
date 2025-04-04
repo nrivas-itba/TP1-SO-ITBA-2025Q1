@@ -1047,7 +1047,7 @@ undefined8 FUN_001013c9(undefined4 param_1,undefined8 param_2)
   uVar1 = *(undefined4 *)(local_50 + 4);
   local_60 = lVar5;
   (&uStack_120)[uVar4 * -2] = 0x10151b;
-  FUN_00102126(uVar1,lVar5);
+  createPipes(uVar1,lVar5);
   lVar2 = local_50;
   lVar5 = local_60;
   (&uStack_120)[uVar4 * -2] = 0x101532;
@@ -1452,7 +1452,7 @@ undefined8 openGameState(ushort *param_1,undefined8 *param_2)
 
 
 
-void FUN_00102126(uint param_1,long param_2)
+void createPipes(uint param_1,long param_2)
 
 {
   int iVar1;
