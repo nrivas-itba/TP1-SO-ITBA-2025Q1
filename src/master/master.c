@@ -7,6 +7,7 @@
 #include <time.h>
 #include "../utils/utils.h"
 #include <libgen.h>
+#include <math.h>
 
 #define DEFAULT_WIDTH 10
 #define DEFAULT_HEIGHT 10
@@ -189,6 +190,22 @@ void printArgs(gameConfig_t* gameConfig){
     sleep(2);
 }
 
+static inline double calculatePosition(double size, char isX, unsigned int i, unsigned int playerCount){
+    if (playerCount == 1){
+        return size/2;
+    }
+    double angle = (i * M_PI * 2) / playerCount;
+    return (isX ? cos(angle) : sin(angle)) * (size / 3) + size / 2 + 0.5;
+}
+
+void spawnPlayers(gameState_t* gameState){
+  for (unsigned int i = 0; i < gameState->playerCount; i++) {
+      gameState->playerList[i].x = calculatePosition(gameState->width, 1, i, gameState->playerCount);
+      gameState->playerList[i].y = calculatePosition(gameState->height, 0, i, gameState->playerCount);
+      gameState->board[gameState->width * gameState->playerList[i].y + gameState->playerList[i].x] = -i;
+    }
+}
+
 int main(int argc, char* argv[]){
     // printf("%d\n\n",sizeof(gameConfig_t));
     // char* temp[sizeof(gameState_t) + (width * height)*sizeof(int)];
@@ -206,5 +223,8 @@ int main(int argc, char* argv[]){
 
     system(ARI_CLEAR); //I dont like this, I would use CSI 2 J, But the profesor's bynary uses system()
     printArgs(&gameConfig);
+
+    spawnPlayers(gameConfig.State);
+
     return 0;
 }

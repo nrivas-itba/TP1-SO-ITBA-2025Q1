@@ -1036,7 +1036,7 @@ undefined8 FUN_001013c9(undefined4 param_1,undefined8 param_2)
   uStack_120 = 0x10147e;
   initializeRandomBoard(local_88,local_50);
   uStack_120 = 0x10148a;
-  FUN_0010256b(local_50);
+  spawnPlayers(local_50);
   if (local_68 != 0) {
     uStack_120 = 0x10149f;
     local_3c = FUN_00101e39(local_88);
@@ -1620,7 +1620,7 @@ void FUN_0010251f(int param_1,undefined1 param_2)
 // WARNING: Removing unreachable block (ram,0x001026f6)
 // WARNING: Removing unreachable block (ram,0x00102734)
 
-void FUN_0010256b(ushort *param_1)
+void spawnPlayers(ushort *param_1)
 
 {
   ushort uVar1;
