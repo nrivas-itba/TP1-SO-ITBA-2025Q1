@@ -125,3 +125,16 @@ screen_t buildScreen(int xOffset,int yOffset){
 int moveCursorScreen(screen_t screen, int x, int y){
     return moveCursor(screen.xOffset+x, screen.yOffset+y);
 }
+
+unsigned int decimalLen(int number){
+    int i = 0;
+    if(number<0){
+        number *= -1;
+        i++;
+    }
+    while(!(number<10)){
+        number /= 10;
+        i++;
+    }
+    return i;
+}

@@ -6,8 +6,10 @@
 #include <strings.h>
 #include <time.h>
 #include "../utils/utils.h"
-#include <libgen.h>
-#include <math.h>
+#include <libgen.h> //For __xpg_basename
+#include <math.h> //For sin and cos
+#include <unistd.h> //For fork
+
 
 #define DEFAULT_WIDTH 10
 #define DEFAULT_HEIGHT 10
@@ -206,6 +208,32 @@ void spawnPlayers(gameState_t* gameState){
     }
 }
 
+void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int height, unsigned int decimalLenHeight){
+  char arg1[decimalLenWidth];
+  char arg2[decimalLenHeight];
+  char* argv[] = {process, arg1, arg2,(char*)0};
+  
+  snprintf(arg1,decimalLenWidth,"%d",width);
+  snprintf(arg2,decimalLenHeight,"%d",height);
+  char* envp[] = {(char*)0};
+  if (execve(process,argv,envp) == -1) {
+    errExit("execve");
+  }
+}
+
+pid_t forkToView(char* view, unsigned int width, unsigned int height) {
+  pid_t pid = fork();
+  if (pid == -1) {
+    errExit("fork");
+  }
+  if (pid == 0) {
+    if (setuid(1000) == -1) {
+      errExit("setuid");
+    }
+    execveWithArgs(view, width, decimalLen(width), height, decimalLen(height));
+  }
+  return pid;
+}
 int main(int argc, char* argv[]){
     // printf("%d\n\n",sizeof(gameConfig_t));
     // char* temp[sizeof(gameState_t) + (width * height)*sizeof(int)];
@@ -226,6 +254,10 @@ int main(int argc, char* argv[]){
     printArgs(&gameConfig);
 
     spawnPlayers(gameConfig.state);
+
+    if (gameConfig.view){
+        forkToView(gameConfig.view, gameConfig.state->width, gameConfig.state->height);
+    }
 
     return 0;
 }

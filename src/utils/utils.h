@@ -106,4 +106,6 @@ void sPost(sem_t* sem);
 screen_t buildScreen(int xOffset, int yOffset);
 int moveCursorScreen(screen_t screen, int x, int y);
 
+unsigned int decimalLen(int number);
+
 #endif

@@ -1039,7 +1039,7 @@ undefined8 FUN_001013c9(undefined4 param_1,undefined8 param_2)
   spawnPlayers(local_50);
   if (local_68 != 0) {
     uStack_120 = 0x10149f;
-    local_3c = FUN_00101e39(local_88);
+    local_3c = forkToView(local_88);
   }
   local_58 = (ulong)*(uint *)(local_50 + 4) - 1;
   uVar4 = ((ulong)*(uint *)(local_50 + 4) * 4 + 0xf) / 0x10;
@@ -1284,7 +1284,7 @@ void FUN_00101b08(long param_1)
 
 
 
-void FUN_00101c11(char *param_1,ushort param_2,ushort param_3)
+void execveWithArgs(char *param_1,ushort param_2,ushort param_3)
 
 {
   int iVar1;
@@ -1339,7 +1339,7 @@ void FUN_00101cd1(undefined2 *param_1,long param_2,long param_3)
       close(*(int *)(param_3 + (ulong)(local_c * 2) * 4));
       dup2(*(int *)(param_3 + (ulong)(local_c * 2 + 1) * 4),1);
       close(*(int *)(param_3 + (ulong)(local_c * 2 + 1) * 4));
-      FUN_00101c11(*(undefined8 *)(*(long *)(param_1 + 0xc) + (ulong)local_c * 8),*param_1,
+      execveWithArgs(*(undefined8 *)(*(long *)(param_1 + 0xc) + (ulong)local_c * 8),*param_1,
                    param_1[1]);
     }
     else {
@@ -1354,7 +1354,7 @@ void FUN_00101cd1(undefined2 *param_1,long param_2,long param_3)
 
 
 
-__pid_t FUN_00101e39(undefined2 *param_1)
+__pid_t forkToView(undefined2 *param_1)
 
 {
   __pid_t _Var1;
@@ -1373,7 +1373,7 @@ __pid_t FUN_00101e39(undefined2 *param_1)
                     // WARNING: Subroutine does not return
       exit(1);
     }
-    FUN_00101c11(*(undefined8 *)(param_1 + 0x10),*param_1,param_1[1]);
+    execveWithArgs(*(undefined8 *)(param_1 + 0x10),*param_1,param_1[1]);
   }
   return _Var1;
 }
