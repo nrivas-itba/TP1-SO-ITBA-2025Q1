@@ -1034,7 +1034,7 @@ undefined8 FUN_001013c9(undefined4 param_1,undefined8 param_2)
   uStack_120 = 0x101467;
   local_50 = openGameState(local_88,local_108);
   uStack_120 = 0x10147e;
-  FUN_00103039(local_88,local_50);
+  initializeRandomBoard(local_88,local_50);
   uStack_120 = 0x10148a;
   FUN_0010256b(local_50);
   if (local_68 != 0) {
@@ -1925,7 +1925,7 @@ void FUN_00103003(long param_1,undefined8 param_2)
 
 
 
-void FUN_00103039(ushort *param_1,ushort *param_2)
+void initializeRandomBoard(ushort *param_1,ushort *param_2)
 
 {
   int iVar1;
@@ -1937,10 +1937,10 @@ void FUN_00103039(ushort *param_1,ushort *param_2)
   *param_2 = *param_1;
   param_2[1] = param_1[1];
   *(undefined4 *)(param_2 + 2) = *(undefined4 *)(param_1 + 8);
-  *(undefined1 *)(param_2 + 0xb8) = 0;
-  memset(param_2 + 4,0,0x168);
-  for (local_c = 0; local_c < *(uint *)(param_1 + 8); local_c = local_c + 1) {
-    __src = __xpg_basename(*(char **)(*(long *)(param_1 + 0xc) + (ulong)local_c * 8));
+  *(undefined1 *)(param_2 + 0xb8) = 0; //I think this is "isOver"
+  memset(param_2 + 4,0,0x168); //Sets the player area to 0
+  for (local_c = 0; local_c < *(uint *)(param_1 + 8); local_c = local_c + 1) { //This should copy players
+    __src = __xpg_basename(*(char **)(*(long *)(param_1 + 0xc) + (ulong)local_c * 8)); //Only taks the name of the file from the path
     strncpy((char *)(param_2 + (ulong)local_c * 0x14 + 4),__src,0x10);
   }
   srand(*(uint *)(param_1 + 4));

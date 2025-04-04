@@ -6,6 +6,7 @@
 #include <strings.h>
 #include <time.h>
 #include "../utils/utils.h"
+#include <libgen.h>
 
 #define DEFAULT_WIDTH 10
 #define DEFAULT_HEIGHT 10
@@ -37,7 +38,7 @@
 
 typedef struct {
     int delay;
-    int seed;
+    unsigned int seed; //TODO este dato viene de atoi, q retorna int. Pero lo usa srand, q toma unsigned int :(
     int timeout;
     char* view;
     char* playerPaths[9];
@@ -67,7 +68,7 @@ void validateArgs(gameConfig_t* gameConfig, int playerCount, int width, int heig
 }
 
 void createPlayer(char* name, player_t* player){
-    strncpy(player->name, name, MAX_PLAYER_NAME_LEN);
+    strncpy(player->name, __xpg_basename(name), MAX_PLAYER_NAME_LEN);
     player->score = 0;
     player->invalidMovementRequestsCount = 0;
     player->validMovementRequestsCount = 0;
@@ -81,6 +82,14 @@ void initializeGameSync(gameSync_t* gameSync){
   semInit(&(gameSync->readGameStateMutex), 1);
   semInit(&(gameSync->readersCountMutex), 1);
   gameSync->readersCount = 0;
+}
+
+
+void initializeRandomBoard(gameState_t* gameState, unsigned int seed) {
+  srand(seed);
+  for(unsigned int i = 0; i < gameState->height * gameState->width; i++){
+    gameState->board[i] = (rand() % 9) + 1;
+  }
 }
 
 void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
@@ -146,14 +155,18 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
 
     gameConfig->Sync = createShm(GAME_SYNC, sizeof(gameConfig->Sync), 0, &gameConfig->SyncFd);
 
-    gameConfig->State->width=width;
-    gameConfig->State->height=height;
-    gameConfig->State->playerCount=playerCount;
-    
-    player_t* playerListDest = &(gameConfig->State->playerList[0]); //TODO no se si es necesario el &(dato[0])
+    gameConfig->State->width       = width;
+    gameConfig->State->height      = height;
+    gameConfig->State->playerCount = playerCount;
+    gameConfig->State->isOver      = 0;
+
+    memset(gameConfig->State->playerList,0,sizeof(gameConfig->State->playerList));
     for(int i = 0; i<MAX_PLAYERS; i++){
-        playerListDest[i] = playerList[i];
+        gameConfig->State->playerList[i] = playerList[i]; //TODO inefficient, it would be ideal to directly write the players in the shared memory.
     }
+
+    initializeRandomBoard(gameConfig->State,gameConfig->seed);
+
     return;
 }
 
@@ -188,6 +201,5 @@ int main(int argc, char* argv[]){
 
     system(ARI_CLEAR); //I dont like this, I would use CSI 2 J, But the profesor's bynary uses system()
     printArgs(&gameConfig);
-
     return 0;
 }
