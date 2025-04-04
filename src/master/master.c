@@ -43,11 +43,11 @@ typedef struct {
     int timeout;
     char* view;
     char* playerPaths[9];
-    gameState_t* State;
-    gameSync_t* Sync;
+    gameState_t* state;
+    gameSync_t* sync;
     size_t gameStateSize;
-    int StateFd;
-    int SyncFd;
+    int stateFd;
+    int syncFd;
 } gameConfig_t;
 
 void validateArgs(gameConfig_t* gameConfig, int playerCount, int width, int height){
@@ -112,10 +112,10 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
     while ((opt = getopt(argc, argv, ARI_OPTARG)) != -1) {
         switch (opt) {
             case 'w':
-                gameConfig->State->width = atoi(optarg);
+                gameConfig->state->width = atoi(optarg);
                 break;
             case 'h':
-                gameConfig->State->height = atoi(optarg);
+                gameConfig->state->height = atoi(optarg);
                 break;
             case 'd':
                 gameConfig->delay = atoi(optarg);
@@ -159,32 +159,32 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
 
     validateArgs(gameConfig, playerCount, width, height);
 
-    gameConfig->gameStateSize=sizeof(gameConfig->State)+sizeof(int)*width*height;
-    gameConfig->State = createShm(GAME_STATE, gameConfig->gameStateSize, 1, &gameConfig->StateFd);
+    gameConfig->gameStateSize=sizeof(gameConfig->state)+sizeof(int)*width*height;
+    gameConfig->state = createShm(GAME_STATE, gameConfig->gameStateSize, 1, &gameConfig->stateFd);
 
-    gameConfig->Sync = createShm(GAME_SYNC, sizeof(gameConfig->Sync), 0, &gameConfig->SyncFd);
+    gameConfig->sync = createShm(GAME_SYNC, sizeof(gameConfig->sync), 0, &gameConfig->syncFd);
 
-    gameConfig->State->width       = width;
-    gameConfig->State->height      = height;
-    gameConfig->State->playerCount = playerCount;
-    gameConfig->State->isOver      = 0;
+    gameConfig->state->width       = width;
+    gameConfig->state->height      = height;
+    gameConfig->state->playerCount = playerCount;
+    gameConfig->state->isOver      = 0;
 
-    copyPlayers(gameConfig->State->playerList, playerList);
+    copyPlayers(gameConfig->state->playerList, playerList);
 
-    initializeRandomBoard(gameConfig->State,gameConfig->seed);
+    initializeRandomBoard(gameConfig->state,gameConfig->seed);
 
     return;
 }
 
 void printArgs(gameConfig_t* gameConfig){
-    printf(ARI_WIDTH, gameConfig->State->width);
-    printf(ARI_HEIGHT, gameConfig->State->height);
+    printf(ARI_WIDTH, gameConfig->state->width);
+    printf(ARI_HEIGHT, gameConfig->state->height);
     printf(ARI_DELAY, gameConfig->delay);
     printf(ARI_TIMEOUT, gameConfig->timeout);
     printf(ARI_SEED, gameConfig->seed);
     printf(ARI_VIEW, gameConfig->view ? gameConfig->view : "-");
-    printf(ARI_NUM_PLAYERS, gameConfig->State->playerCount);
-    for (int i = 0; i < gameConfig->State->playerCount; i++) {
+    printf(ARI_NUM_PLAYERS, gameConfig->state->playerCount);
+    for (int i = 0; i < gameConfig->state->playerCount; i++) {
         printf(ARI_PLAYER_NAME_STRING_FORMAT, gameConfig->playerPaths[i]);
     }
     sleep(2);
@@ -224,7 +224,7 @@ int main(int argc, char* argv[]){
     system(ARI_CLEAR); //I dont like this, I would use CSI 2 J, But the profesor's bynary uses system()
     printArgs(&gameConfig);
 
-    spawnPlayers(gameConfig.State);
+    spawnPlayers(gameConfig.state);
 
     return 0;
 }
