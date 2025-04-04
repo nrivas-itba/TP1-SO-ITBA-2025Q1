@@ -13,6 +13,7 @@
     Returns int or -1.
 */
 int numberSize(int number, int size){
+    int aux = number;
     int currentSize=0;
     for(; number>=10;currentSize++){
         number/=10; // 100 -> 10 ...
@@ -20,7 +21,7 @@ int numberSize(int number, int size){
     if (currentSize >= size){
         return -1;
     }
-    return number;
+    return aux;
 }
 
 /*
@@ -83,7 +84,7 @@ int printPlayerStats(player_t* players, unsigned int playerCount, const screen_t
         printf("═");
     }
     moveCursorScreen(screen,0,1);
-    printf(" %16s %5s %5s %5s %s \n", "Name", "Score", "InvRq", "ValRq", "❤️");
+    printf(" %16s %5s %5s %5s %s \n", "Name", "Score", "ValRq", "InvRq", "❤️");
     moveCursorScreen(screen,0,2);
     for (int x = 0; x < myWidth; x++){
         printf("═");
@@ -91,7 +92,7 @@ int printPlayerStats(player_t* players, unsigned int playerCount, const screen_t
 
     for (int fila = 0; fila < playerCount; fila++){
         moveCursorScreen(screen,0,3+fila);
-        printf(" %16.16s %5d %5d %5d %s \n", players[fila].name, numberSize(players[fila].score, 5), numberSize(players[fila].invalidMovementRequestsCount, 5), numberSize(players[fila].validMovementRequestsCount, 5), (players[fila].canMove ? "💀" : "😀")); 
+        printf(" %16.16s %5d %5d %5d %s \n", players[fila].name, numberSize(players[fila].score, 5), numberSize(players[fila].validMovementRequestsCount, 5), numberSize(players[fila].invalidMovementRequestsCount, 5), (players[fila].canMove ? "💀" : "😀")); 
     }
 
     // Lowe border

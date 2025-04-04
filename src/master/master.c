@@ -68,7 +68,9 @@ void validateArgs(gameConfig_t* gameConfig, int playerCount, int width, int heig
 }
 
 void createPlayer(char* name, player_t* player){
+    //memset(dest,0,sizeof(dest[0])*MAX_PLAYERS); The chomp champs original implementation uses memset to initialize players to 0. But it is not neccesary since strncpy guarantees to write "count" characters, filling with 0 if source is shorter than len.
     strncpy(player->name, __xpg_basename(name), MAX_PLAYER_NAME_LEN);
+    player->name[MAX_PLAYER_NAME_LEN-1] = 0; //strncpy does not guarantee a null terminated string
     player->score = 0;
     player->invalidMovementRequestsCount = 0;
     player->validMovementRequestsCount = 0;
@@ -90,6 +92,12 @@ void initializeRandomBoard(gameState_t* gameState, unsigned int seed) {
   for(unsigned int i = 0; i < gameState->height * gameState->width; i++){
     gameState->board[i] = (rand() % 9) + 1;
   }
+}
+
+void copyPlayers(player_t dest[MAX_PLAYERS],player_t org[MAX_PLAYERS]){
+    for(int i = 0; i<MAX_PLAYERS; i++){
+        dest[i] = org[i]; //TODO inefficient, it would be ideal to directly write the players in the shared memory.
+    }
 }
 
 void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
@@ -160,10 +168,7 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
     gameConfig->State->playerCount = playerCount;
     gameConfig->State->isOver      = 0;
 
-    memset(gameConfig->State->playerList,0,sizeof(gameConfig->State->playerList));
-    for(int i = 0; i<MAX_PLAYERS; i++){
-        gameConfig->State->playerList[i] = playerList[i]; //TODO inefficient, it would be ideal to directly write the players in the shared memory.
-    }
+    copyPlayers(gameConfig->State->playerList, playerList);
 
     initializeRandomBoard(gameConfig->State,gameConfig->seed);
 
