@@ -219,9 +219,10 @@ int main(int argc, char* argv[]){
         .playerPaths = {0},
     };
     
-    configureGame(argc, argv, &gameConfig);
-
     system(ARI_CLEAR); //I dont like this, I would use CSI 2 J, But the profesor's bynary uses system()
+
+    configureGame(argc, argv, &gameConfig);
+    
     printArgs(&gameConfig);
 
     spawnPlayers(gameConfig.state);
