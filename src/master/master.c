@@ -258,8 +258,8 @@ void createPipes(unsigned int playerCount, pipefd_t* pipefd) {
 void closeForeignPipes(unsigned int playerId, unsigned int playerCount, pipefd_t* pipefd) {
   for (unsigned int i = 0; i < playerCount; i++) {
     if (playerId != i) {
-      close(pipefd[i].read);
-      close(pipefd[i].write);
+      close(pipefd[i].read); //TODO err exit
+      close(pipefd[i].write); //TODO err exit
     }
   }
 }
@@ -275,8 +275,8 @@ void spawnPlayerProcesses(gameState_t* gameState, char** playerPaths, pipefd_t* 
         errExit(ARI_SETUID);
       }
       closeForeignPipes(i, gameState->playerCount, pipefd);
-      close(pipefd[i].read);
-      dup2(pipefd[i].write,1);
+      close(pipefd[i].read); //TODO err exit
+      dup2(pipefd[i].write,1); //TODO err exit
       close(pipefd[i].write); //TODO validate this, especially execve ChompChamps (6b398ab0f1be541975002579f26f509f) no valida errores de close2 ni dup2 ni execve
       execveWithArgs(playerPaths[i], gameState->width, decimalLen(gameState->width), gameState->height, decimalLen(gameState->height));
     }
@@ -288,7 +288,7 @@ void spawnPlayerProcesses(gameState_t* gameState, char** playerPaths, pipefd_t* 
 
 void closeWritePipes(unsigned int playerCount,pipefd_t* pipefd) {
   for (unsigned int i = 0; i < playerCount; i++) {
-    close(pipefd[i].write);
+    close(pipefd[i].write); //TODO err exit
   }
 }
 
