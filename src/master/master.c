@@ -224,7 +224,7 @@ void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int 
   char arg2[decimalLenHeight+1];
   char* argv[] = {process, arg1, arg2,(char*)0};
 
-  snprintf(arg1,decimalLenWidth+1,ARI_SNPRINTF,width);
+  snprintf(arg1,decimalLenWidth+1,ARI_SNPRINTF,width); //This may be a little overkill, another aproach would be to use itoa. But ChompChamps original uses snprintf.
   snprintf(arg2,decimalLenHeight+1,ARI_SNPRINTF,height);
   char* envp[] = {(char*)0};
   if (execve(process,argv,envp) == -1) {
