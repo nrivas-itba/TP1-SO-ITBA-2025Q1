@@ -1063,7 +1063,7 @@ undefined8 FUN_001013c9(undefined4 param_1,undefined8 param_2)
   uVar1 = local_3c;
   if (local_68 != 0) {
     (&uStack_120)[uVar4 * -2] = 0x10156e;
-    FUN_00101aad(uVar1);
+    waitForView(uVar1);
   }
   lVar5 = local_50;
   (&uStack_120)[uVar4 * -2] = 0x10157a;
@@ -1229,7 +1229,7 @@ void askViewToPrint(long param_1,sem_t *param_2)
 
 
 
-void FUN_00101aad(__pid_t param_1)
+void waitForView(__pid_t param_1)
 
 {
   __pid_t _Var1;

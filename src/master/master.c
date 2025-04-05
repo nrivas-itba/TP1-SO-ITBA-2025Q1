@@ -10,7 +10,7 @@
 #define __USE_MISC
 #include <math.h> //For sin and cos
 #include <unistd.h> //For fork
-
+#include <sys/wait.h> //For waitpid
 
 #define DEFAULT_WIDTH 10
 #define DEFAULT_HEIGHT 10
@@ -20,7 +20,7 @@
 
 #define MIN_PLAYERS 1
 
-#define ARI_VIEW_EXIT "View exited (%d)\n" //TODO Sin uso
+#define ARI_VIEW_EXIT "View exited (%d)\n"
 #define ARI_PLAYER_EXIT "Player %s (%u) exited (%d) with a score of %u / %u / %u\n" //TODO Sin uso
 
 #define ARI_OPTARG "w:h:d:p:v:s:t:"
@@ -44,6 +44,7 @@
 #define ARI_EXECVE "execve"
 #define ARI_FORK "fork"
 #define ARI_SETUID "setuid"
+#define ARI_WAITPID "waitpid"
 
 #define ARI_SNPRINTF "%d"
 
@@ -338,7 +339,14 @@ void game(gameConfig_t* gameConfig/*, long param_1*/,  gameState_t* gameState, g
   }
 }
 
-
+void waitForView(pid_t view) {
+  int statLoc;
+  if (waitpid(view, &statLoc, 0) == -1) {
+    errExit(ARI_WAITPID);
+  }
+  printf(ARI_VIEW_EXIT, WEXITSTATUS(statLoc));
+  return;
+}
 
 int main(int argc, char* argv[]){
     // printf("%d\n\n",sizeof(gameConfig_t));
@@ -361,8 +369,9 @@ int main(int argc, char* argv[]){
 
     spawnPlayers(gameConfig.state);
 
+    pid_t viewPid = 0;
     if (gameConfig.view){
-        forkToView(gameConfig.view, gameConfig.state->width, gameConfig.state->height);
+        viewPid = forkToView(gameConfig.view, gameConfig.state->width, gameConfig.state->height);
     }
 
     pipefd_t pipefd[MAX_PLAYERS];
@@ -374,6 +383,10 @@ int main(int argc, char* argv[]){
     closeWritePipes(gameConfig.state->playerCount, pipefd);
 
     game(&gameConfig/*, long param_1*/,  gameConfig.state, gameConfig.sync/*,undefined8 param_4*/);
+
+    if (viewPid > 0){
+        waitForView(viewPid);
+    }
 
     return 0;
 }
