@@ -1067,7 +1067,7 @@ undefined8 FUN_001013c9(undefined4 param_1,undefined8 param_2)
   }
   lVar5 = local_50;
   (&uStack_120)[uVar4 * -2] = 0x10157a;
-  FUN_00101b08(lVar5);
+  waitAllPlayers(lVar5);
   uVar3 = local_48;
   (&uStack_120)[uVar4 * -2] = 0x101586;
   FUN_0010340e(uVar3);
@@ -1247,7 +1247,7 @@ void waitForView(__pid_t param_1)
 
 
 
-void FUN_00101b08(long param_1)
+void waitAllPlayers(long param_1)
 
 {
   long lVar1;

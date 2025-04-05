@@ -21,7 +21,7 @@
 #define MIN_PLAYERS 1
 
 #define ARI_VIEW_EXIT "View exited (%d)\n"
-#define ARI_PLAYER_EXIT "Player %s (%u) exited (%d) with a score of %u / %u / %u\n" //TODO Sin uso
+#define ARI_PLAYER_EXIT "Player %s (%u) exited (%d) with a score of %u / %u / %u\n"
 
 #define ARI_OPTARG "w:h:d:p:v:s:t:"
 #define ARI_WRONG_USAGE "Usage: %s [-w width] [-h height] [-d delay] [-s seed] [-v view] [-t timeout] -p player1 player2 ...\n"
@@ -45,6 +45,7 @@
 #define ARI_FORK "fork"
 #define ARI_SETUID "setuid"
 #define ARI_WAITPID "waitpid"
+#define ARI_WAIT "wait"
 
 #define ARI_SNPRINTF "%d"
 
@@ -348,6 +349,35 @@ void waitForView(pid_t view) {
   return;
 }
 
+static inline unsigned int findPlayer(player_t* playerList, unsigned int playerCount, pid_t pid){
+    unsigned int i;
+    for(i=0; i<playerCount; i++){
+        if (playerList[i].pid == pid){
+            break;
+        }
+    }
+    return i;
+}
+
+void waitAllPlayers(player_t* playerList, unsigned int playerCount){
+  for(unsigned int i = 0; i<playerCount; i++){
+    int statLoc;
+    pid_t pid = wait(&statLoc);
+    if (pid == -1) {
+      errExit(ARI_WAIT);
+    }
+    unsigned int playerNumber = findPlayer(playerList, playerCount, pid);
+    printf(ARI_PLAYER_EXIT,
+        playerList[playerNumber].name,
+        playerNumber,
+        WEXITSTATUS(statLoc),
+        playerList[playerNumber].score,
+        playerList[playerNumber].validMovementRequestsCount,
+        playerList[playerNumber].invalidMovementRequestsCount
+    );
+  }
+}
+
 int main(int argc, char* argv[]){
     // printf("%d\n\n",sizeof(gameConfig_t));
     // char* temp[sizeof(gameState_t) + (width * height)*sizeof(int)];
@@ -387,6 +417,8 @@ int main(int argc, char* argv[]){
     if (viewPid > 0){
         waitForView(viewPid);
     }
+
+    waitAllPlayers(gameConfig.state->playerList, gameConfig.state->playerCount);
 
     return 0;
 }
