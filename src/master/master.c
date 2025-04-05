@@ -344,7 +344,7 @@ void waitForView(pid_t view) {
   if (waitpid(view, &statLoc, 0) == -1) {
     errExit(ARI_WAITPID);
   }
-  printf(ARI_VIEW_EXIT, WEXITSTATUS(statLoc));
+  printf(ARI_VIEW_EXIT, WEXITSTATUS(statLoc)); //Original chomp champs does not use WEXITSTATUS
   return;
 }
 
