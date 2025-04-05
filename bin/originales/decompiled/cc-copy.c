@@ -1070,7 +1070,7 @@ undefined8 FUN_001013c9(undefined4 param_1,undefined8 param_2)
   waitAllPlayers(lVar5);
   uVar3 = local_48;
   (&uStack_120)[uVar4 * -2] = 0x101586;
-  FUN_0010340e(uVar3);
+  unInitializeGameSync(uVar3);
   (&uStack_120)[uVar4 * -2] = 0x101595;
   unlinkMem(local_c8);
   (&uStack_120)[uVar4 * -2] = 0x1015a4;
@@ -2050,7 +2050,7 @@ void unlockGameStateReads(long param_1)
 
 
 
-void FUN_0010340e(sem_t *param_1)
+void unInitializeGameSync(sem_t *param_1)
 
 {
   int iVar1;

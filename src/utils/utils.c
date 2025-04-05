@@ -61,6 +61,12 @@ void semInit(sem_t* sem, unsigned int value){
   }
 }
 
+void semDestroy(sem_t* sem){
+  if (sem_destroy(sem) == -1) {
+    errExit("sem_destroy");
+  }
+}
+
 void* openmem(char* name, size_t size, char readOnly){
     int fd = shm_open(name, readOnly ? O_RDONLY : O_RDWR, 0);
     if (fd == -1){

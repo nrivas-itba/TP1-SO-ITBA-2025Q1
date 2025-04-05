@@ -175,7 +175,7 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
 
     validateArgs(gameConfig, playerCount, width, height);
 
-    gameConfig->state = createShm(GAME_STATE, sizeof(gameConfig->state)+sizeof(int)*width*height, 0, &gameConfig->stateFd);
+    gameConfig->state = createShm(GAME_STATE, sizeof(gameConfig->state)+sizeof(gameConfig->state->board[0])*width*height, 0, &gameConfig->stateFd);
 
     gameConfig->sync = createShm(GAME_SYNC, sizeof(gameConfig->sync), 1, &gameConfig->syncFd);
 
@@ -378,6 +378,28 @@ void waitAllPlayers(player_t* playerList, unsigned int playerCount){
   }
 }
 
+void unInitializeGameSync(gameSync_t* gameSync) {
+  semDestroy(&(gameSync->printNeeded));
+  semDestroy(&(gameSync->printDone));
+  semDestroy(&(gameSync->masterWantsToReadMutex));
+  semDestroy(&(gameSync->readGameStateMutex));
+  semDestroy(&(gameSync->readersCountMutex));
+}
+
+void unconfigureGame(gameConfig_t* gameConfig){
+    unInitializeGameSync(gameConfig->sync);
+    unlinkMem(GAME_STATE,
+        sizeof(gameConfig->state) + sizeof(gameConfig->state->board[0]) * gameConfig->state->width * gameConfig->state->height,
+        gameConfig->state,
+        &gameConfig->stateFd
+    );
+    unlinkMem(GAME_SYNC,
+        sizeof(gameConfig->sync),
+        gameConfig->sync,
+        &gameConfig->syncFd
+    );
+}
+
 int main(int argc, char* argv[]){
     // printf("%d\n\n",sizeof(gameConfig_t));
     // char* temp[sizeof(gameState_t) + (width * height)*sizeof(int)];
@@ -410,7 +432,7 @@ int main(int argc, char* argv[]){
 
     spawnPlayerProcesses(gameConfig.state, gameConfig.playerPaths, pipefd);
 
-    closeWritePipes(gameConfig.state->playerCount, pipefd);
+    closeWritePipes(gameConfig.state->playerCount, pipefd); //I dont know why original chomp champs separates this and does not make it inside spawn players.
 
     game(&gameConfig/*, long param_1*/,  gameConfig.state, gameConfig.sync/*,undefined8 param_4*/);
 
@@ -419,6 +441,8 @@ int main(int argc, char* argv[]){
     }
 
     waitAllPlayers(gameConfig.state->playerList, gameConfig.state->playerCount);
+
+    unconfigureGame(&gameConfig);
 
     return 0;
 }

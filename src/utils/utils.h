@@ -97,6 +97,7 @@ void* createShm(char* name, size_t size, char isPublic, int* fd);
 void unlinkMem(char* name, size_t size, void* address, int* fd);
 
 void semInit(sem_t* sem, unsigned int value);
+void semDestroy(sem_t* sem);
 
 game_t openGame(int argc, char* argv[]); //TODO no me gusta que una funcion reciva argc y argv
 
