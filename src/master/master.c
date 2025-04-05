@@ -7,6 +7,7 @@
 #include <time.h>
 #include "../utils/utils.h"
 #include <libgen.h> //For __xpg_basename
+#define __USE_MISC
 #include <math.h> //For sin and cos
 #include <unistd.h> //For fork
 
@@ -54,7 +55,6 @@ typedef struct {
     char* playerPaths[9];
     gameState_t* state;
     gameSync_t* sync;
-    size_t gameStateSize;
     int stateFd;
     int syncFd;
 } gameConfig_t;
@@ -173,10 +173,9 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
 
     validateArgs(gameConfig, playerCount, width, height);
 
-    gameConfig->gameStateSize=sizeof(gameConfig->state)+sizeof(int)*width*height;
-    gameConfig->state = createShm(GAME_STATE, gameConfig->gameStateSize, 1, &gameConfig->stateFd);
+    gameConfig->state = createShm(GAME_STATE, sizeof(gameConfig->state)+sizeof(int)*width*height, 0, &gameConfig->stateFd);
 
-    gameConfig->sync = createShm(GAME_SYNC, sizeof(gameConfig->sync), 0, &gameConfig->syncFd);
+    gameConfig->sync = createShm(GAME_SYNC, sizeof(gameConfig->sync), 1, &gameConfig->syncFd);
 
     gameConfig->state->width       = width;
     gameConfig->state->height      = height;
@@ -186,8 +185,7 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
     copyPlayers(gameConfig->state->playerList, playerList);
 
     initializeRandomBoard(gameConfig->state,gameConfig->seed);
-
-    return;
+    initializeGameSync(gameConfig->sync);
 }
 
 void printArgs(gameConfig_t* gameConfig){
@@ -277,7 +275,7 @@ void spawnPlayerProcesses(gameState_t* gameState, char** playerPaths, pipefd_t* 
       closeForeignPipes(i, gameState->playerCount, pipefd);
       close(pipefd[i].read);
       dup2(pipefd[i].write,1);
-      close(pipefd[i].write); //ChompChamps (6b398ab0f1be541975002579f26f509f) no valida errores de close2 ni dup2 ni execve
+      close(pipefd[i].write); //TODO validate this, especially execve ChompChamps (6b398ab0f1be541975002579f26f509f) no valida errores de close2 ni dup2 ni execve
       execveWithArgs(playerPaths[i], gameState->width, decimalLen(gameState->width), gameState->height, decimalLen(gameState->height));
     }
     else {
@@ -291,6 +289,56 @@ void closeWritePipes(unsigned int playerCount,pipefd_t* pipefd) {
     close(pipefd[i].write);
   }
 }
+
+void askViewToPrint(int delay,gameSync_t* gameSync) {
+  sPost(&(gameSync->printNeeded));
+  sWait(&(gameSync->printDone)); //ChompChamps (6b398ab0f1be541975002579f26f509f) does not check sem errors, but we check them.
+  usleep(delay * 1000);
+}
+
+void lockGameStateReads(gameSync_t* gameSync) {
+  sWait(&(gameSync->masterWantsToReadMutex));
+  sWait(&(gameSync->readGameStateMutex));
+  sPost(&(gameSync->masterWantsToReadMutex));
+  return;
+}
+
+void unlockGameStateReads(gameSync_t* gameSync) {
+  sem_post(&(gameSync->readGameStateMutex));
+  return;
+}
+
+void endGame(gameState_t* gameState,gameSync_t* gameSync) {
+  lockGameStateReads(gameSync);
+  gameState->isOver = 1;
+  unlockGameStateReads(gameSync);
+  return;
+}
+
+void game(gameConfig_t* gameConfig/*, long param_1*/,  gameState_t* gameState, gameSync_t* gameSync/*,undefined8 param_4*/) { //TODO sacar game sync y state si ya vienen en config
+  char zeroMeansIsOver;
+  int noSeNiElTipoDeDato1;
+  int noSeNiElTipoDeDato2;
+  int noSeNiElTipoDeDato3 = 0;
+  time_t timeStart = time(NULL);
+  while(1) {
+    if (gameConfig->view) {
+      askViewToPrint(gameConfig->delay, gameConfig->sync);
+    }
+    if (gameState->isOver){
+      break;
+    }
+    zeroMeansIsOver = 0; //TODO FUN_00101683(&noSeNiElTipoDeDato3,param_1,gameState,gameSync,param_4,&noSeNiElTipoDeDato2,&noSeNiElTipoDeDato1,&timeStart);
+    if (zeroMeansIsOver == 0) {
+      endGame(gameState, gameSync);
+    }
+    else {
+      //FUN_00101938(gameState,gameSync,noSeNiElTipoDeDato2,noSeNiElTipoDeDato1,&timeStart);
+    }
+  }
+}
+
+
 
 int main(int argc, char* argv[]){
     // printf("%d\n\n",sizeof(gameConfig_t));
@@ -324,6 +372,8 @@ int main(int argc, char* argv[]){
     spawnPlayerProcesses(gameConfig.state, gameConfig.playerPaths, pipefd);
 
     closeWritePipes(gameConfig.state->playerCount, pipefd);
+
+    game(&gameConfig/*, long param_1*/,  gameConfig.state, gameConfig.sync/*,undefined8 param_4*/);
 
     return 0;
 }

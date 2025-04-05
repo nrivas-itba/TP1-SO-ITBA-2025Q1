@@ -1059,7 +1059,7 @@ undefined8 FUN_001013c9(undefined4 param_1,undefined8 param_2)
   lVar2 = local_50;
   lVar5 = local_60;
   (&uStack_120)[uVar4 * -2] = 0x10155b;
-  FUN_001015bb(local_88,lVar2,uVar3,lVar5);
+  game(local_88,lVar2,uVar3,lVar5);
   uVar1 = local_3c;
   if (local_68 != 0) {
     (&uStack_120)[uVar4 * -2] = 0x10156e;
@@ -1080,7 +1080,7 @@ undefined8 FUN_001013c9(undefined4 param_1,undefined8 param_2)
 
 
 
-void FUN_001015bb(long param_1,long param_2,undefined8 param_3,undefined8 param_4)
+void game(long param_1,long param_2,undefined8 param_3,undefined8 param_4)
 
 {
   char cVar1;
@@ -1093,12 +1093,12 @@ void FUN_001015bb(long param_1,long param_2,undefined8 param_3,undefined8 param_
   local_14 = 0;
   while( true ) {
     if (*(long *)(param_1 + 0x20) != 0) {
-      FUN_00101a6a(param_1,param_3);
+      askViewToPrint(param_1,param_3);
     }
     if (*(char *)(param_2 + 0x170) != '\0') break;
     cVar1 = FUN_00101683(&local_14,param_1,param_2,param_3,param_4,&local_18,&local_1c,&local_10);
     if (cVar1 == '\0') {
-      FUN_00103003(param_2,param_3);
+      endGame(param_2,param_3);
     }
     else {
       FUN_00101938(param_2,param_3,local_18,local_1c,&local_10);
@@ -1167,9 +1167,9 @@ FUN_00101683(int *param_1,undefined8 param_2,long param_3,undefined8 param_4,lon
   }
   cVar3 = FUN_00102493(param_5,uVar2,param_6,param_7);
   if (cVar3 == '\0') {
-    FUN_001033b0(param_4);
+    lockGameStateReads(param_4);
     *(undefined1 *)((ulong)uVar2 * 0x28 + param_3 + 0x2c) = 1;
-    FUN_001033ef(param_4);
+    unlockGameStateReads(param_4);
     cVar3 = FUN_00102f52(param_3);
     if (cVar3 == '\0') {
       uVar6 = FUN_00101683(param_1,param_2,param_3,param_4,param_5,param_6,param_7,param_8);
@@ -1196,20 +1196,20 @@ void FUN_00101938(long param_1,undefined8 param_2,uint param_3,undefined4 param_
   
   cVar1 = FUN_00102a80(param_1,param_3,param_4,&local_c);
   if (cVar1 == '\0') {
-    FUN_001033b0(param_2);
+    lockGameStateReads(param_2);
     *(int *)((ulong)param_3 * 0x28 + param_1 + 0x1c) =
          *(int *)((ulong)param_3 * 0x28 + param_1 + 0x1c) + 1;
-    FUN_001033ef(param_2);
+    unlockGameStateReads(param_2);
   }
   else {
-    FUN_001033b0(param_2);
+    lockGameStateReads(param_2);
     FUN_00102b51(param_1,param_3,local_c);
     *(int *)((ulong)param_3 * 0x28 + param_1 + 0x20) =
          *(int *)((ulong)param_3 * 0x28 + param_1 + 0x20) + 1;
     FUN_00102c19(param_1);
     uVar2 = FUN_00102f52(param_1);
     *(undefined1 *)(param_1 + 0x170) = uVar2;
-    FUN_001033ef(param_2);
+    unlockGameStateReads(param_2);
     tVar3 = time((time_t *)0x0);
     *param_5 = tVar3;
   }
@@ -1218,7 +1218,7 @@ void FUN_00101938(long param_1,undefined8 param_2,uint param_3,undefined4 param_
 
 
 
-void FUN_00101a6a(long param_1,sem_t *param_2)
+void askViewToPrint(long param_1,sem_t *param_2)
 
 {
   sem_post(param_2);
@@ -1914,12 +1914,12 @@ uint FUN_00102fa7(long param_1)
 
 
 
-void FUN_00103003(long param_1,undefined8 param_2)
+void endGame(long param_1,undefined8 param_2)
 
 {
-  FUN_001033b0(param_2);
+  lockGameStateReads(param_2);
   *(undefined1 *)(param_1 + 0x170) = 1;
-  FUN_001033ef(param_2);
+  unlockGameStateReads(param_2);
   return;
 }
 
@@ -2030,7 +2030,7 @@ void FUN_0010334c(long param_1)
 
 
 
-void FUN_001033b0(long param_1)
+void lockGameStateReads(long param_1)
 
 {
   sem_wait((sem_t *)(param_1 + 0x40));
@@ -2041,7 +2041,7 @@ void FUN_001033b0(long param_1)
 
 
 
-void FUN_001033ef(long param_1)
+void unlockGameStateReads(long param_1)
 
 {
   sem_post((sem_t *)(param_1 + 0x60));
