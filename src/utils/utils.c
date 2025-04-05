@@ -127,14 +127,13 @@ int moveCursorScreen(screen_t screen, int x, int y){
 }
 
 unsigned int decimalLen(int number){
-    int i = 0;
+    unsigned int len = 0;
     if(number<0){
         number *= -1;
-        i++;
+        len++;
     }
-    while(!(number<10)){
-        number /= 10;
-        i++;
-    }
-    return i;
+    do {
+        len++;
+    } while(number /= 10);
+    return len;
 }

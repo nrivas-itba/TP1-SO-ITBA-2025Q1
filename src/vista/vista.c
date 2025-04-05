@@ -202,6 +202,9 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], c
 
 int main(int argc, char* argv[]){
     game_t game = openGame(argc, argv);
+    if (!game.gameWidth || !game.gameHeight){
+        errExit("NoWidth/Height");
+    }
     char isGameOver = 0;
     while(!isGameOver){
         sWait(&(game.sync->printNeeded)); //Waint until master wants to print

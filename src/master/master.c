@@ -219,12 +219,12 @@ void spawnPlayers(gameState_t* gameState){
 }
 
 void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int height, unsigned int decimalLenHeight){
-  char arg1[decimalLenWidth];
-  char arg2[decimalLenHeight];
+  char arg1[decimalLenWidth+1];
+  char arg2[decimalLenHeight+1];
   char* argv[] = {process, arg1, arg2,(char*)0};
-  
-  snprintf(arg1,decimalLenWidth,ARI_SNPRINTF,width);
-  snprintf(arg2,decimalLenHeight,ARI_SNPRINTF,height);
+
+  snprintf(arg1,decimalLenWidth+1,ARI_SNPRINTF,width);
+  snprintf(arg2,decimalLenHeight+1,ARI_SNPRINTF,height);
   char* envp[] = {(char*)0};
   if (execve(process,argv,envp) == -1) {
     errExit(ARI_EXECVE);
