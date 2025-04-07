@@ -175,9 +175,18 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
 
     validateArgs(gameConfig, playerCount, width, height);
 
-    gameConfig->state = createShm(GAME_STATE, sizeof(gameConfig->state)+sizeof(gameConfig->state->board[0])*width*height, 0, &gameConfig->stateFd);
 
-    gameConfig->sync = createShm(GAME_SYNC, sizeof(gameConfig->sync), 1, &gameConfig->syncFd);
+    gameConfig->sync = createShm(GAME_SYNC, //BUG the player crashes on shm_open
+        sizeof(*(gameConfig->sync)),
+        1,
+        &gameConfig->syncFd
+    );
+
+    gameConfig->state = createShm(GAME_STATE,
+        sizeof(*(gameConfig->state))+sizeof(gameConfig->state->board[0])*width*height,
+        0,
+        &gameConfig->stateFd
+    );
 
     gameConfig->state->width       = width;
     gameConfig->state->height      = height;
@@ -389,12 +398,12 @@ void unInitializeGameSync(gameSync_t* gameSync) {
 void unconfigureGame(gameConfig_t* gameConfig){
     unInitializeGameSync(gameConfig->sync);
     unlinkMem(GAME_STATE,
-        sizeof(gameConfig->state) + sizeof(gameConfig->state->board[0]) * gameConfig->state->width * gameConfig->state->height,
+        sizeof(*(gameConfig->state)) + sizeof(gameConfig->state->board[0]) * gameConfig->state->width * gameConfig->state->height,
         gameConfig->state,
         &gameConfig->stateFd
     );
     unlinkMem(GAME_SYNC,
-        sizeof(gameConfig->sync),
+        sizeof(*(gameConfig->sync)),
         gameConfig->sync,
         &gameConfig->syncFd
     );
