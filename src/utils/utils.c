@@ -18,6 +18,10 @@
 #define MODE_RW0_RW0_RW0 MODE_RW0_R00_R00 | S_IWGRP | S_IWOTH
 
 void* createShm(char* name, size_t size, char isPublic, int* fd){
+    mode_t prevMode;
+    if (isPublic){ //TODO i dont understand why this is neccesary
+        prevMode = umask((mode_t)0); //This systeam call never fails
+    }
     *fd = shm_open(name, O_RDWR | O_CREAT, isPublic ? MODE_RW0_RW0_RW0 : MODE_RW0_R00_R00);
     if (*fd == -1){
         errExit("shm_open");
@@ -37,6 +41,9 @@ void* createShm(char* name, size_t size, char isPublic, int* fd){
     if (ret == MAP_FAILED){
         errExit("mmap");
     }    
+    if (isPublic){
+        umask(prevMode);
+    }
     return ret;
 }
 
