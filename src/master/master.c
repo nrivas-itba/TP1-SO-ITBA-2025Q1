@@ -78,7 +78,7 @@ void validateArgs(gameConfig_t* gameConfig, int playerCount, int width, int heig
     }
 
     if (gameConfig->view == NULL){
-        fprintf(stderr, ARI_NO_VIEW);
+        fprintf(stderr, ARI_NO_VIEW); //TODO this should not be printed if no -d arg was passed (this should be moved to get opt?)
     }
 
     return;

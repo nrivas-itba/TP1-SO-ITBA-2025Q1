@@ -1,0 +1,346 @@
+execve("./bin/originales/ChompChampsAMD-v4_4_2025", ["./bin/originales/ChompChampsAMD-"..., "-p", "./bin/player10.o"], 0x7fff4eb88210 /* 8 vars */) = 0
+brk(NULL)                               = 0x55ffa8772000
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fa560a92000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=35914, ...}, AT_EMPTY_PATH) = 0
+mmap(NULL, 35914, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7fa560a89000
+close(3)                                = 0
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=907784, ...}, AT_EMPTY_PATH) = 0
+mmap(NULL, 909560, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fa5609aa000
+mmap(0x7fa5609ba000, 471040, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x10000) = 0x7fa5609ba000
+mmap(0x7fa560a2d000, 368640, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x83000) = 0x7fa560a2d000
+mmap(0x7fa560a87000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xdc000) = 0x7fa560a87000
+close(3)                                = 0
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\20t\2\0\0\0\0\0"..., 832) = 832
+pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+newfstatat(3, "", {st_mode=S_IFREG|0755, st_size=1922136, ...}, AT_EMPTY_PATH) = 0
+pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+mmap(NULL, 1970000, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fa5607c9000
+mmap(0x7fa5607ef000, 1396736, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x26000) = 0x7fa5607ef000
+mmap(0x7fa560944000, 339968, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x17b000) = 0x7fa560944000
+mmap(0x7fa560997000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1ce000) = 0x7fa560997000
+mmap(0x7fa56099d000, 53072, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7fa56099d000
+close(3)                                = 0
+mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fa5607c6000
+arch_prctl(ARCH_SET_FS, 0x7fa5607c6740) = 0
+set_tid_address(0x7fa5607c6a10)         = 93
+set_robust_list(0x7fa5607c6a20, 24)     = 0
+rseq(0x7fa5607c7060, 0x20, 0, 0x53053053) = 0
+mprotect(0x7fa560997000, 16384, PROT_READ) = 0
+mprotect(0x7fa560a87000, 4096, PROT_READ) = 0
+mprotect(0x55ffa7d61000, 4096, PROT_READ) = 0
+mprotect(0x7fa560ac4000, 8192, PROT_READ) = 0
+prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+munmap(0x7fa560a89000, 35914)           = 0
+rt_sigaction(SIGINT, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fa560805050}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGQUIT, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fa560805050}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+mmap(NULL, 36864, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) = 0x7fa560a89000
+rt_sigprocmask(SIG_BLOCK, ~[], [CHLD], 8) = 0
+clone3({flags=CLONE_VM|CLONE_VFORK, exit_signal=SIGCHLD, stack=0x7fa560a89000, stack_size=0x9000}, 88) = 94
+munmap(0x7fa560a89000, 36864)           = 0
+rt_sigprocmask(SIG_SETMASK, [CHLD], NULL, 8) = 0
+wait4(94, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 94
+rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fa560805050}, NULL, 8) = 0
+rt_sigaction(SIGQUIT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fa560805050}, NULL, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=94, si_uid=0, si_status=0, si_utime=0, si_stime=1 /* 0.01 s */} ---
+newfstatat(1, "", {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0), ...}, AT_EMPTY_PATH) = 0
+getrandom("\x85\x5d\x02\xce\x4f\xc2\x10\xc2", 8, GRND_NONBLOCK) = 8
+brk(NULL)                               = 0x55ffa8772000
+brk(0x55ffa8793000)                     = 0x55ffa8793000
+write(1, "width: 10\n", 10)             = 10
+write(1, "height: 10\n", 11)            = 11
+write(1, "delay: 200\n", 11)            = 11
+write(1, "timeout: 10\n", 12)           = 12
+write(1, "seed: 1744082525\n", 17)      = 17
+write(1, "view: -\n", 8)                = 8
+write(1, "num_players: 1\n", 15)        = 15
+write(1, "  ./bin/player10.o\n", 19)    = 19
+clock_nanosleep(CLOCK_REALTIME, 0, {tv_sec=2, tv_nsec=0}, 0x7fff79c63f50) = 0
+rt_sigaction(SIGINT, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fa560805050}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fa560805050}, 8) = 0
+rt_sigaction(SIGQUIT, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fa560805050}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fa560805050}, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+mmap(NULL, 36864, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) = 0x7fa560a89000
+rt_sigprocmask(SIG_BLOCK, ~[], [CHLD], 8) = 0
+clone3({flags=CLONE_VM|CLONE_VFORK, exit_signal=SIGCHLD, stack=0x7fa560a89000, stack_size=0x9000}, 88) = 96
+munmap(0x7fa560a89000, 36864)           = 0
+rt_sigprocmask(SIG_SETMASK, [CHLD], NULL, 8) = 0
+wait4(96, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 96
+rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fa560805050}, NULL, 8) = 0
+rt_sigaction(SIGQUIT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fa560805050}, NULL, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=96, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+umask(000)                              = 022
+openat(AT_FDCWD, "/dev/shm/game_sync", O_RDWR|O_CREAT|O_NOFOLLOW|O_CLOEXEC, 0666) = 3
+ftruncate(3, 168)                       = 0
+mmap(NULL, 168, PROT_READ|PROT_WRITE, MAP_SHARED, 3, 0) = 0x7fa560a91000
+umask(022)                              = 000
+openat(AT_FDCWD, "/dev/shm/game_state", O_RDWR|O_CREAT|O_NOFOLLOW|O_CLOEXEC, 0644) = 4
+ftruncate(4, 772)                       = 0
+mmap(NULL, 772, PROT_READ|PROT_WRITE, MAP_SHARED, 4, 0) = 0x7fa560a90000
+pipe2([5, 6], 0)                        = 0
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fa5607c6a10) = 98
+close(6)                                = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=994964469})
+read(5, "\7", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 0
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998236})
+read(5, "\1", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999997174})
+read(5, "\6", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998377})
+read(5, "\5", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998507})
+read(5, "\0", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999997445})
+read(5, "\3", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 0
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999997515})
+read(5, "\5", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999997215})
+read(5, "\2", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998317})
+read(5, "\6", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999997646})
+read(5, "\5", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998748})
+read(5, "\6", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999997776})
+read(5, "\0", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999983999})
+read(5, "\1", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998306})
+read(5, "\3", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998508})
+read(5, "\4", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998197})
+read(5, "\1", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998608})
+read(5, "\0", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 0
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998587})
+read(5, "\2", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998667})
+read(5, "\1", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998317})
+read(5, "\7", 1)                        = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998387})
+read(5, "\0", 1)                        = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998297})
+read(5, "\2", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998287})
+read(5, "\7", 1)                        = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998507})
+read(5, "\0", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998487})
+read(5, "\6", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998397})
+read(5, "\0", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998527})
+read(5, "\2", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998276})
+read(5, "\7", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998126})
+read(5, "\6", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 0
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998437})
+read(5, "\1", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998457})
+read(5, "\5", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998457})
+read(5, "\0", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999996995})
+read(5, "\7", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998447})
+read(5, "\7", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998256})
+read(5, "\7", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998367})
+read(5, "\0", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 0
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998577})
+read(5, "\5", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998537})
+read(5, "\0", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998237})
+read(5, "\0", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 0
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998317})
+read(5, "\4", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998497})
+read(5, "\5", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998367})
+read(5, "\5", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998518})
+read(5, "\7", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998006})
+read(5, "\0", 1)                        = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998688})
+read(5, "\5", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 0
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998297})
+read(5, "\6", 1)                        = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998317})
+read(5, "\0", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 0
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998166})
+read(5, "\4", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998528})
+read(5, "\2", 1)                        = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998417})
+read(5, "\0", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998447})
+read(5, "\1", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999997996})
+read(5, "\0", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998678})
+read(5, "\7", 1)                        = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998547})
+read(5, "\6", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998167})
+read(5, "\5", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 0
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998487})
+read(5, "\4", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998247})
+read(5, "\4", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999997765})
+read(5, "\4", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998286})
+read(5, "\0", 1)                        = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998287})
+read(5, "\3", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998297})
+read(5, "\7", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998226})
+read(5, "\0", 1)                        = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999979651})
+read(5, "\3", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998468})
+read(5, "\5", 1)                        = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998528})
+read(5, "\1", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999997635})
+read(5, "\2", 1)                        = 1
+futex(0x7fa560a91040, FUTEX_WAKE, 1)    = 0
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 1
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999998397})
+read(5, "\1", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999997716})
+read(5, "\2", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+pselect6(6, [5], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [5], left {tv_sec=9, tv_nsec=999997986})
+read(5, "\2", 1)                        = 1
+futex(0x7fa560a91060, FUTEX_WAKE, 1)    = 0
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=98, si_uid=1000, si_status=0, si_utime=17 /* 0.17 s */, si_stime=1 /* 0.01 s */} ---
+wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 98
+write(1, "Player player10.o (0) exited (0)"..., 63) = 63
+munmap(0x7fa560a91000, 168)             = 0
+close(3)                                = 0
+unlink("/dev/shm/game_sync")            = 0
+munmap(0x7fa560a90000, 772)             = 0
+close(4)                                = 0
+unlink("/dev/shm/game_state")           = 0
+exit_group(0)                           = ?
++++ exited with 0 +++
