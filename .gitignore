@@ -23,3 +23,5 @@ runCustom.sh
 *.raw
 *.iso
 *.elf
+
+.DS_Store
