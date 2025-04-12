@@ -25,3 +25,9 @@ runCustom.sh
 *.elf
 
 .DS_Store
+
+# PVS-Studio
+.config/
+PVS-Studio.log
+report.tasks
+strace_out

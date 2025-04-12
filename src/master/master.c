@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -133,10 +135,10 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
     while ((opt = getopt(argc, argv, ARI_OPTARG)) != -1) {
         switch (opt) {
             case 'w':
-                gameConfig->state->width = atoi(optarg);
+                width = atoi(optarg);
                 break;
             case 'h':
-                gameConfig->state->height = atoi(optarg);
+                height = atoi(optarg);
                 break;
             case 'd':
                 gameConfig->delay = atoi(optarg);
