@@ -92,7 +92,7 @@ int printPlayerStats(player_t* players, unsigned int playerCount, const screen_t
 
     for (int fila = 0; fila < playerCount; fila++){
         moveCursorScreen(screen,0,3+fila);
-        printf(" %16.16s %5d %5d %5d %s \n", players[fila].name, numberSize(players[fila].score, 5), numberSize(players[fila].validMovementRequestsCount, 5), numberSize(players[fila].invalidMovementRequestsCount, 5), (players[fila].canMove ? "💀" : "😀")); 
+        printf(" %16.16s %5d %5d %5d %s \n", players[fila].name, numberSize(players[fila].score, 5), numberSize(players[fila].validMovementRequestsCount, 5), numberSize(players[fila].invalidMovementRequestsCount, 5), (players[fila].isBlocked ? "💀" : "😀")); 
     }
 
     // Lowe border

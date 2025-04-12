@@ -96,7 +96,7 @@ void createPlayer(char* name, player_t* player){
     player->score = 0;
     player->invalidMovementRequestsCount = 0;
     player->validMovementRequestsCount = 0;
-    player->canMove = 1;
+    player->isBlocked = 0;
 }
 
 void initializeGameSync(gameSync_t* gameSync){
@@ -320,7 +320,7 @@ void lockGameStateReads(gameSync_t* gameSync) {
 }
 
 void unlockGameStateReads(gameSync_t* gameSync) {
-  sem_post(&(gameSync->readGameStateMutex));
+  sPost(&(gameSync->readGameStateMutex));
   return;
 }
 
@@ -361,27 +361,39 @@ int readPlayer(int fd,char *directionPtr) { //TODO es probable que se pueda simp
 
 char canAnyPlayerMove(gameState_t* gameState){
   for(unsigned int i = 0; i < gameState->playerCount; i++){
-    if (gameState->playerList[i].canMove){
+    if (!gameState->playerList[i].isBlocked){
       return 1;
     }
   }
   return 0;
 }
 
+void killPlayer(unsigned int nextPlayerIndex, gameState_t* gameState, gameSync_t* gameSync, struct pollfd* pollFdArr){
+    if(gameSync){
+      lockGameStateReads(gameSync); //TODO esta feito
+    }
+    gameState->playerList[nextPlayerIndex].isBlocked = 1;
+    if(gameSync){
+      unlockGameStateReads(gameSync);
+    }
+    pollFdArr[nextPlayerIndex].events = 0;
+    pollFdArr[nextPlayerIndex].revents = 0; //TODO no se si es necesario
+    pollFdArr[nextPlayerIndex].fd = -1; //TODO no se si esta bien, o si hacer el bitwsie negativo
+}
+
+char hasAnyValidDirection(gameState_t* gameState, unsigned int playerIndex);
 //The ChompChamps implementation of this round-rovin like function was recursive and used many static variables. It was not realistic to try to recreate it.
 int getNextMove(unsigned int* nextPlayerIndex, int timeout, gameState_t* gameState, gameSync_t* gameSync,  struct pollfd* pollFdArr, char* directionPtr, time_t timeStart){
     static int numberOfReadyPlayers = 0; //TODO analizar si se puede / deberia sacar (hacer no estatica)
     while(1){ //TODO probably some condition should be put here instead of having "ifs" with returns
-        for(unsigned int i = 0; numberOfReadyPlayers > 0 && i<gameState->playerCount; i++){ //TODO this for is very wierd
+        for(unsigned int i = 0; numberOfReadyPlayers > 0 && i < gameState->playerCount; i++){ //TODO this for is very wierd
+            // if(!hasAnyValidDirection(gameState,*nextPlayerIndex)){
+            //     killPlayer(*nextPlayerIndex, gameState, gameSync,pollFdArr);
+            // }
             if(pollFdArr[*nextPlayerIndex].revents!=0){
                 numberOfReadyPlayers--;
-                if(pollFdArr[*nextPlayerIndex].revents != POLLIN || readPlayer(pollFdArr[*nextPlayerIndex].fd,directionPtr) == -1){ //TODO this is the wierdest if ever, it abuses of "||" lazyness to make function calls
-                    lockGameStateReads(gameSync);
-                    gameState->playerList[*nextPlayerIndex].canMove = 0;
-                    unlockGameStateReads(gameSync);
-                    pollFdArr[*nextPlayerIndex].events = 0;
-                    pollFdArr[*nextPlayerIndex].revents = 0; //TODO no se si es necesario
-                    pollFdArr[*nextPlayerIndex].fd = -1; //TODO no se si esta bien, o si hacer el bitwsie negativo
+                if(!(pollFdArr[*nextPlayerIndex].revents & POLLIN) || readPlayer(pollFdArr[*nextPlayerIndex].fd,directionPtr) == -1){ //TODO this is the wierdest if ever, it abuses of "||" lazyness to make function calls
+                    killPlayer(*nextPlayerIndex, gameState, gameSync,pollFdArr);
                     return -1;
                 }
                 return 0;
@@ -404,27 +416,26 @@ static inline int getDy(char direction){
          - (direction == 1 || direction == 0 || direction == 7);
 }
 
-static inline char isWidthin(int minInclusive, int value, int maxExclusive){
+static inline char isWithin(int minInclusive, int value, int maxExclusive){
     return minInclusive <= value && value < maxExclusive;
 }
 
 static inline char isDirectionInsideOfBoard(coords_t* coords, unsigned short width, unsigned short height){
-  return isWidthin(0, coords->x, width) && isWidthin(0, coords->y, height);
+  return isWithin(0, coords->x, width) && isWithin(0, coords->y, height);
 }
 
 
-
-static inline char isNewPositionEmpty(coords_t* coords, unsigned short width, unsigned short height, int board[width][height]){
-    return isWidthin(1, board[coords->x][coords->y], 9+1); //TODO unhardcode 1, 9 (min and max board values)
+static inline char isNewPositionEmpty(coords_t* coords, unsigned short width, int* board){
+    return isWithin(1, board[width * (coords->y) + coords->x], 9+1); //TODO unhardcode 1, 9 (min and max board values)
 }
 
-int isDirectionValid(gameState_t* gameState, unsigned int playerIndex, char direction, coords_t* coords) {
+char isDirectionValid(gameState_t* gameState, unsigned int playerIndex, char direction, coords_t* coords) {
     *coords = (coords_t){
         .x = gameState->playerList[playerIndex].x + getDx(direction),
         .y = gameState->playerList[playerIndex].y + getDy(direction)
     };
     return isDirectionInsideOfBoard(coords, gameState->width, gameState->height)
-           && isNewPositionEmpty(coords, gameState->width, gameState->height, (void*)gameState->board);
+           && isNewPositionEmpty(coords, gameState->width, gameState->board);
 }
 
 char hasAnyValidDirection(gameState_t* gameState, unsigned int playerIndex){
@@ -437,25 +448,37 @@ char hasAnyValidDirection(gameState_t* gameState, unsigned int playerIndex){
     return 0;
 }
 
-void applyCoords(gameState_t* gameState, unsigned int playerIndex, coords_t* coords){
-    gameState->board[gameState->width * coords->y + coords->x] = -playerIndex;
-    gameState->playerList[playerIndex].x = coords->x;
-    gameState->playerList[playerIndex].y = coords->y;
-    gameState->playerList[playerIndex].validMovementRequestsCount++;
-    gameState->playerList[playerIndex].canMove = hasAnyValidDirection(gameState, playerIndex);
+void updateAllPlayers(gameState_t* gameState, struct pollfd* pollFdArr){
+    for(unsigned int i = 0; i < gameState->playerCount; i++){
+        if(!hasAnyValidDirection(gameState,i)){
+          killPlayer(i,gameState,0,pollFdArr);
+        }
+    }
 }
 
-void processMove(gameState_t* gameState, gameSync_t* gameSync, unsigned int playerIndex, char direction) {
+void applyCoords(gameState_t* gameState, unsigned int playerIndex, coords_t* coords){
+    player_t* player = &(gameState->playerList[playerIndex]);
+    player->score += gameState->board[gameState->width * coords->y + coords->x]; //TODO quizas hacer una variable player
+    gameState->board[gameState->width * coords->y + coords->x] = -playerIndex;
+    player->x = coords->x;
+    player->y = coords->y;
+    player->validMovementRequestsCount++;
+}
+
+void processMove(gameState_t* gameState, gameSync_t* gameSync, unsigned int playerIndex, char direction, struct pollfd* pollFdArr) {
   coords_t coords;
-  if (isDirectionValid(gameState, playerIndex, direction, &coords) == -1) {
+  if (isDirectionValid(gameState, playerIndex, direction, &coords)) {
     lockGameStateReads(gameSync);
     applyCoords(gameState, playerIndex, &coords);
+    updateAllPlayers(gameState, pollFdArr);
     gameState->isOver = !canAnyPlayerMove(gameState);
     unlockGameStateReads(gameSync);
   }
   else {
     lockGameStateReads(gameSync);
     gameState->playerList[playerIndex].invalidMovementRequestsCount++;
+    // gameState->playerList[playerIndex].isBlocked = !hasAnyValidDirection(gameState, playerIndex);
+    // gameState->isOver = !canAnyPlayerMove(gameState);
     unlockGameStateReads(gameSync);
   }
 }
@@ -475,9 +498,9 @@ void game(gameConfig_t* gameConfig, struct pollfd* pollFdArr) {
       endGame(gameConfig->state, gameConfig->sync);
     }
     else {
-      processMove(gameConfig->state, gameConfig->sync, nextPlayerIndex, direction);
-      nextPlayerIndex++;
+      processMove(gameConfig->state, gameConfig->sync, nextPlayerIndex, direction, pollFdArr);
     }
+    nextPlayerIndex = (nextPlayerIndex + 1) % gameConfig->state->playerCount;
   }
 }
 

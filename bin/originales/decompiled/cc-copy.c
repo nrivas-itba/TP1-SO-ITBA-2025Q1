@@ -1170,7 +1170,7 @@ getNextMove(int *param_1,undefined8 param_2,long param_3,undefined8 param_4,long
     lockGameStateReads(param_4);
     *(undefined1 *)((ulong)uVar2 * 0x28 + param_3 + 0x2c) = 1;
     unlockGameStateReads(param_4);
-    cVar3 = canAllPlayersMove(param_3);
+    cVar3 = canAnyPlayerMove(param_3);
     if (cVar3 == '\0') {
       uVar6 = getNextMove(param_1,param_2,param_3,param_4,param_5,param_6,param_7,param_8);
     }
@@ -1207,7 +1207,7 @@ void processMove(long param_1,undefined8 param_2,uint param_3,undefined4 param_4
     *(int *)((ulong)param_3 * 0x28 + param_1 + 0x20) =
          *(int *)((ulong)param_3 * 0x28 + param_1 + 0x20) + 1;
     FUN_00102c19(param_1);
-    uVar2 = canAllPlayersMove(param_1);
+    uVar2 = canAnyPlayerMove(param_1);
     *(undefined1 *)(param_1 + 0x170) = uVar2;
     unlockGameStateReads(param_2);
     tVar3 = time((time_t *)0x0);
@@ -1876,7 +1876,7 @@ undefined8 FUN_00102cfe(ushort *param_1,int param_2)
 
 
 
-undefined8 canAllPlayersMove(long param_1)
+undefined8 canAnyPlayerMove(long param_1)
 
 {
   uint local_c;

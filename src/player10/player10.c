@@ -17,7 +17,7 @@ player_t* getMe(game_t* game){
 char shouldITryToMove(player_t* me){
     static int invalidMovementRequestsCount = -1;
     static int validMovementRequestsCount = -1;
-    if (!me->canMove && (me->invalidMovementRequestsCount != invalidMovementRequestsCount || me->validMovementRequestsCount != validMovementRequestsCount)){
+    if (!me->isBlocked  && (me->invalidMovementRequestsCount != invalidMovementRequestsCount || me->validMovementRequestsCount != validMovementRequestsCount)){
         invalidMovementRequestsCount = me->invalidMovementRequestsCount;
         validMovementRequestsCount = me->validMovementRequestsCount;
         return 1;
