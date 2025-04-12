@@ -450,7 +450,7 @@ char hasAnyValidDirection(gameState_t* gameState, unsigned int playerIndex){
 
 void updateAllPlayers(gameState_t* gameState, struct pollfd* pollFdArr){
     for(unsigned int i = 0; i < gameState->playerCount; i++){
-        if(!hasAnyValidDirection(gameState,i)){
+        if(!gameState->playerList[i].isBlocked && !hasAnyValidDirection(gameState,i)){
           killPlayer(i,gameState,0,pollFdArr);
         }
     }
