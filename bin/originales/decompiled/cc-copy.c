@@ -1096,12 +1096,12 @@ void game(long param_1,long param_2,undefined8 param_3,undefined8 param_4)
       askViewToPrint(param_1,param_3);
     }
     if (*(char *)(param_2 + 0x170) != '\0') break;
-    cVar1 = FUN_00101683(&local_14,param_1,param_2,param_3,param_4,&local_18,&local_1c,&local_10);
+    cVar1 = getNextMove(&local_14,param_1,param_2,param_3,param_4,&local_18,&local_1c,&local_10);
     if (cVar1 == '\0') {
       endGame(param_2,param_3);
     }
     else {
-      FUN_00101938(param_2,param_3,local_18,local_1c,&local_10);
+      processMove(param_2,param_3,local_18,local_1c,&local_10);
     }
   }
   return;
@@ -1110,7 +1110,7 @@ void game(long param_1,long param_2,undefined8 param_3,undefined8 param_4)
 
 
 undefined8
-FUN_00101683(int *param_1,undefined8 param_2,long param_3,undefined8 param_4,long param_5,
+getNextMove(int *param_1,undefined8 param_2,long param_3,undefined8 param_4,long param_5,
             undefined8 param_6,undefined8 param_7,undefined8 param_8)
 
 {
@@ -1128,7 +1128,7 @@ FUN_00101683(int *param_1,undefined8 param_2,long param_3,undefined8 param_4,lon
   }
   uVar7 = DAT_001061c0;
   if (*param_1 == 1) {
-    DAT_00106260 = FUN_0010238c(param_2,param_3,param_5,&DAT_001061e0,param_8);
+    DAT_00106260 = getNumberOfReadyPlayers(param_2,param_3,param_5,&DAT_001061e0,param_8);
     if (DAT_00106260 == 0) {
       DAT_00106260 = 0;
       return 0;
@@ -1165,14 +1165,14 @@ FUN_00101683(int *param_1,undefined8 param_2,long param_3,undefined8 param_4,lon
   if (DAT_00106260 == 0) {
     *param_1 = 1;
   }
-  cVar3 = FUN_00102493(param_5,uVar2,param_6,param_7);
+  cVar3 = readPlayer(param_5,uVar2,param_6,param_7);
   if (cVar3 == '\0') {
     lockGameStateReads(param_4);
     *(undefined1 *)((ulong)uVar2 * 0x28 + param_3 + 0x2c) = 1;
     unlockGameStateReads(param_4);
-    cVar3 = FUN_00102f52(param_3);
+    cVar3 = canAllPlayersMove(param_3);
     if (cVar3 == '\0') {
-      uVar6 = FUN_00101683(param_1,param_2,param_3,param_4,param_5,param_6,param_7,param_8);
+      uVar6 = getNextMove(param_1,param_2,param_3,param_4,param_5,param_6,param_7,param_8);
     }
     else {
       uVar6 = 0;
@@ -1186,7 +1186,7 @@ FUN_00101683(int *param_1,undefined8 param_2,long param_3,undefined8 param_4,lon
 
 
 
-void FUN_00101938(long param_1,undefined8 param_2,uint param_3,undefined4 param_4,time_t *param_5)
+void processMove(long param_1,undefined8 param_2,uint param_3,undefined4 param_4,time_t *param_5)
 
 {
   char cVar1;
@@ -1194,7 +1194,7 @@ void FUN_00101938(long param_1,undefined8 param_2,uint param_3,undefined4 param_
   time_t tVar3;
   undefined4 local_c;
   
-  cVar1 = FUN_00102a80(param_1,param_3,param_4,&local_c);
+  cVar1 = isDirectionValid(param_1,param_3,param_4,&local_c);
   if (cVar1 == '\0') {
     lockGameStateReads(param_2);
     *(int *)((ulong)param_3 * 0x28 + param_1 + 0x1c) =
@@ -1207,7 +1207,7 @@ void FUN_00101938(long param_1,undefined8 param_2,uint param_3,undefined4 param_
     *(int *)((ulong)param_3 * 0x28 + param_1 + 0x20) =
          *(int *)((ulong)param_3 * 0x28 + param_1 + 0x20) + 1;
     FUN_00102c19(param_1);
-    uVar2 = FUN_00102f52(param_1);
+    uVar2 = canAllPlayersMove(param_1);
     *(undefined1 *)(param_1 + 0x170) = uVar2;
     unlockGameStateReads(param_2);
     tVar3 = time((time_t *)0x0);
@@ -1503,7 +1503,7 @@ void closeWritePipes(uint param_1,long param_2)
 
 
 
-int FUN_00102248(long param_1,long param_2,long param_3)
+int buildFdSet(long param_1,long param_2,long param_3)
 
 {
   int iVar1;
@@ -1544,7 +1544,7 @@ int FUN_00102248(long param_1,long param_2,long param_3)
 
 // WARNING: Removing unreachable block (ram,0x001023c7)
 
-int FUN_0010238c(long param_1,undefined8 param_2,undefined8 param_3,fd_set *param_4,time_t *param_5)
+int getNumberOfReadyPlayers(long param_1,undefined8 param_2,undefined8 param_3,fd_set *param_4,time_t *param_5)
 
 {
   uint uVar1;
@@ -1561,7 +1561,7 @@ int FUN_0010238c(long param_1,undefined8 param_2,undefined8 param_3,fd_set *para
   dVar2 = difftime(__time1,__time0);
   local_38.tv_sec = (__time_t)((double)uVar1 - dVar2);
   local_38.tv_usec = 0;
-  local_1c = FUN_00102248(param_2,param_3,param_4);
+  local_1c = buildFdSet(param_2,param_3,param_4);
   if (local_38.tv_sec < 1) {
     local_20 = 0;
   }
@@ -1578,7 +1578,7 @@ int FUN_0010238c(long param_1,undefined8 param_2,undefined8 param_3,fd_set *para
 
 
 
-bool FUN_00102493(long param_1,int param_2,int *param_3,uint *param_4)
+bool readPlayer(long param_1,int param_2,int *param_3,uint *param_4)
 
 {
   ssize_t sVar1;
@@ -1685,7 +1685,7 @@ undefined4 FUN_00102851(ushort *param_1,uint param_2)
 
 
 
-int FUN_001028e3(ushort *param_1,ushort param_2,ushort param_3)
+int twoDimensionCoordsToOneDimension(ushort *param_1,ushort param_2,ushort param_3)
 
 {
   return (uint)param_2 + (uint)param_3 * (uint)*param_1;
@@ -1693,7 +1693,7 @@ int FUN_001028e3(ushort *param_1,ushort param_2,ushort param_3)
 
 
 
-void FUN_00102912(ushort *param_1,uint param_2,undefined2 *param_3,undefined2 *param_4)
+void oneDimentionCoordsToTwoDimentionsCoords(ushort *param_1,uint param_2,undefined2 *param_3,undefined2 *param_4)
 
 {
   *param_3 = (short)(param_2 % (uint)*param_1);
@@ -1703,7 +1703,7 @@ void FUN_00102912(ushort *param_1,uint param_2,undefined2 *param_3,undefined2 *p
 
 
 
-undefined8 FUN_00102964(ushort *param_1,uint param_2,int param_3)
+undefined8 isInvalidDirection(ushort *param_1,uint param_2,int param_3)
 
 {
   undefined8 uVar1;
@@ -1743,7 +1743,7 @@ undefined4 FUN_00102a5f(long param_1,uint param_2)
 
 
 
-undefined8 FUN_00102a80(long param_1,uint param_2,uint param_3,int *param_4)
+undefined8 isDirectionValid(long param_1,uint param_2,uint param_3,int *param_4)
 
 {
   char cVar1;
@@ -1752,10 +1752,10 @@ undefined8 FUN_00102a80(long param_1,uint param_2,uint param_3,int *param_4)
   undefined8 uVar4;
   
   if (param_3 < 8) {
-    cVar1 = FUN_00102964(param_1,param_2,param_3);
+    cVar1 = isInvalidDirection(param_1,param_2,param_3);
     if (cVar1 == '\0') {
       iVar2 = FUN_00102851(param_1,param_3);
-      iVar3 = FUN_001028e3(param_1,*(undefined2 *)((ulong)param_2 * 0x28 + param_1 + 0x24),
+      iVar3 = twoDimensionCoordsToOneDimension(param_1,*(undefined2 *)((ulong)param_2 * 0x28 + param_1 + 0x24),
                            *(undefined2 *)((ulong)param_2 * 0x28 + param_1 + 0x26));
       *param_4 = iVar2 + iVar3;
       uVar4 = FUN_00102a5f(param_1,*param_4);
@@ -1775,7 +1775,7 @@ undefined8 FUN_00102a80(long param_1,uint param_2,uint param_3,int *param_4)
 void FUN_00102b51(long param_1,uint param_2,uint param_3)
 
 {
-  FUN_00102912(param_1,param_3,param_1 + (ulong)param_2 * 0x28 + 0x24,
+  oneDimentionCoordsToTwoDimentionsCoords(param_1,param_3,param_1 + (ulong)param_2 * 0x28 + 0x24,
                param_1 + (ulong)param_2 * 0x28 + 0x26);
   *(int *)((ulong)param_2 * 0x28 + param_1 + 0x18) =
        *(int *)((ulong)param_2 * 0x28 + param_1 + 0x18) +
@@ -1795,7 +1795,7 @@ void FUN_00102c19(long param_1)
   
   for (local_c = 0; local_c < *(uint *)(param_1 + 4); local_c = local_c + 1) {
     if (*(char *)((ulong)local_c * 0x28 + param_1 + 0x2c) == '\0') {
-      uVar1 = FUN_001028e3(param_1,*(undefined2 *)((ulong)local_c * 0x28 + param_1 + 0x24),
+      uVar1 = twoDimensionCoordsToOneDimension(param_1,*(undefined2 *)((ulong)local_c * 0x28 + param_1 + 0x24),
                            *(undefined2 *)((ulong)local_c * 0x28 + param_1 + 0x26));
       iVar2 = FUN_00102cfe(param_1,uVar1);
       *(bool *)((ulong)local_c * 0x28 + param_1 + 0x2c) = iVar2 == 0;
@@ -1814,7 +1814,7 @@ undefined8 FUN_00102cfe(ushort *param_1,int param_2)
   ushort local_c;
   ushort local_a;
   
-  FUN_00102912(param_1,param_2,&local_a,&local_c);
+  oneDimentionCoordsToTwoDimentionsCoords(param_1,param_2,&local_a,&local_c);
   if (local_c != 0) {
     iVar2 = FUN_00102851(param_1,0);
     cVar1 = FUN_00102a5f(param_1,iVar2 + param_2);
@@ -1876,7 +1876,7 @@ undefined8 FUN_00102cfe(ushort *param_1,int param_2)
 
 
 
-undefined8 FUN_00102f52(long param_1)
+undefined8 canAllPlayersMove(long param_1)
 
 {
   uint local_c;

@@ -7,10 +7,10 @@
 #include <time.h>
 #include "../utils/utils.h"
 #include <libgen.h> //For __xpg_basename
-#define __USE_MISC
 #include <math.h> //For sin and cos
 #include <unistd.h> //For fork
 #include <sys/wait.h> //For waitpid
+#include <poll.h> //for poll
 
 #define DEFAULT_WIDTH 10
 #define DEFAULT_HEIGHT 10
@@ -66,6 +66,11 @@ typedef struct {
     int write;
 } pipefd_t;
 
+typedef struct {
+    unsigned int x;
+    unsigned int y;
+} coords_t;
+
 void validateArgs(gameConfig_t* gameConfig, int playerCount, int width, int height){
     if (playerCount < MIN_PLAYERS){
         fprintf(stderr,ARI_NO_PLAYER);
@@ -107,7 +112,7 @@ void initializeGameSync(gameSync_t* gameSync){
 void initializeRandomBoard(gameState_t* gameState, unsigned int seed) {
   srand(seed);
   for(unsigned int i = 0; i < gameState->height * gameState->width; i++){
-    gameState->board[i] = (rand() % 9) + 1;
+    gameState->board[i] = (rand() % 9) + 1; //TODO unhardcode 1, 9 (min and max board values)
   }
 }
 
@@ -326,25 +331,152 @@ void endGame(gameState_t* gameState,gameSync_t* gameSync) {
   return;
 }
 
-void game(gameConfig_t* gameConfig/*, long param_1*/,  gameState_t* gameState, gameSync_t* gameSync/*,undefined8 param_4*/) { //TODO sacar game sync y state si ya vienen en config
-  char zeroMeansIsOver;
-  int noSeNiElTipoDeDato1;
-  int noSeNiElTipoDeDato2;
-  int noSeNiElTipoDeDato3 = 0;
-  time_t timeStart = time(NULL);
-  while(1) {
+int getNumberOfReadyPlayers(int timeout, unsigned int playerCount, struct pollfd* pollFdArr, time_t *timeStart) { //TODO es probable que se pueda simplificar. Ademas, solo lee un pipe, deberia tener un nombre generico no particular de player
+  int ret;
+  int timeUntilTimeout = (timeout - difftime(time(NULL), *timeStart)) * 1000;
+  if (timeUntilTimeout < 1) {
+    ret = 0;
+  }
+  else {
+    ret = poll(pollFdArr, playerCount, timeUntilTimeout);
+    if (ret == -1) {
+      errExit("poll");
+    }
+  }
+  return ret;
+}
+
+int readPlayer(int fd,char *directionPtr) { //TODO es probable que se pueda simplificar. Ademas, solo lee un pipe, deberia tener un nombre generico no particular de player
+  int numberOfReadedChars;
+  numberOfReadedChars = read(fd,directionPtr,1);
+  if (numberOfReadedChars == -1) {
+    perror("read");
+    exit(1);
+  }
+  if (numberOfReadedChars == 0) {
+    return -1;
+  }
+  return 0;
+}
+
+char canAnyPlayerMove(gameState_t* gameState){
+  for(unsigned int i = 0; i < gameState->playerCount; i++){
+    if (gameState->playerList[i].canMove){
+      return 1;
+    }
+  }
+  return 0;
+}
+
+//The ChompChamps implementation of this round-rovin like function was recursive and used many static variables. It was not realistic to try to recreate it.
+int getNextMove(unsigned int* nextPlayerIndex, int timeout, gameState_t* gameState, gameSync_t* gameSync,  struct pollfd* pollFdArr, char* directionPtr, time_t timeStart){
+    static int numberOfReadyPlayers = 0; //TODO analizar si se puede / deberia sacar (hacer no estatica)
+    while(1){ //TODO probably some condition should be put here instead of having "ifs" with returns
+        for(unsigned int i = 0; numberOfReadyPlayers > 0 && i<gameState->playerCount; i++){ //TODO this for is very wierd
+            if(pollFdArr[*nextPlayerIndex].revents!=0){
+                numberOfReadyPlayers--;
+                if(pollFdArr[*nextPlayerIndex].revents != POLLIN || readPlayer(pollFdArr[*nextPlayerIndex].fd,directionPtr) == -1){ //TODO this is the wierdest if ever, it abuses of "||" lazyness to make function calls
+                    lockGameStateReads(gameSync);
+                    gameState->playerList[*nextPlayerIndex].canMove = 0;
+                    unlockGameStateReads(gameSync);
+                    pollFdArr[*nextPlayerIndex].events = 0;
+                    pollFdArr[*nextPlayerIndex].revents = 0; //TODO no se si es necesario
+                    pollFdArr[*nextPlayerIndex].fd = -1; //TODO no se si esta bien, o si hacer el bitwsie negativo
+                    return -1;
+                }
+                return 0;
+            }
+            *nextPlayerIndex=((*nextPlayerIndex)+1)%gameState->playerCount;
+        }
+        numberOfReadyPlayers = getNumberOfReadyPlayers(timeout, gameState->playerCount, pollFdArr, &timeStart);
+        if (numberOfReadyPlayers == 0) {
+            return -1;
+        }
+    }
+}
+
+static inline int getDx(char direction){
+    return (direction == 1 || direction == 2 || direction == 3)
+         - (direction == 5 || direction == 6 || direction == 7);
+}
+static inline int getDy(char direction){
+    return (direction == 3 || direction == 4 || direction == 5)
+         - (direction == 1 || direction == 0 || direction == 7);
+}
+
+static inline char isWidthin(int minInclusive, int value, int maxExclusive){
+    return minInclusive <= value && value < maxExclusive;
+}
+
+static inline char isDirectionInsideOfBoard(coords_t* coords, unsigned short width, unsigned short height){
+  return isWidthin(0, coords->x, width) && isWidthin(0, coords->y, height);
+}
+
+
+
+static inline char isNewPositionEmpty(coords_t* coords, unsigned short width, unsigned short height, int board[width][height]){
+    return isWidthin(1, board[coords->x][coords->y], 9+1); //TODO unhardcode 1, 9 (min and max board values)
+}
+
+int isDirectionValid(gameState_t* gameState, unsigned int playerIndex, char direction, coords_t* coords) {
+    *coords = (coords_t){
+        .x = gameState->playerList[playerIndex].x + getDx(direction),
+        .y = gameState->playerList[playerIndex].y + getDy(direction)
+    };
+    return isDirectionInsideOfBoard(coords, gameState->width, gameState->height)
+           && isNewPositionEmpty(coords, gameState->width, gameState->height, (void*)gameState->board);
+}
+
+char hasAnyValidDirection(gameState_t* gameState, unsigned int playerIndex){
+    coords_t coords;
+    for(char i = 0; i<8; i++){//TODO unhardcode max direction
+        if(isDirectionValid(gameState, playerIndex, i, &coords)){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void applyCoords(gameState_t* gameState, unsigned int playerIndex, coords_t* coords){
+    gameState->board[gameState->width * coords->y + coords->x] = -playerIndex;
+    gameState->playerList[playerIndex].x = coords->x;
+    gameState->playerList[playerIndex].y = coords->y;
+    gameState->playerList[playerIndex].validMovementRequestsCount++;
+    gameState->playerList[playerIndex].canMove = hasAnyValidDirection(gameState, playerIndex);
+}
+
+void processMove(gameState_t* gameState, gameSync_t* gameSync, unsigned int playerIndex, char direction) {
+  coords_t coords;
+  if (isDirectionValid(gameState, playerIndex, direction, &coords) == -1) {
+    lockGameStateReads(gameSync);
+    applyCoords(gameState, playerIndex, &coords);
+    gameState->isOver = !canAnyPlayerMove(gameState);
+    unlockGameStateReads(gameSync);
+  }
+  else {
+    lockGameStateReads(gameSync);
+    gameState->playerList[playerIndex].invalidMovementRequestsCount++;
+    unlockGameStateReads(gameSync);
+  }
+}
+
+void game(gameConfig_t* gameConfig, struct pollfd* pollFdArr) {
+  unsigned int nextPlayerIndex = 0;
+  char direction;
+  while(1) { //TODO reordenando, se puede hacer un while (gameState->isOver)
+    time_t timeStart = time(NULL);
     if (gameConfig->view) {
       askViewToPrint(gameConfig->delay, gameConfig->sync);
     }
-    if (gameState->isOver){
+    if (gameConfig->state->isOver){
       break;
     }
-    zeroMeansIsOver = 0; //TODO FUN_00101683(&noSeNiElTipoDeDato3,param_1,gameState,gameSync,param_4,&noSeNiElTipoDeDato2,&noSeNiElTipoDeDato1,&timeStart);
-    if (zeroMeansIsOver == 0) {
-      endGame(gameState, gameSync);
+    if (getNextMove(&nextPlayerIndex, gameConfig->timeout, gameConfig->state, gameConfig->sync, pollFdArr, &direction, timeStart) == -1) {
+      endGame(gameConfig->state, gameConfig->sync);
     }
     else {
-      //FUN_00101938(gameState,gameSync,noSeNiElTipoDeDato2,noSeNiElTipoDeDato1,&timeStart);
+      processMove(gameConfig->state, gameConfig->sync, nextPlayerIndex, direction);
+      nextPlayerIndex++;
     }
   }
 }
@@ -354,7 +486,7 @@ void waitForView(pid_t view) {
   if (waitpid(view, &statLoc, 0) == -1) {
     errExit(ARI_WAITPID);
   }
-  printf(ARI_VIEW_EXIT, WEXITSTATUS(statLoc)); //Original chomp champs does not use WEXITSTATUS
+  printf(ARI_VIEW_EXIT, WEXITSTATUS(statLoc)); //TODO Original chomp champs does not use WEXITSTATUS -- Pregunte por mail y dijo que NO (hace falta) usemos la macro
   return;
 }
 
@@ -409,6 +541,16 @@ void unconfigureGame(gameConfig_t* gameConfig){
     );
 }
 
+void setUpPollFdArr(unsigned int playerCount, pipefd_t* pipefd, struct pollfd* pollFdArr){
+    for(unsigned int i = 0; i<playerCount; i++){
+        pollFdArr[i] = (struct pollfd){
+            .fd = pipefd[i].read,
+            .events = POLLIN,
+            .revents = 0 //Important because we read this value before calling poll
+        };
+    }
+}
+
 int main(int argc, char* argv[]){
     // printf("%d\n\n",sizeof(gameConfig_t));
     // char* temp[sizeof(gameState_t) + (width * height)*sizeof(int)];
@@ -419,7 +561,7 @@ int main(int argc, char* argv[]){
         .seed = DEFAULT_SEED,
         .timeout = DEFAULT_TIMEOUT,
         .view = NULL,
-        .playerPaths = {0},
+        .playerPaths = {0}
     };
     
     system(ARI_CLEAR); //I dont like this, I would use CSI 2 J, But the profesor's bynary uses system()
@@ -435,15 +577,19 @@ int main(int argc, char* argv[]){
         viewPid = forkToView(gameConfig.view, gameConfig.state->width, gameConfig.state->height);
     }
 
-    pipefd_t pipefd[MAX_PLAYERS];
+    pipefd_t pipefd[MAX_PLAYERS]; //TODO quizas no es necesario guardar el read end aca, y se puede guardar directo en poll fd arr (aunque quizas seria mala modularizacion? ( TODO discutir))
 
     createPipes(gameConfig.state->playerCount, pipefd);
+
+    struct pollfd pollFdArr[MAX_PLAYERS]; //TODO el master no necesita esto, se deberia mover a la parte de procesado de jugadores
+
+    setUpPollFdArr(gameConfig.state->playerCount, pipefd, pollFdArr);
 
     spawnPlayerProcesses(gameConfig.state, gameConfig.playerPaths, pipefd);
 
     closeWritePipes(gameConfig.state->playerCount, pipefd); //I dont know why original chomp champs separates this and does not make it inside spawn players.
 
-    game(&gameConfig/*, long param_1*/,  gameConfig.state, gameConfig.sync/*,undefined8 param_4*/);
+    game(&gameConfig, pollFdArr);
 
     if (viewPid > 0){
         waitForView(viewPid);
