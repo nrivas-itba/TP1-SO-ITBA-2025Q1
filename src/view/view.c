@@ -34,7 +34,7 @@
     Prints the player stats table
     Returns how many lines where printed.
 */
-int printPlayerStats(player_t* players, unsigned int playerCount, const screen_t screen){
+int printPlayerStats(player_t* playerList, unsigned int playerCount, const screen_t screen){
 
     // TODO aux arr with indexes -> sort with criteria (complex)
 
@@ -68,17 +68,21 @@ int printPlayerStats(player_t* players, unsigned int playerCount, const screen_t
 
     for (int fila = 0; fila < playerCount; fila++){
         moveCursorScreen(screen,1,2+fila);
-        printf(TABLE_FORMAT_ROW, players[fila].name, NUMBER_FITS(players[fila].score, SCORE_LEN), NUMBER_FITS(players[fila].validMovementRequestsCount, VALID_REQUESTS_LEN), NUMBER_FITS(players[fila].invalidMovementRequestsCount, INVALID_REQUESTS_LEN), (players[fila].isBlocked ? BLOCKED_PLAYER : NON_BLOCKED_PLAYER)); 
+        printf(TABLE_FORMAT_ROW, playerList[fila].name, NUMBER_FITS(playerList[fila].score, SCORE_LEN), NUMBER_FITS(playerList[fila].validMovementRequestsCount, VALID_REQUESTS_LEN), NUMBER_FITS(playerList[fila].invalidMovementRequestsCount, INVALID_REQUESTS_LEN), (playerList[fila].isBlocked ? BLOCKED_PLAYER : NON_BLOCKED_PLAYER)); 
     }
 
     return tableHeight;
+}
+
+static inline char isThisAPlayerHead(player_t* playerList, int negativePlayerIndex, unsigned short x, unsigned short y){
+    return playerList[-negativePlayerIndex].x == x && playerList[-negativePlayerIndex].y == y;
 }
 
 /*
     Prints the table
     Returns how many lines where printed.
 */
-int printTable(int gameWidth, int gameHeight, int board[gameHeight][gameWidth], const screen_t screen){
+int printTable(int gameWidth, int gameHeight, int board[gameHeight][gameWidth], player_t* playerList, const screen_t screen){
     static const char* playerColors[]= {
         RED,
         GREEN,
@@ -120,7 +124,7 @@ int printTable(int gameWidth, int gameHeight, int board[gameHeight][gameWidth], 
             }
             else {
                 printf("%s", playerColors[-boardValue]);
-                printBlock(screenInsider, columna, fila, yMult, xMult, "█", "█");
+                printBlock(screenInsider, columna, fila, yMult, xMult, "█", isThisAPlayerHead(playerList, boardValue, columna, fila) ? "+" : "█");
                 printf("%s", WHITE);
             }
         }
@@ -140,7 +144,7 @@ int main(int argc, char* argv[]){
         screen_t screen = buildScreen(1,14);
         moveCursorScreen(screen,0,0);
         screen = modifyScreen(screen, 0, printPlayerStats(game.state->playerList, game.state->playerCount, screen));
-        screen = modifyScreen(screen, 0, printTable(game.gameWidth, game.gameHeight, (void*)(game.state->board), screen));
+        screen = modifyScreen(screen, 0, printTable(game.gameWidth, game.gameHeight, (void*)(game.state->board), game.state->playerList, screen));
         moveCursorScreen(screen,0,0);
         isGameOver = game.state->isOver;
         sPost(&(game.sync->printDone)); //Tell the master that we have finished printing.
