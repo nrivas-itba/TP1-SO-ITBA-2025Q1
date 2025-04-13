@@ -5,60 +5,29 @@
 #include <stdint.h>
 #include <semaphore.h>
 #include "../utils/utils.h"
-
+#include "graphics/graphics.h"
+#define STRINGIZE_WRAPPED(x) #x
+#define STRINGIZE(x) STRINGIZE_WRAPPED(x)
+#define MIN_MAX_FORMAT(x) STRINGIZE(x) "." STRINGIZE(x)
 #define NOT_ENOUGH_SPACE_TO_PRINT_MATRIX "Not enough space for matrix"
 #define NOT_ENOUGH_SPACE_TO_PRINT_TABLE "Not enough space for table"
-
-/*
-    Check digits of int -> off limit is set to -1
-    Returns int or -1.
-*/
-int numberSize(int number, int size){
-    int aux = number;
-    int currentSize=0;
-    for(; number>=10;currentSize++){
-        number/=10; // 100 -> 10 ...
-    }
-    if (currentSize >= size){
-        return -1;
-    }
-    return aux;
-}
-
-/*
-    Check if there is enough space in screen to write something
-    Returns binary.
-*/
-int checkWritable(const screen_t screen, char* myMsg){
-    int ret = 0;
-    if(screen.yWidth >= 1 && screen.xWidth >= sizeof(myMsg)){
-            moveCursorScreen(screen,0,0);
-            puts(myMsg);
-            ret = 1;
-    }
-    return ret;
-}
-
-/*
-    Check if there is enough space in screen to print something
-    Returns binary.
-*/
-int checkPrintable(int srcWidth, int srcHeight, int myWidth, int myHeight, const screen_t screen){
-    // can print
-    int ret = 1;
-    if(srcWidth < myWidth || srcHeight < myHeight){
-        // cannot print
-        ret = 0;
-        for(int x=0; x<screen.xWidth;x++){
-            for(int y=0; y<screen.yWidth; y++){
-                moveCursorScreen(screen, x, y);
-                putchar(' ');
-            }
-        }
-        fflush(stderr);
-    }
-    return ret;
-}
+#define NAME "Name"
+#define SCORE "Score"
+#define SCORE_LEN 5
+#define VALID_REQUESTS "ValRq"
+#define VALID_REQUESTS_LEN 5
+#define INVALID_REQUESTS "InvRq"
+#define INVALID_REQUESTS_LEN 5
+#define IS_BLOCKED "Health"
+#define IS_BLOCKED_LEN 6
+#define BLOCKED_PLAYER "💀"
+#define NON_BLOCKED_PLAYER "😀"
+#define TABLE_FORMAT(TYPE_ARG) "%-"MIN_MAX_FORMAT(MAX_PLAYER_NAME_LEN)"s %-"STRINGIZE(SCORE_LEN) TYPE_ARG" %-"STRINGIZE(VALID_REQUESTS_LEN) TYPE_ARG" %-"STRINGIZE(INVALID_REQUESTS_LEN) TYPE_ARG " %-"MIN_MAX_FORMAT(IS_BLOCKED_LEN)"s\n"
+#define TABLE_FORMAT_HEADER TABLE_FORMAT("s")
+#define TABLE_FORMAT_ROW TABLE_FORMAT("d")
+#define NUMBER_OF_NON_FORMAT_CHARACTERS_IN_TABLE_FORMAT 4
+#define TABLE_FORMAT_LEN NUMBER_OF_NON_FORMAT_CHARACTERS_IN_TABLE_FORMAT + MAX_PLAYER_NAME_LEN + SCORE_LEN + VALID_REQUESTS_LEN + INVALID_REQUESTS_LEN + IS_BLOCKED_LEN
+#define NUMBER_FITS(NUMBER, MAX) decimalLen(NUMBER) < MAX ? NUMBER : -1
 
 
 /*
@@ -72,44 +41,58 @@ int printPlayerStats(player_t* players, unsigned int playerCount, const screen_t
     int xWidth = screen.xWidth-2;
     int yHeight = screen.yWidth-2;
 
-    int myWidth = 25 + MAX_PLAYER_NAME_LEN;
+    const int tableHeight = 4+playerCount;
 
     //fix magic numbers
-    if( !checkPrintable(xWidth,yHeight,myWidth,playerCount,screen) ){
-        return checkWritable(screen, NOT_ENOUGH_SPACE_TO_PRINT_TABLE);
+    // if( !checkPrintable(xWidth,yHeight,myWidth,playerCount,screen) ){
+    //     return checkWritable(screen, NOT_ENOUGH_SPACE_TO_PRINT_TABLE);
+    // }
+
+    //TODO codigo repetido
+    if(xWidth < TABLE_FORMAT_LEN || yHeight <  tableHeight){
+        int ret = 0;
+        if(screen.yWidth >= 1 && screen.xWidth >= sizeof(NOT_ENOUGH_SPACE_TO_PRINT_MATRIX)){
+            moveCursorScreen(screen,0,0);
+            puts(NOT_ENOUGH_SPACE_TO_PRINT_MATRIX);
+            ret = 1;
+        }
+        fflush(stderr);
+        return ret;
     }
+
+    puts(TABLE_FORMAT(""));
 
     // Header
     moveCursorScreen(screen,0,0);
-    for (int x = 0; x < myWidth; x++){
+    for (int x = 0; x < TABLE_FORMAT_LEN; x++){
         printf("═");
     }
     moveCursorScreen(screen,0,1);
-    printf(" %16s %5s %5s %5s %s \n", "Name", "Score", "ValRq", "InvRq", "❤️");
+    printf(TABLE_FORMAT_HEADER, NAME, SCORE, VALID_REQUESTS, INVALID_REQUESTS, IS_BLOCKED);
     moveCursorScreen(screen,0,2);
-    for (int x = 0; x < myWidth; x++){
+    for (int x = 0; x < TABLE_FORMAT_LEN; x++){
         printf("═");
     }
 
     for (int fila = 0; fila < playerCount; fila++){
         moveCursorScreen(screen,0,3+fila);
-        printf(" %16.16s %5d %5d %5d %s \n", players[fila].name, numberSize(players[fila].score, 5), numberSize(players[fila].validMovementRequestsCount, 5), numberSize(players[fila].invalidMovementRequestsCount, 5), (players[fila].isBlocked ? "💀" : "😀")); 
+        printf(TABLE_FORMAT_ROW, players[fila].name, NUMBER_FITS(players[fila].score, SCORE_LEN), NUMBER_FITS(players[fila].validMovementRequestsCount, VALID_REQUESTS_LEN), NUMBER_FITS(players[fila].invalidMovementRequestsCount, INVALID_REQUESTS_LEN), (players[fila].isBlocked ? BLOCKED_PLAYER : NON_BLOCKED_PLAYER)); 
     }
 
     // Lowe border
     moveCursorScreen(screen,0,3+playerCount);
-    for (int x = 0; x < myWidth; x++){
+    for (int x = 0; x < TABLE_FORMAT_LEN; x++){
         printf("═");
     }
 
-    return 4+playerCount;
+    return tableHeight;
 }
 
 /*
     Prints the board
     Returns how many lines where printed.
 */
-int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], const screen_t screen){
+int printGame(int gameWidth, int gameHeight, int board[gameHeight][gameWidth], const screen_t screen){
     static const char* playerColors[]= {
         RED,
         GREEN,
@@ -124,99 +107,60 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], c
     
     int xWidth = screen.xWidth-2;
     int yHeight = screen.yWidth-2;
-
-    if( !checkPrintable(xWidth,yHeight,gameWidth,gameHeight,screen) ){
-        return checkWritable(screen, NOT_ENOUGH_SPACE_TO_PRINT_MATRIX);
+    if(xWidth < gameWidth || yHeight < gameHeight){
+        int ret = 0;
+        if(screen.yWidth >= 1 && screen.xWidth >= sizeof(NOT_ENOUGH_SPACE_TO_PRINT_MATRIX)){
+            moveCursorScreen(screen,0,0);
+            puts(NOT_ENOUGH_SPACE_TO_PRINT_MATRIX);
+            ret = 1;
+        }
+        fflush(stderr);
+        return ret;
     }
-
     int xMult = xWidth/gameWidth;
     int yMult = yHeight/gameHeight;
 
     // Upper boarder
-    moveCursorScreen(screen,0,0);
-    printf("╭");
-    for (int x = 0; x < gameWidth*xMult; x++){
-        printf("═");
-    }
-    printf("╮");
+    printBoard(screen, gameWidth*xMult+2, gameHeight*yMult+2);
 
-    /*
-    for (int i = 0; i < gameWidth; i++){
-        moveCursorScreen(screen,0,1+i);
-        printf("║");    // Left border
-        for (int j = 0; j < gameHeight; j++){
-            if(matrix[i][j]>0){
-                printf(" %d ", matrix[i][j]);
-            }
-            else{
-                printf("%s███%s", playerColors[-matrix[i][j]],WHITE);
-            }
-        }
-        printf("║");  // Right border
-    }
-    */
+   screen_t screenInsider = modifyScreen(screen,1,1); //TODO nombre de variable no representativo
+   char numberStr[2] = {0};
    for (int fila = 0; fila < gameHeight; fila++){
         for (int columna = 0; columna < gameWidth; columna++){
             int boardValue = board[fila][columna];
-            for(int filaInner = 0; filaInner<yMult; filaInner++){
-                if(columna == 0){
-                    moveCursorScreen(screen,0,1+fila*yMult+filaInner);
-                    printf("║");    // Left border
-                }
-                for(int columnaInner = 0; columnaInner<xMult;columnaInner++){
-                    moveCursorScreen(screen,1+columna*xMult+columnaInner,1+fila*yMult+filaInner);
-                    if(boardValue>0){
-                        if(columnaInner==xMult/2 && filaInner == yMult/2){
-                            printf("%d", boardValue%10);
-                        }
-                        else{
-                            putchar(' ');
-                        }
-                    }
-                    else{
-                        printf("%s", playerColors[-boardValue]);
-                        printf("█");
-                        printf("%s", WHITE);
-                    }
-                }
-                if(columna == gameWidth-1){
-                    moveCursorScreen(screen,1+gameWidth*xMult,1+fila*yMult+filaInner);
-                    printf("║");    // Right border
-                    fflush(stdout);
-                }
+            if (boardValue > 0){
+                numberStr[0] = '0'+(boardValue%10);
+                printBlock(screenInsider, columna, fila, yMult, xMult, " ", numberStr);
+            }
+            else {
+                printf("%s", playerColors[-boardValue]);
+                printBlock(screenInsider, columna, fila, yMult, xMult, "█", "█");
+                printf("%s", WHITE);
             }
         }
     }
 
-    // Lower border
-    moveCursorScreen(screen,0,1+gameWidth*yMult);
-    printf("╰");
-    for (int i = 0; i < gameWidth*xMult; i++){
-        printf("═");
-
-    }
-    printf("╯");
     fflush(stdout);
-
     return 2+gameHeight*yMult;
 }
 
 int main(int argc, char* argv[]){
-    game_t game = openGame(argc, argv);
-    if (!game.gameWidth || !game.gameHeight){
-        errExit("NoWidth/Height");
-    }
+    game_t game = openGame(argc, argv); //TODO meter todas estas inicializaciones en un inicializador de vista
+    printf(ENABLE_ALTERNATIVE_SCREEN_BUFFER);
+    signalHandler_t signalHandler = setGraphicsSignalHandler();
     char isGameOver = 0;
     while(!isGameOver){
         sWait(&(game.sync->printNeeded)); //Waint until master wants to print
         screen_t screen = buildScreen(1,14);
-        moveCursor(1,screen.yOffset);
-        screen.yOffset += printPlayerStats(game.state->playerList, game.state->playerCount, screen);
-        screen.yOffset += printGame(game.gameWidth, game.gameHeight, (void*)(game.state->board), screen);
-        moveCursor(1,screen.yOffset);
+        moveCursorScreen(screen,0,0);
+        screen = modifyScreen(screen, 0, printPlayerStats(game.state->playerList, game.state->playerCount, screen));
+        screen = modifyScreen(screen, 0, printGame(game.gameWidth, game.gameHeight, (void*)(game.state->board), screen));
+        moveCursorScreen(screen,0,0);
         isGameOver = game.state->isOver;
         sPost(&(game.sync->printDone)); //Tell the master that we have finished printing.
 
     }
+    deleteGraphicsSignalHandler(signalHandler);
+    printf(DISABLE_ALTERNATIVE_SCREEN_BUFFER);
     return 0;
 }

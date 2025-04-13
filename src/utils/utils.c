@@ -95,20 +95,25 @@ void* openmem(char* name, size_t size, char readOnly){
 }
 
 game_t openGame(int argc, char* argv[]){
-    game_t ret;
     if (argc != 3){
         errExit("invalid argc");
     }
 
-    ret.gameWidth  = atoi(argv[1]);
-    ret.gameHeight = atoi(argv[2]);
+    game_t ret = (game_t){
+        .gameWidth  = atoi(argv[1]),
+        .gameHeight = atoi(argv[2]),
+        .sync = openmem(GAME_SYNC, sizeof(*ret.sync), 0),
+        .state = openmem(GAME_STATE,sizeof(*ret.state) + (ret.gameWidth * ret.gameHeight) * sizeof((ret.state->board)[0]), 1)
+    };
     
-    if (ret.gameWidth < 0 || ret.gameWidth < 0){
-        errExit("invalid argc");
+    if (ret.gameWidth <= 0 || ret.gameWidth <= 0){
+        errExit("Board dimensions cant be less or equal to 0");
     }
 
-    ret.sync = openmem(GAME_SYNC, sizeof(*ret.sync), 0);
-    ret.state = openmem(GAME_STATE,sizeof(*ret.state) + (ret.gameWidth * ret.gameHeight) * sizeof((ret.state->board)[0]), 1);
+    if (ret.gameHeight != ret.state->height || ret.gameWidth != ret.state->width){
+        errExit("Board dimensions dont match");
+    }
+
     return ret;
 }
 
@@ -121,24 +126,6 @@ void sPost(sem_t* sem){
     if (sem_post(sem) == -1){ //Tell the master that we have finished printing.
         errExit("sem_post");
     }
-}
-
-screen_t buildScreen(int xOffset,int yOffset){
-        screen_t ret;
-        struct winsize w;
-        // Query terminal size
-        if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1) {
-            errExit("ioctl, is the stdOut connected to a console?");
-        }
-        ret.xWidth = w.ws_col-xOffset;
-        ret.yWidth = w.ws_row-yOffset;
-        ret.xOffset = xOffset;
-        ret.yOffset = yOffset;
-        return ret;
-}
-
-int moveCursorScreen(screen_t screen, int x, int y){
-    return moveCursor(screen.xOffset+x, screen.yOffset+y);
 }
 
 unsigned int decimalLen(int number){
