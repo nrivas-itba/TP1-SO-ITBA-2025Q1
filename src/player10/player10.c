@@ -7,6 +7,10 @@
 #include "../utils/utils.h"
 #include <string.h> //for mem cpy
 
+typedef struct {
+    FILE* file;
+} connection_t;
+
 unsigned int getMe(game_t* game){
     pid_t pid = getpid();
     for(int i =0; i<MAX_PLAYERS; i++){
@@ -18,8 +22,8 @@ unsigned int getMe(game_t* game){
 }
 
 char shouldITryToMove(player_t* me){
-    static int invalidMovementRequestsCount = -1;
-    static int validMovementRequestsCount = -1;
+    static unsigned int invalidMovementRequestsCount = -1;
+    static unsigned int validMovementRequestsCount = -1;
     if (!me->isBlocked  && (me->invalidMovementRequestsCount != invalidMovementRequestsCount || me->validMovementRequestsCount != validMovementRequestsCount)){
         invalidMovementRequestsCount = me->invalidMovementRequestsCount;
         validMovementRequestsCount = me->validMovementRequestsCount;
@@ -49,18 +53,15 @@ void finishReading(gameSync_t* gameSync){
     sPost(&(gameSync->readersCountMutex));
 }
 
-char getNextMove(){
-    FILE *fp = fopen("/dev/random", "rb");
-    if (fp == NULL) {
-        errExit("Error opening /dev/random");
-    }
+char getNextMove(connection_t* connection){
     unsigned char random_byte;
-    fread(&random_byte, 1, 1, fp);
-    fclose(fp);
+    if (fread(&random_byte, 1, 1, connection->file) == 0){
+        errExit("fread");
+    }
     return random_byte;
 }
 
-void playingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playerCount, unsigned int me){
+void playingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playerCount, unsigned int me, connection_t* connection){
     player_t playerList[playerCount];
     int board[gameWidth][gameHeight];
     char isGameOver = 0;
@@ -72,13 +73,18 @@ void playingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playe
         finishReading(game->sync);
 
         if(shouldITryToMove(&(playerList[me]))){
-            char nextMove = getNextMove()%9;
+            char nextMove = getNextMove(connection)%9;
             if(nextMove!=8){
                 printf("%c", nextMove); // Print a random value
                 fflush(stdout);
             }
+            else{
+                shouldITryToMove(&((player_t){
+                    .validMovementRequestsCount=-1
+                }));
+            }
         }
-        
+
         if(!isGameOver){
             waitToRead(game->sync);
         }
@@ -88,12 +94,28 @@ void playingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playe
     }
 }
 
+connection_t openConnection(){
+    connection_t ret = (connection_t){
+        .file = fopen("/dev/random", "rb")
+    };
+    if (ret.file == NULL) {
+        errExit("Error opening /dev/random");
+    }
+    return ret;
+}
+
+void closeConnection(connection_t* connection){
+    fclose(connection->file);
+}
+
 int main(int argc, char* argv[]){
     game_t game = openGame(argc, argv); //TODO meter todas estas inicializaciones en un inicializador de view
     unsigned int me = getMe(&game);
+    connection_t connection = openConnection();
     
     waitToRead(game.sync);
-    playingLoop(&game, game.gameWidth, game.gameHeight, game.state->playerCount, me);
+    playingLoop(&game, game.gameWidth, game.gameHeight, game.state->playerCount, me, &connection);
     
+    closeConnection(&connection);
     return 0;
 }
