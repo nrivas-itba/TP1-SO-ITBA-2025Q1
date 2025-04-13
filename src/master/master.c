@@ -467,7 +467,7 @@ void applyCoords(gameState_t* gameState, unsigned int playerIndex, coords_t* coo
     player->validMovementRequestsCount++;
 }
 
-void processMove(gameState_t* gameState, gameSync_t* gameSync, unsigned int playerIndex, char direction, struct pollfd* pollFdArr) {
+void processMove(gameState_t* gameState, gameSync_t* gameSync, unsigned int playerIndex, char direction, struct pollfd* pollFdArr, time_t* timeStart) {
   coords_t coords;
   if (isDirectionValid(gameState, playerIndex, direction, &coords)) {
     lockGameStateReads(gameSync);
@@ -475,6 +475,7 @@ void processMove(gameState_t* gameState, gameSync_t* gameSync, unsigned int play
     updateAllPlayers(gameState, pollFdArr);
     gameState->isOver = !canAnyPlayerMove(gameState);
     unlockGameStateReads(gameSync);
+    *timeStart = time(NULL);
   }
   else {
     lockGameStateReads(gameSync);
@@ -488,8 +489,8 @@ void processMove(gameState_t* gameState, gameSync_t* gameSync, unsigned int play
 void game(gameConfig_t* gameConfig, struct pollfd* pollFdArr) {
   unsigned int nextPlayerIndex = 0;
   char direction;
+  time_t timeStart = time(NULL);
   while(1) { //TODO reordenando, se puede hacer un while (gameState->isOver)
-    time_t timeStart = time(NULL);
     if (gameConfig->view) {
       askViewToPrint(gameConfig->delay, gameConfig->sync);
     }
@@ -500,7 +501,7 @@ void game(gameConfig_t* gameConfig, struct pollfd* pollFdArr) {
       endGame(gameConfig->state, gameConfig->sync);
     }
     else {
-      processMove(gameConfig->state, gameConfig->sync, nextPlayerIndex, direction, pollFdArr);
+      processMove(gameConfig->state, gameConfig->sync, nextPlayerIndex, direction, pollFdArr, &timeStart);
     }
     nextPlayerIndex = (nextPlayerIndex + 1) % gameConfig->state->playerCount;
   }
