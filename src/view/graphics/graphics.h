@@ -48,7 +48,7 @@ CSI 6n	DSR	Device Status Report	Reports the cursor position (CPR) by transmittin
 
 typedef struct {
     int xWidth;
-    int yWidth;
+    int yHeight;
     int xOffset;
     int yOffset;
 } screen_t;
@@ -65,4 +65,6 @@ int moveCursorScreen(screen_t screen, int x, int y);
 
 void printBorder(screen_t screen, const int boardWidth, const int boardHeight); //TODO deberia ser screen_t*
 void printBlock(screen_t screen, int columna, int fila, int yMult, int xMult, char* str, char* strMiddle); //TODO deberia ser screen_t*
+int checkPrintable(screen_t* screen, int width, int tableHeight, char* errStr, size_t errStrLen);
+
 #endif
