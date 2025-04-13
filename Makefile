@@ -2,10 +2,10 @@ include Makefile.inc
 
 .PHONY: clean
 
-all: vista player10 master
+all: view player10 master
 
-vista:
-	cd $(VISTA_DIR) && make all
+view:
+	cd $(view_DIR) && make all
 
 player10:
 	cd $(PLAYER10_DIR) && make all
@@ -36,11 +36,11 @@ p ?= 1
 
 run:
 	@echo "Running with $(p) players..."; \
-	make all && sleep 1 && $(call get_master) -d $(d) -t $(t) -w $(w) -h $(h)  -v $(VISTA_O) -p $$(for i in $$(seq 1 $(p)); do echo -n "$(PLAYER10_O) "; done)
+	make all && sleep 1 && $(call get_master) -d $(d) -t $(t) -w $(w) -h $(h)  -v $(view_O) -p $$(for i in $$(seq 1 $(p)); do echo -n "$(PLAYER10_O) "; done)
 
 run_valgrind:
 	@echo "Running with $(p) players..."; \
-	make all && sleep 1 && valgrind $(call get_master) -d $(d) -t $(t) -v $(VISTA_O) -p $$(for i in $$(seq 1 $(p)); do echo -n "$(PLAYER10_O) "; done)
+	make all && sleep 1 && valgrind $(call get_master) -d $(d) -t $(t) -v $(view_O) -p $$(for i in $$(seq 1 $(p)); do echo -n "$(PLAYER10_O) "; done)
 
 
 # Make testee todo con valgrind y pvs studio

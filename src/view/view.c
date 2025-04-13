@@ -145,7 +145,7 @@ int printGame(int gameWidth, int gameHeight, int board[gameHeight][gameWidth], c
 }
 
 int main(int argc, char* argv[]){
-    game_t game = openGame(argc, argv); //TODO meter todas estas inicializaciones en un inicializador de vista
+    game_t game = openGame(argc, argv); //TODO meter todas estas inicializaciones en un inicializador de view
     printf(ENABLE_ALTERNATIVE_SCREEN_BUFFER);
     signalHandler_t signalHandler = setGraphicsSignalHandler();
     char isGameOver = 0;
