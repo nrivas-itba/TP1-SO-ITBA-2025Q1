@@ -554,12 +554,12 @@ void unInitializeGameSync(gameSync_t* gameSync) {
 
 void unconfigureGame(gameConfig_t* gameConfig){
     unInitializeGameSync(gameConfig->sync);
-    unlinkMem(GAME_STATE,
+    closeMem(GAME_STATE,
         sizeof(*(gameConfig->state)) + sizeof(gameConfig->state->board[0]) * gameConfig->state->width * gameConfig->state->height,
         gameConfig->state,
         &gameConfig->stateFd
     );
-    unlinkMem(GAME_SYNC,
+    closeMem(GAME_SYNC,
         sizeof(*(gameConfig->sync)),
         gameConfig->sync,
         &gameConfig->syncFd

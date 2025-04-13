@@ -21,7 +21,7 @@
 
 void* createShm(char* name, size_t size, char isPublic, int* fd){
     mode_t prevMode;
-    if (isPublic){ //TODO i dont understand why this is neccesary
+    if (isPublic){
         prevMode = umask((mode_t)0); //This systeam call never fails
     }
     *fd = shm_open(name, O_RDWR | O_CREAT, isPublic ? MODE_RW0_RW0_RW0 : MODE_RW0_R00_R00);
@@ -49,7 +49,7 @@ void* createShm(char* name, size_t size, char isPublic, int* fd){
     return ret;
 }
 
-void unlinkMem(char* name, size_t size, void* address, int* fd){
+void closeMem(char* name, size_t size, void* address, int* fd){
   if (munmap(address, size) == -1) {
     errExit("munmap");
   }
@@ -58,8 +58,10 @@ void unlinkMem(char* name, size_t size, void* address, int* fd){
     errExit("close");
   }
 
-  if (shm_unlink(name) == -1){
-    errExit("shm_unlink");
+  if(name){
+    if (shm_unlink(name) == -1){
+        errExit("shm_unlink");
+    }
   }
   return;
 }
@@ -94,17 +96,6 @@ void* openMem(char* name, size_t size, char readOnly, int* fd){
     return ret;
 }
 
-void closeMem(size_t size, void* address, int* fd){
-  if (munmap(address, size) == -1) {
-    errExit("munmap");
-  }
-  
-  if (close(*fd) == -1) {
-    errExit("close");
-  }
-  return;
-}
-
 game_t openGame(int argc, char* argv[]){
     if (argc != 3){
         errExit("invalid argc");
@@ -129,8 +120,8 @@ game_t openGame(int argc, char* argv[]){
 }
 
 void closeGame(game_t* game){
-    closeMem(sizeof(*game->sync), game->sync, &(game->syncFd));
-    closeMem(sizeof(*game->state) + (game->gameWidth * game->gameHeight) * sizeof((game->state->board)[0]), game->state, &(game->stateFd));
+    closeMem(0, sizeof(*game->sync), game->sync, &(game->syncFd));
+    closeMem(0, sizeof(*game->state) + (game->gameWidth * game->gameHeight) * sizeof((game->state->board)[0]), game->state, &(game->stateFd));
 }
 
 void sWait(sem_t* sem){
