@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h> //for mem cpy
 #include <semaphore.h>
 #include "../utils/utils.h"
 #include "graphics/graphics.h"
@@ -66,7 +67,7 @@ static inline char isThisAPlayerHead(player_t* playerList, int negativePlayerInd
     Prints the game
     Returns how many lines where printed.
 */
-int printGame(int gameWidth, int gameHeight, int board[gameHeight][gameWidth], player_t* playerList, screen_t screen){
+int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], player_t* playerList, screen_t screen){
     static const char* playerColors[]= {
         RED,
         GREEN,
@@ -112,22 +113,38 @@ int printGame(int gameWidth, int gameHeight, int board[gameHeight][gameWidth], p
     return yRealHeight;
 }
 
+void printingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playerCount){
+    player_t playerList[playerCount];
+    int board[gameWidth][gameHeight];
+    char isGameOver = 0;
+    while(1){
+        memcpy(playerList, game->state->playerList, sizeof(playerList[0])*playerCount);
+        memcpy(board,      game->state->board,      sizeof(board[0][0])*gameWidth*gameHeight);
+        isGameOver = game->state->isOver;
+        sPost(&(game->sync->printDone)); //Tell the master that we have finished printing.
+        screen_t screen = buildScreen(0,0);
+        screen = modifyScreen(screen, 0, printPlayerStats(playerList, playerCount, screen));
+        screen = modifyScreen(screen, 0, printGame(gameWidth, gameHeight, board, playerList, screen));
+        moveCursorScreen(screen,0,0);
+
+        if(!isGameOver){
+            sWait(&(game->sync->printNeeded)); //Waint until master wants to print
+        }
+        else{
+            break;
+        }
+    }
+}
+
+
 int main(int argc, char* argv[]){
     game_t game = openGame(argc, argv); //TODO meter todas estas inicializaciones en un inicializador de view
     printf(ENABLE_ALTERNATIVE_SCREEN_BUFFER);
     signalHandler_t signalHandler = setGraphicsSignalHandler();
-    char isGameOver = 0;
-    while(!isGameOver){
-        sWait(&(game.sync->printNeeded)); //Waint until master wants to print
-        screen_t screen = buildScreen(0,0);
-        moveCursorScreen(screen,0,0);
-        screen = modifyScreen(screen, 0, printPlayerStats(game.state->playerList, game.state->playerCount, screen));
-        screen = modifyScreen(screen, 0, printGame(game.gameWidth, game.gameHeight, (void*)(game.state->board), game.state->playerList, screen));
-        moveCursorScreen(screen,0,0);
-        isGameOver = game.state->isOver;
-        sPost(&(game.sync->printDone)); //Tell the master that we have finished printing.
-
-    }
+    
+    sWait(&(game.sync->printNeeded)); //Waint until master wants to print
+    printingLoop(&game, game.gameWidth, game.gameHeight, game.state->playerCount);
+    
     deleteGraphicsSignalHandler(signalHandler);
     printf(DISABLE_ALTERNATIVE_SCREEN_BUFFER);
     return 0;
