@@ -90,9 +90,9 @@ int printTable(int gameWidth, int gameHeight, int board[gameHeight][gameWidth], 
         CYAN,
         MAGENTA,
         YELLOW,
-        WHITE,
-        GRAY
-        BLACK,
+        ORANGE,
+        PURPLE,
+        HOTPINK
     };
     
     int xWidth = screen.xWidth-2;

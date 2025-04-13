@@ -34,15 +34,17 @@ CSI 6n	DSR	Device Status Report	Reports the cursor position (CPR) by transmittin
 #define ENABLE_ALTERNATIVE_SCREEN_BUFFER "\033[?1049h"
 #define DISABLE_ALTERNATIVE_SCREEN_BUFFER "\033[?1049l"
 
-#define BLACK COLOR(,,)
-#define BLUE COLOR(, , "255")
-#define GREEN COLOR(, "255", )
-#define CYAN COLOR(, "255", "255")
-#define RED COLOR("255", , )
-#define MAGENTA COLOR("255", , "255")
-#define YELLOW COLOR("255", "255", )
-#define WHITE COLOR("255", "255", "255")
-#define GRAY COLOR("127", "127", "127")
+#define WHITE   COLOR("255", "255", "255")
+
+#define RED     COLOR("255", "0", "0")
+#define GREEN   COLOR("0", "255", "0")
+#define BLUE    COLOR("0", "0", "255")
+#define YELLOW  COLOR("255", "255", "0")
+#define MAGENTA COLOR("255", "0", "255")
+#define CYAN    COLOR("0", "255", "255")
+#define ORANGE  COLOR("255", "165", "0")
+#define PURPLE  COLOR("128", "0", "128")
+#define HOTPINK COLOR("255", "105", "180")
 
 typedef struct {
     int xWidth;
