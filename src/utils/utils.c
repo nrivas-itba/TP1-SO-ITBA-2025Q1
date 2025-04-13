@@ -76,9 +76,9 @@ void semDestroy(sem_t* sem){
   }
 }
 
-void* openmem(char* name, size_t size, char readOnly){
-    int fd = shm_open(name, readOnly ? O_RDONLY : O_RDWR, 0);
-    if (fd == -1){
+void* openMem(char* name, size_t size, char readOnly, int* fd){
+    *fd = shm_open(name, readOnly ? O_RDONLY : O_RDWR, 0);
+    if (*fd == -1){
         errExit("shm_open");
     }
 
@@ -86,12 +86,23 @@ void* openmem(char* name, size_t size, char readOnly){
                 size,
                 PROT_READ | (readOnly ? 0 : PROT_WRITE),
                 MAP_SHARED,
-                fd,
+                *fd,
                 0);
     if (ret == MAP_FAILED){
         errExit("mmap");
     }
     return ret;
+}
+
+void closeMem(size_t size, void* address, int* fd){
+  if (munmap(address, size) == -1) {
+    errExit("munmap");
+  }
+  
+  if (close(*fd) == -1) {
+    errExit("close");
+  }
+  return;
 }
 
 game_t openGame(int argc, char* argv[]){
@@ -102,8 +113,8 @@ game_t openGame(int argc, char* argv[]){
     game_t ret = (game_t){
         .gameWidth  = atoi(argv[1]),
         .gameHeight = atoi(argv[2]),
-        .sync = openmem(GAME_SYNC, sizeof(*ret.sync), 0),
-        .state = openmem(GAME_STATE,sizeof(*ret.state) + (ret.gameWidth * ret.gameHeight) * sizeof((ret.state->board)[0]), 1)
+        .sync = openMem(GAME_SYNC, sizeof(*ret.sync), 0, &(ret.syncFd)),
+        .state = openMem(GAME_STATE,sizeof(*ret.state) + (ret.gameWidth * ret.gameHeight) * sizeof((ret.state->board)[0]), 1, &(ret.stateFd))
     };
     
     if (ret.gameWidth <= 0 || ret.gameWidth <= 0){
@@ -115,6 +126,11 @@ game_t openGame(int argc, char* argv[]){
     }
 
     return ret;
+}
+
+void closeGame(game_t* game){
+    closeMem(sizeof(*game->sync), game->sync, &(game->syncFd));
+    closeMem(sizeof(*game->state) + (game->gameWidth * game->gameHeight) * sizeof((game->state->board)[0]), game->state, &(game->stateFd));
 }
 
 void sWait(sem_t* sem){

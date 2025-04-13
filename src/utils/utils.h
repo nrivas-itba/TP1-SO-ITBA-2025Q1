@@ -44,6 +44,8 @@ int board[]; // Puntero al comienzo del tablero. fila-0, fila-1, ..., fila-n-1
 typedef struct {
     int gameWidth;
     int gameHeight;
+    int syncFd;
+    int stateFd;
     gameSync_t* sync;
     gameState_t* state;
 } game_t;
