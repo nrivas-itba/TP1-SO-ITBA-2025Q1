@@ -59,7 +59,7 @@ Grupo 10 <!-- Que se quiere sacar 10 -->
 > - `[-v view]`: View binary route. **Default**: No view
 >   - **In `make_run`**: `bin/vista.o`, unmodifiable
 > - `-p player1 player2`
->   - **In `make_run`**: `bin/player.o`, unmodifiable, you can only decide the amount of players
+>   - **In `make_run`**: `bin/player10.o`, unmodifiable, you can only decide the amount of players
 
 > [!NOTE]
 >
