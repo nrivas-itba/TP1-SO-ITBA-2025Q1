@@ -60,7 +60,7 @@ static inline void printCorners(screen_t screen, const int boardWidth, const int
     return;
 }
 
-void printBoard(screen_t screen, const int boardWidth, const int boardHeight){
+void printBorder(screen_t screen, const int boardWidth, const int boardHeight){
     for (int i = 1; i < boardWidth-1; i++){
         moveCursorScreen(screen, i, 0);
         printf("═");
