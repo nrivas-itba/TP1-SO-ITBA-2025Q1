@@ -41,7 +41,7 @@ Grupo 10 <!-- Que se quiere sacar 10 -->
 > make run p=<PLAYERS> w=<WIDTH> h=<HEIGHT> d=<DELAY> t=<TIMEOUT>
 > 
 > # Or enter manually
-> ./bin/master.o -p ./bin/player10.o -v ./bin/vista.o
+> ./bin/master.o -p ./bin/player10.o -v ./bin/view.o
 > ```
 >
 > If you want to use the original binary provided, it is located in `bin/originales/`. Optionally, you can use the parameter `m=original` in the `make run`
@@ -57,7 +57,7 @@ Grupo 10 <!-- Que se quiere sacar 10 -->
 > - `[-s seed]`: Seed utilized for generating the board. **Default**: `time(NULL)`
 >   - **In `make_run`**: `time(NULL)`, unmodifiable
 > - `[-v view]`: View binary route. **Default**: No view
->   - **In `make_run`**: `bin/vista.o`, unmodifiable
+>   - **In `make_run`**: `bin/view.o`, unmodifiable
 > - `-p player1 player2`
 >   - **In `make_run`**: `bin/player10.o`, unmodifiable, you can only decide the amount of players
 
@@ -76,5 +76,5 @@ Grupo 10 <!-- Que se quiere sacar 10 -->
 > If you want to use the Valgrind tool, you can use `make run_valgrind` with the same parameters as `make_run`. Optionally, you can run it manually:
 >
 > ```sh
-> valgrind ./bin/master.o -p ./bin/player10.o -v ./bin/vista.o
+> valgrind ./bin/master.o -p ./bin/player10.o -v ./bin/view.o
 > ```
