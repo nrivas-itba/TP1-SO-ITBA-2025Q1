@@ -108,7 +108,7 @@ game_t openGame(int argc, char* argv[]){
         .state = openMem(GAME_STATE,sizeof(*ret.state) + (ret.gameWidth * ret.gameHeight) * sizeof((ret.state->board)[0]), 1, &(ret.stateFd))
     };
     
-    if (ret.gameWidth <= 0 || ret.gameWidth <= 0){
+    if (ret.gameWidth <= 0 || ret.gameHeight <= 0){
         errExit("Board dimensions cant be less or equal to 0");
     }
 

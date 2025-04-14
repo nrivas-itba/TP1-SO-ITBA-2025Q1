@@ -209,8 +209,8 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
 void printArgs(gameConfig_t* gameConfig){
     printf(ARI_WIDTH, gameConfig->state->width);
     printf(ARI_HEIGHT, gameConfig->state->height);
-    printf(ARI_DELAY, gameConfig->delay);
-    printf(ARI_TIMEOUT, gameConfig->timeout);
+    printf(ARI_DELAY, (unsigned int)gameConfig->delay);
+    printf(ARI_TIMEOUT, (unsigned int)gameConfig->timeout);
     printf(ARI_SEED, gameConfig->seed);
     printf(ARI_VIEW, gameConfig->view ? gameConfig->view : "-");
     printf(ARI_NUM_PLAYERS, gameConfig->state->playerCount);
