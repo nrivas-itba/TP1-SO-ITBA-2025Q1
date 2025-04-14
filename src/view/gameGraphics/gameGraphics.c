@@ -50,7 +50,7 @@ int printPlayerStats(player_t* playerList, unsigned int playerCount, const scree
     moveCursorScreen(&screen,0,0);
     printf(TABLE_FORMAT_HEADER, NAME, SCORE, VALID_REQUESTS, INVALID_REQUESTS, IS_BLOCKED);
 
-    for (int row = 0; row < playerCount; row++){ //TODO codigo en español
+    for (int row = 0; row < playerCount; row++){
         moveCursorScreen(&screen, 0, 1+row);
         printf("%s",getPlayerColor(row));
         printf(TABLE_FORMAT_ROW, playerList[row].name, NUMBER_FITS(playerList[row].score, SCORE_LEN), NUMBER_FITS(playerList[row].validMovementRequestsCount, VALID_REQUESTS_LEN), NUMBER_FITS(playerList[row].invalidMovementRequestsCount, INVALID_REQUESTS_LEN), (playerList[row].isBlocked ? BLOCKED_PLAYER : NON_BLOCKED_PLAYER)); 
