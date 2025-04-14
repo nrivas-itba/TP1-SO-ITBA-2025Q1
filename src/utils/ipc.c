@@ -8,6 +8,7 @@
 #include <semaphore.h>
 #include <unistd.h>
 #include <poll.h>
+#include <time.h>
 
 #include "ari.h"
 
@@ -136,4 +137,12 @@ int pollWrapper(struct pollfd* pollFdArr, unsigned int nfd, int timeout){
       errExit("poll");
     }
     return ret;
+}
+
+int getNumberOfReadyFd(int timeout, unsigned int nfd, struct pollfd* pollFdArr, time_t *timeStart) {
+  int timeUntilTimeout = (timeout - difftime(time(NULL), *timeStart)) * 1000;
+  if (timeUntilTimeout < 1) {
+    return 0;
+  }
+  return pollWrapper(pollFdArr, nfd, timeUntilTimeout);
 }

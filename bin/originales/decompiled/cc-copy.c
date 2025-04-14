@@ -1128,7 +1128,7 @@ getNextMove(int *param_1,undefined8 param_2,long param_3,undefined8 param_4,long
   }
   uVar7 = DAT_001061c0;
   if (*param_1 == 1) {
-    DAT_00106260 = getNumberOfReadyPlayers(param_2,param_3,param_5,&DAT_001061e0,param_8);
+    DAT_00106260 = getNumberOfReadyFd(param_2,param_3,param_5,&DAT_001061e0,param_8);
     if (DAT_00106260 == 0) {
       DAT_00106260 = 0;
       return 0;
@@ -1544,7 +1544,7 @@ int buildFdSet(long param_1,long param_2,long param_3)
 
 // WARNING: Removing unreachable block (ram,0x001023c7)
 
-int getNumberOfReadyPlayers(long param_1,undefined8 param_2,undefined8 param_3,fd_set *param_4,time_t *param_5)
+int getNumberOfReadyFd(long param_1,undefined8 param_2,undefined8 param_3,fd_set *param_4,time_t *param_5)
 
 {
   uint uVar1;

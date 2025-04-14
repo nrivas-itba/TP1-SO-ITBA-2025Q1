@@ -25,6 +25,6 @@ void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int 
 
 void dup2Fd(int from, int to);
 
-int pollWrapper(struct pollfd* pollFdArr, unsigned int nfd, int timeout);
+int getNumberOfReadyFd(int timeout, unsigned int nfd, struct pollfd* pollFdArr, time_t *timeStart);
 
 #endif

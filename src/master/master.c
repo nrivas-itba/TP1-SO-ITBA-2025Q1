@@ -298,14 +298,6 @@ void endGame(gameState_t* gameState,gameSync_t* gameSync) {
   return;
 }
 
-int getNumberOfReadyPlayers(int timeout, unsigned int playerCount, struct pollfd* pollFdArr, time_t *timeStart) {
-  int timeUntilTimeout = (timeout - difftime(time(NULL), *timeStart)) * 1000;
-  if (timeUntilTimeout < 1) {
-    return 0;
-  }
-  return pollWrapper(pollFdArr, playerCount, timeUntilTimeout);
-}
-
 int readPlayer(int fd,char *directionPtr) { //TODO es probable que se pueda simplificar. Ademas, solo lee un pipe, deberia tener un nombre generico no particular de player
   int numberOfReadedChars;
   numberOfReadedChars = read(fd,directionPtr,1);
@@ -360,7 +352,7 @@ int getNextMove(unsigned int* nextPlayerIndex, int timeout, gameState_t* gameSta
             }
             *nextPlayerIndex=((*nextPlayerIndex)+1)%gameState->playerCount;
         }
-        numberOfReadyPlayers = getNumberOfReadyPlayers(timeout, gameState->playerCount, pollFdArr, &timeStart);
+        numberOfReadyPlayers = getNumberOfReadyFd(timeout, gameState->playerCount, pollFdArr, &timeStart);
         if (numberOfReadyPlayers == 0) {
             return -1;
         }
