@@ -39,4 +39,6 @@ void closeWritePipes(unsigned int nfd,pipefd_t* pipefd);
 
 void setUpPollFdArr(unsigned int nfd, pipefd_t* pipefd, struct pollfd* pollFdArr);
 
+int readPipe(int fd,char *directionPtr);
+
 #endif

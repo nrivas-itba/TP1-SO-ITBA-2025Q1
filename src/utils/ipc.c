@@ -179,3 +179,15 @@ void setUpPollFdArr(unsigned int nfd, pipefd_t* pipefd, struct pollfd* pollFdArr
       };
   }
 }
+
+int readPipe(int fd,char *directionPtr) { //TODO es probable que se pueda simplificar. Ademas, solo lee un pipe, deberia tener un nombre generico no particular de player
+  int numberOfReadedChars;
+  numberOfReadedChars = read(fd,directionPtr,1);
+  if (numberOfReadedChars == -1) {
+    errExit("read");
+  }
+  if (numberOfReadedChars == 0) {
+    return -1;
+  }
+  return 0;
+}
