@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <sys/ioctl.h>
-//TODO Ninguno de estos define esta verificado que sea necesario. Por favor revisar si se puede sacar alguno
 
 #include "utils.h"
 #include "ipc.h"
