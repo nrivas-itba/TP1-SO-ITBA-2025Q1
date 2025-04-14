@@ -66,6 +66,14 @@ void closeMem(char* name, size_t size, void* address, int* fd){
   return;
 }
 
+void closeFd(int fd)
+{
+    if (close(fd) == -1){
+        errExit("close");
+    }
+    
+}
+
 void semInit(sem_t* sem, unsigned int value){
   if (sem_init(sem,!0,value) == -1) {
     errExit("sem_init");

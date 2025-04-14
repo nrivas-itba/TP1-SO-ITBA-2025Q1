@@ -247,7 +247,7 @@ void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int 
   snprintf(arg1,decimalLenWidth+1,ARI_SNPRINTF,width); //This may be a little overkill, another aproach would be to use itoa. But ChompChamps original uses snprintf.
   snprintf(arg2,decimalLenHeight+1,ARI_SNPRINTF,height);
   char* envp[] = {(char*)0};
-  if (execve(process,argv,envp) == -1) {
+  if (execve(process,argv,envp) == -1) { // TODO
     errExit(ARI_EXECVE);
   }
 }
@@ -277,8 +277,8 @@ void createPipes(unsigned int playerCount, pipefd_t* pipefd) {
 void closeForeignPipes(unsigned int playerId, unsigned int playerCount, pipefd_t* pipefd) {
   for (unsigned int i = 0; i < playerCount; i++) {
     if (playerId != i) {
-      close(pipefd[i].read); //TODO err exit
-      close(pipefd[i].write); //TODO err exit
+      closeFd(pipefd[i].read); 
+      closeFd(pipefd[i].write); 
     }
   }
 }
@@ -294,9 +294,9 @@ void spawnPlayerProcesses(gameState_t* gameState, char** playerPaths, pipefd_t* 
         errExit(ARI_SETUID);
       }
       closeForeignPipes(i, gameState->playerCount, pipefd);
-      close(pipefd[i].read); //TODO err exit
+      closeFd(pipefd[i].read);
       dup2(pipefd[i].write,1); //TODO err exit
-      close(pipefd[i].write); //TODO validate this, especially execve ChompChamps (6b398ab0f1be541975002579f26f509f) no valida errores de close2 ni dup2 ni execve
+      closeFd(pipefd[i].write); //We validate this, even though ChompChamps (6b398ab0f1be541975002579f26f509f) doesn't
       execveWithArgs(playerPaths[i], gameState->width, decimalLen(gameState->width), gameState->height, decimalLen(gameState->height));
     }
     else {
@@ -307,7 +307,7 @@ void spawnPlayerProcesses(gameState_t* gameState, char** playerPaths, pipefd_t* 
 
 void closeWritePipes(unsigned int playerCount,pipefd_t* pipefd) {
   for (unsigned int i = 0; i < playerCount; i++) {
-    close(pipefd[i].write); //TODO err exit
+    closeFd(pipefd[i].write); 
   }
 }
 
@@ -431,7 +431,7 @@ static inline char isDirectionInsideOfBoard(coords_t* coords, unsigned short wid
 
 
 static inline char isNewPositionEmpty(coords_t* coords, unsigned short width, int* board){
-    return isWithin(1, board[width * (coords->y) + coords->x], 9+1); //TODO unhardcode 1, 9 (min and max board values)
+    return isWithin(MIN_BOARD_VALUE, board[width * (coords->y) + coords->x], MAX_BOARD_VALUE+1);
 }
 
 char isDirectionValid(gameState_t* gameState, unsigned int playerIndex, char direction, coords_t* coords) {

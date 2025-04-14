@@ -53,6 +53,7 @@ typedef struct {
 void* createShm(char* name, size_t size, char isPublic, int* fd);
 
 void closeMem(char* name, size_t size, void* address, int* fd);
+void closeFd(int fd);
 
 void semInit(sem_t* sem, unsigned int value);
 void semDestroy(sem_t* sem);
