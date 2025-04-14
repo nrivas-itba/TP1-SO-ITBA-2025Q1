@@ -29,6 +29,7 @@
 #define ARI_PLAYER_EXIT "Player %s (%u) exited (%d) with a score of %u / %u / %u\n"
 
 #define ARI_OPTARG "w:h:d:p:v:s:t:"
+#define ARI_OPTARG_MOD "w:h:v:d:p:s:t:"
 #define ARI_WRONG_USAGE "Usage: %s [-w width] [-h height] [-d delay] [-s seed] [-v view] [-t timeout] -p player1 player2 ...\n"
 #define ARI_NO_VIEW "Info: Delay parameter ignored since there is no view.\n"
 #define ARI_NO_PLAYER "Error: At least one player must be specified using -p.\n"
@@ -56,7 +57,7 @@
 
 typedef struct {
     int delay;
-    unsigned int seed; //TODO este dato viene de atoi, q retorna int. Pero lo usa srand, q toma unsigned int :(
+    unsigned int seed;
     int timeout;
     char* view;
     char* playerPaths[MAX_PLAYERS];
@@ -85,10 +86,6 @@ void validateArgs(gameConfig_t* gameConfig, int playerCount, int width, int heig
     if (width < DEFAULT_WIDTH || height < DEFAULT_HEIGHT){
         fprintf(stderr, ARI_WRONG_BOARD_DIMENSIONS, DEFAULT_WIDTH, DEFAULT_HEIGHT, width, height);
         exit(EXIT_FAILURE);
-    }
-
-    if (gameConfig->view == NULL){
-        fprintf(stderr, ARI_NO_VIEW); //TODO this should not be printed if no -d arg was passed (this should be moved to get opt?)
     }
 
     return;
@@ -123,19 +120,19 @@ void initializeRandomBoard(gameState_t* gameState, unsigned int seed) {
 
 void copyPlayers(player_t dest[MAX_PLAYERS],player_t org[MAX_PLAYERS]){
     for(int i = 0; i<MAX_PLAYERS; i++){
-        dest[i] = org[i]; //TODO inefficient, it would be ideal to directly write the players in the shared memory.
+        dest[i] = org[i]; //OBS: inefficient, it would be ideal to directly write the players in the shared memory.
     }
 }
 
 void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
-
     int opt;
     int playerCount = 0;
     int width = DEFAULT_WIDTH;
     int height = DEFAULT_HEIGHT;
+    char isDelayDeclared = 0;
     player_t playerList[MAX_PLAYERS] = {0};
 
-    while ((opt = getopt(argc, argv, ARI_OPTARG)) != -1) {
+    while ((opt = getopt(argc, argv, ARI_OPTARG_MOD)) != -1) {
         switch (opt) {
             case 'w':
                 width = atoi(optarg);
@@ -148,6 +145,7 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
                 if (gameConfig->delay<0) {
                     gameConfig->delay=0;
                 }
+                isDelayDeclared = 1;
                 break;
             case 't':
                 gameConfig->timeout = atoi(optarg);
@@ -185,6 +183,9 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
 
     validateArgs(gameConfig, playerCount, width, height);
 
+    if (isDelayDeclared && gameConfig->view == NULL){
+      fprintf(stderr, ARI_NO_VIEW); 
+    }
 
     gameConfig->sync = createShm(GAME_SYNC, //BUG the player crashes on shm_open
         sizeof(*(gameConfig->sync)),
