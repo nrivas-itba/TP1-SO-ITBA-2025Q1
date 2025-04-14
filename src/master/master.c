@@ -93,7 +93,7 @@ void validateArgs(gameConfig_t* gameConfig, int playerCount, int width, int heig
 
 void createPlayer(char* name, player_t* player){
     //memset(dest,0,sizeof(dest[0])*MAX_PLAYERS); The chomp champs original implementation uses memset to initialize players to 0. But it is not neccesary since strncpy guarantees to write 'count' characters, filling with 0 if source is shorter than len.
-    strncpy(player->name, __xpg_basename(name), MAX_PLAYER_NAME_LEN);
+    strncpy(player->name, basename(name), MAX_PLAYER_NAME_LEN);
     player->name[MAX_PLAYER_NAME_LEN-1] = 0; //strncpy does not guarantee a null terminated string
     player->score = 0;
     player->invalidMovementRequestsCount = 0;
@@ -516,7 +516,7 @@ void waitForView(pid_t view) {
   if (waitpid(view, &statLoc, 0) == -1) {
     errExit(ARI_WAITPID);
   }
-  printf(ARI_VIEW_EXIT, WEXITSTATUS(statLoc)); //TODO Original chomp champs does not use WEXITSTATUS -- Pregunte por mail y dijo que NO (hace falta) usemos la macro
+  printf(ARI_VIEW_EXIT, statLoc); //OBS Original chomp champs does not use WEXITSTATUS -- Asked by email and was mentioned it wasn't necessary
   return;
 }
 
