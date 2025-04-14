@@ -492,7 +492,21 @@ void processMove(gameState_t* gameState, gameSync_t* gameSync, unsigned int play
   }
 }
 
-void game(gameConfig_t* gameConfig, struct pollfd* pollFdArr) {
+void setUpPollFdArr(unsigned int playerCount, pipefd_t* pipefd, struct pollfd* pollFdArr){
+  for(unsigned int i = 0; i<playerCount; i++){
+      pollFdArr[i] = (struct pollfd){
+          .fd = pipefd[i].read,
+          .events = POLLIN,
+          .revents = 0 //Important because we read this value before calling poll
+      };
+  }
+}
+
+void game(gameConfig_t* gameConfig, pipefd_t* pipefd) {
+  struct pollfd pollFdArr[MAX_PLAYERS];
+
+  setUpPollFdArr(gameConfig->state->playerCount, pipefd, pollFdArr);
+
   unsigned int nextPlayerIndex = 0;
   char direction;
   time_t timeStart = time(NULL);
@@ -573,16 +587,6 @@ void unconfigureGame(gameConfig_t* gameConfig){
     );
 }
 
-void setUpPollFdArr(unsigned int playerCount, pipefd_t* pipefd, struct pollfd* pollFdArr){
-    for(unsigned int i = 0; i<playerCount; i++){
-        pollFdArr[i] = (struct pollfd){
-            .fd = pipefd[i].read,
-            .events = POLLIN,
-            .revents = 0 //Important because we read this value before calling poll
-        };
-    }
-}
-
 int main(int argc, char* argv[]){
     // printf("%d\n\n",sizeof(gameConfig_t));
     // char* temp[sizeof(gameState_t) + (width * height)*sizeof(int)];
@@ -613,15 +617,13 @@ int main(int argc, char* argv[]){
 
     createPipes(gameConfig.state->playerCount, pipefd);
 
-    struct pollfd pollFdArr[MAX_PLAYERS]; //TODO el master no necesita esto, se deberia mover a la parte de procesado de jugadores
 
-    setUpPollFdArr(gameConfig.state->playerCount, pipefd, pollFdArr);
 
     spawnPlayerProcesses(gameConfig.state, gameConfig.playerPaths, pipefd);
 
     closeWritePipes(gameConfig.state->playerCount, pipefd); //I dont know why original chomp champs separates this and does not make it inside spawn players.
 
-    game(&gameConfig, pollFdArr);
+    game(&gameConfig, pipefd);
 
     if (viewPid > 0){
         waitForView(viewPid);
