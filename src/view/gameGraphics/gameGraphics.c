@@ -50,10 +50,10 @@ int printPlayerStats(player_t* playerList, unsigned int playerCount, const scree
     moveCursorScreen(&screen,0,0);
     printf(TABLE_FORMAT_HEADER, NAME, SCORE, VALID_REQUESTS, INVALID_REQUESTS, IS_BLOCKED);
 
-    for (int fila = 0; fila < playerCount; fila++){ //TODO codigo en español
-        moveCursorScreen(&screen, 0, 1+fila);
-        printf("%s",getPlayerColor(fila));
-        printf(TABLE_FORMAT_ROW, playerList[fila].name, NUMBER_FITS(playerList[fila].score, SCORE_LEN), NUMBER_FITS(playerList[fila].validMovementRequestsCount, VALID_REQUESTS_LEN), NUMBER_FITS(playerList[fila].invalidMovementRequestsCount, INVALID_REQUESTS_LEN), (playerList[fila].isBlocked ? BLOCKED_PLAYER : NON_BLOCKED_PLAYER)); 
+    for (int row = 0; row < playerCount; row++){ //TODO codigo en español
+        moveCursorScreen(&screen, 0, 1+row);
+        printf("%s",getPlayerColor(row));
+        printf(TABLE_FORMAT_ROW, playerList[row].name, NUMBER_FITS(playerList[row].score, SCORE_LEN), NUMBER_FITS(playerList[row].validMovementRequestsCount, VALID_REQUESTS_LEN), NUMBER_FITS(playerList[row].invalidMovementRequestsCount, INVALID_REQUESTS_LEN), (playerList[row].isBlocked ? BLOCKED_PLAYER : NON_BLOCKED_PLAYER)); 
         printf("%s",getPlayerColor(-1));
     }
 
@@ -86,18 +86,18 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], p
 
     // Upper boarder
    char numberStr[2] = {0};
-   for (int fila = 0; fila < gameHeight; fila++){
-        for (int columna = 0; columna < gameWidth; columna++){
-            int boardValue = ((int*)board)[fila*gameWidth+columna];//board[columna][fila];
+   for (int row = 0; row < gameHeight; row++){
+        for (int column = 0; column < gameWidth; column++){
+            int boardValue = ((int*)board)[row*gameWidth+column];//board[column][row];
             if (boardValue > 0){
                 numberStr[0] = '0'+(boardValue%10);
-                printBlock(&screen, columna, fila, yMult, xMult, " ", numberStr);
+                printBlock(&screen, column, row, yMult, xMult, " ", numberStr);
             }
             else {
                 printf("%s", getPlayerColor(-boardValue));
-                isThisAPlayerHead(playerList, boardValue, columna, fila) ?
-                    printBlock(&screen, columna, fila, yMult, xMult, HEAD_CHAR, HEAD_SPECIAL_CHAR):
-                    printBlock(&screen, columna, fila, yMult, xMult, BODY_CHAR, BODY_CHAR); //isThisAPlayerHead(playerList, boardValue, columna, fila) ? "▓" : "▓"
+                isThisAPlayerHead(playerList, boardValue, column, row) ?
+                    printBlock(&screen, column, row, yMult, xMult, HEAD_CHAR, HEAD_SPECIAL_CHAR):
+                    printBlock(&screen, column, row, yMult, xMult, BODY_CHAR, BODY_CHAR); //isThisAPlayerHead(playerList, boardValue, column, row) ? "▓" : "▓"
                 printf("%s", getPlayerColor(-1));
             }
         }

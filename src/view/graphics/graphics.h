@@ -50,7 +50,7 @@ screen_t buildScreenFromScreen(const screen_t* screen, int xOffset, int yOffset)
 int moveCursorScreen(const screen_t* screen, int x, int y);
 
 void printBorder(const screen_t* screen, const int boardWidth, const int boardHeight);
-void printBlock(const screen_t* screen, int columna, int fila, int yMult, int xMult, char* str, char* strMiddle);//TODO codigo en español
+void printBlock(const screen_t* screen, int xColumn, int yRow, int yMult, int xMult, char* str, char* strMiddle);
 int checkPrintable(screen_t* screen, int width, int tableHeight, char* errStr, size_t errStrLen);
 
 const char* getPlayerColor(unsigned int playerIndex);

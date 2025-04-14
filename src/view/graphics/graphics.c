@@ -100,11 +100,11 @@ void printBorder(const screen_t* screen, const int boardWidth, const int boardHe
     printCorners(screen, boardWidth, boardHeight);
 }
 
-void printBlock(const screen_t* screen, int columna, int fila, int yMult, int xMult, char* str, char* strMiddle){
-    for(int filaInner = 0; filaInner<yMult; filaInner++){
-        for(int columnaInner = 0; columnaInner<xMult;columnaInner++){
-            moveCursorScreen(screen,columna*xMult+columnaInner,fila*yMult+filaInner);
-            if(columnaInner==xMult/2 && filaInner == yMult/2){
+void printBlock(const screen_t* screen, int column, int row, int yMult, int xMult, char* str, char* strMiddle){
+    for(int rowInner = 0; rowInner<yMult; rowInner++){
+        for(int columnInner = 0; columnInner<xMult;columnInner++){
+            moveCursorScreen(screen,column*xMult+columnInner,row*yMult+rowInner);
+            if(columnInner==xMult/2 && rowInner == yMult/2){
                 printf("%s",strMiddle);
             }
             else{
