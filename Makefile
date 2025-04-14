@@ -43,8 +43,6 @@ run_valgrind:
 	make all && sleep 1 && valgrind $(call get_master) -d $(d) -t $(t) -v $(view_O) -p $$(for i in $$(seq 1 $(p)); do echo -n "$(PLAYER10_O) "; done)
 
 
-# Make testee todo con valgrind y pvs studio
-
 pvs: $(CREDENTIALS)
 	make clean
 	pvs-studio-analyzer trace -- make
