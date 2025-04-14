@@ -8,6 +8,8 @@
 #include <semaphore.h>
 #include <unistd.h>
 
+#include "ari.h"
+
 #define MODE_RW0_R00_R00 S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH
 #define MODE_RW0_RW0_RW0 MODE_RW0_R00_R00 | S_IWGRP | S_IWOTH
 
@@ -106,3 +108,16 @@ void sPost(sem_t* sem){
         errExit("sem_post");
     }
 }
+
+void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int height, unsigned int decimalLenHeight){
+    char arg1[decimalLenWidth+1];
+    char arg2[decimalLenHeight+1];
+    char* argv[] = {process, arg1, arg2,(char*)0};
+  
+    snprintf(arg1,decimalLenWidth+1,ARI_SNPRINTF,width); //This may be a little overkill, another aproach would be to use itoa. But ChompChamps original uses snprintf.
+    snprintf(arg2,decimalLenHeight+1,ARI_SNPRINTF,height);
+    char* envp[] = {(char*)0};
+    if (execve(process,argv,envp) == -1) { // TODO
+      errExit(ARI_EXECVE);
+    }
+  }

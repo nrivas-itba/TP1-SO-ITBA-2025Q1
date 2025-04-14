@@ -20,4 +20,6 @@ void semDestroy(sem_t* sem);
 void sWait(sem_t* sem);
 void sPost(sem_t* sem);
 
+void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int height, unsigned int decimalLenHeight);
+
 #endif

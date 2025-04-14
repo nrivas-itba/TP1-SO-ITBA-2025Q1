@@ -14,6 +14,7 @@
 #include <poll.h> //for poll
 #include "../utils/utils.h"
 #include "../utils/ipc.h"
+#include "../utils/ari.h"
 
 #define DEFAULT_WIDTH 10
 #define DEFAULT_HEIGHT 10
@@ -27,36 +28,6 @@
 #define MAX_DIRECTION 7
 
 #define MIN_PLAYERS 1
-
-#define ARI_VIEW_EXIT "View exited (%d)\n"
-#define ARI_PLAYER_EXIT "Player %s (%u) exited (%d) with a score of %u / %u / %u\n"
-
-#define ARI_OPTARG "w:h:d:p:v:s:t:"
-#define ARI_OPTARG_MOD "w:h:v:d:p:s:t:"
-#define ARI_WRONG_USAGE "Usage: %s [-w width] [-h height] [-d delay] [-s seed] [-v view] [-t timeout] -p player1 player2 ...\n"
-#define ARI_NO_VIEW "Info: Delay parameter ignored since there is no view.\n"
-#define ARI_NO_PLAYER "Error: At least one player must be specified using -p.\n"
-#define ARI_TOO_MANY_PLAYERS "Error: At most %d players can be specified using -p.\n"
-#define ARI_WRONG_BOARD_DIMENSIONS "Error: Minimal board dimensions: %dx%d. Given %dx%d\n"
-
-#define ARI_CLEAR "clear"
-#define ARI_WIDTH "width: %d\n"
-#define ARI_HEIGHT "height: %d\n"
-#define ARI_DELAY "delay: %u\n"
-#define ARI_TIMEOUT "timeout: %u\n"
-#define ARI_SEED "seed: %u\n"
-#define ARI_VIEW "view: %s\n"
-#define ARI_NUM_PLAYERS "num_players: %u\n"
-#define ARI_PLAYER_NAME_STRING_FORMAT "  %s\n"
-
-#define ARI_PIPE "pipe"
-#define ARI_EXECVE "execve"
-#define ARI_FORK "fork"
-#define ARI_SETUID "setuid"
-#define ARI_WAITPID "waitpid"
-#define ARI_WAIT "wait"
-
-#define ARI_SNPRINTF "%d"
 
 typedef struct {
     int delay;
@@ -241,19 +212,6 @@ void spawnPlayers(gameState_t* gameState){
       gameState->playerList[i].y = calculatePosition(gameState->height, 0, i, gameState->playerCount);
       gameState->board[gameState->width * gameState->playerList[i].y + gameState->playerList[i].x] = -i;
     }
-}
-
-void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int height, unsigned int decimalLenHeight){
-  char arg1[decimalLenWidth+1];
-  char arg2[decimalLenHeight+1];
-  char* argv[] = {process, arg1, arg2,(char*)0};
-
-  snprintf(arg1,decimalLenWidth+1,ARI_SNPRINTF,width); //This may be a little overkill, another aproach would be to use itoa. But ChompChamps original uses snprintf.
-  snprintf(arg2,decimalLenHeight+1,ARI_SNPRINTF,height);
-  char* envp[] = {(char*)0};
-  if (execve(process,argv,envp) == -1) { // TODO
-    errExit(ARI_EXECVE);
-  }
 }
 
 pid_t forkToView(char* view, unsigned int width, unsigned int height) {
