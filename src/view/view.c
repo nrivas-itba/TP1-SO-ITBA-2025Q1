@@ -21,9 +21,10 @@ void printingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int play
         isGameOver = game->state->isOver;
         sPost(&(game->sync->printDone)); //Tell the master that we have finished printing.
         screen_t screen = buildScreen(0,0);
-        screen = modifyScreen(screen, 0, printPlayerStats(playerList, playerCount, screen));
-        screen = modifyScreen(screen, 0, printGame(gameWidth, gameHeight, board, playerList, screen));
-        moveCursorScreen(screen,0,0);
+        screen = buildScreenFromScreen(&screen, 0, printPlayerStats(playerList, playerCount, &screen));
+        screen = buildScreenFromScreen(&screen, 0, printGame(gameWidth, gameHeight, board, playerList, &screen));
+        moveCursorScreen(&screen,0,0);
+        fflush(stdout);
 
         if(!isGameOver){
             sWait(&(game->sync->printNeeded)); //Waint until master wants to print

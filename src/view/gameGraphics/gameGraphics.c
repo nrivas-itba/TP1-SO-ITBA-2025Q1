@@ -35,8 +35,9 @@
     Prints the player stats table
     Returns how many lines where printed.
 */
-int printPlayerStats(player_t* playerList, unsigned int playerCount, screen_t screen){
+int printPlayerStats(player_t* playerList, unsigned int playerCount, const screen_t* screenOrg){
     // TODO aux arr with indexes -> sort with criteria (complex)
+    screen_t screen = *screenOrg;
     const int tableHeight = 3+playerCount;
     const int tableWidth = 2+TABLE_FORMAT_LEN;
     
@@ -46,11 +47,11 @@ int printPlayerStats(player_t* playerList, unsigned int playerCount, screen_t sc
     }
 
 
-    moveCursorScreen(screen,0,0);
+    moveCursorScreen(&screen,0,0);
     printf(TABLE_FORMAT_HEADER, NAME, SCORE, VALID_REQUESTS, INVALID_REQUESTS, IS_BLOCKED);
 
     for (int fila = 0; fila < playerCount; fila++){ //TODO codigo en español
-        moveCursorScreen(screen, 0, 1+fila);
+        moveCursorScreen(&screen, 0, 1+fila);
         printf("%s",getPlayerColor(fila));
         printf(TABLE_FORMAT_ROW, playerList[fila].name, NUMBER_FITS(playerList[fila].score, SCORE_LEN), NUMBER_FITS(playerList[fila].validMovementRequestsCount, VALID_REQUESTS_LEN), NUMBER_FITS(playerList[fila].invalidMovementRequestsCount, INVALID_REQUESTS_LEN), (playerList[fila].isBlocked ? BLOCKED_PLAYER : NON_BLOCKED_PLAYER)); 
         printf("%s",getPlayerColor(-1));
@@ -68,7 +69,8 @@ static inline char isThisAPlayerHead(player_t* playerList, int negativePlayerInd
     Prints the game
     Returns how many lines where printed.
 */
-int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], player_t* playerList, screen_t screen){
+int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], player_t* playerList, const screen_t* screenOrg){
+    screen_t screen = *screenOrg;
     int xMult = (screen.xWidth-2)/gameWidth;
     int yMult = (screen.yHeight-2)/gameHeight;
     int xRealWidth = gameWidth*xMult + 2;
@@ -89,13 +91,13 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], p
             int boardValue = ((int*)board)[fila*gameWidth+columna];//board[columna][fila];
             if (boardValue > 0){
                 numberStr[0] = '0'+(boardValue%10);
-                printBlock(screen, columna, fila, yMult, xMult, " ", numberStr);
+                printBlock(&screen, columna, fila, yMult, xMult, " ", numberStr);
             }
             else {
                 printf("%s", getPlayerColor(-boardValue));
                 isThisAPlayerHead(playerList, boardValue, columna, fila) ?
-                    printBlock(screen, columna, fila, yMult, xMult, HEAD_CHAR, HEAD_SPECIAL_CHAR):
-                    printBlock(screen, columna, fila, yMult, xMult, BODY_CHAR, BODY_CHAR); //isThisAPlayerHead(playerList, boardValue, columna, fila) ? "▓" : "▓"
+                    printBlock(&screen, columna, fila, yMult, xMult, HEAD_CHAR, HEAD_SPECIAL_CHAR):
+                    printBlock(&screen, columna, fila, yMult, xMult, BODY_CHAR, BODY_CHAR); //isThisAPlayerHead(playerList, boardValue, columna, fila) ? "▓" : "▓"
                 printf("%s", getPlayerColor(-1));
             }
         }

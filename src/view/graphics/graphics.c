@@ -63,15 +63,15 @@ screen_t buildScreen(int xOffset,int yOffset){
     };
 }
 
-screen_t modifyScreen(screen_t screen, int xOffset, int yOffset){
-    return buildScreen(screen.xOffset + xOffset, screen.yOffset + yOffset);
+screen_t buildScreenFromScreen(const screen_t* screen, int xOffset, int yOffset){
+    return buildScreen(screen->xOffset + xOffset, screen->yOffset + yOffset);
 }
 
-int moveCursorScreen(screen_t screen, int x, int y){
-    return printf(MOVE_CURSOR_FORMAT, screen.yOffset+y+1, screen.xOffset+x+1); //+1 offset because screen starts at 1,1
+int moveCursorScreen(const screen_t* screen, int x, int y){
+    return printf(MOVE_CURSOR_FORMAT, screen->yOffset+y+1, screen->xOffset+x+1); //+1 offset because screen starts at 1,1
 }
 
-static inline void printCorners(screen_t screen, const int boardWidth, const int boardHeight){
+static inline void printCorners(const screen_t* screen, const int boardWidth, const int boardHeight){
     moveCursorScreen(screen, 0, 0);
     printf("╭");
     moveCursorScreen(screen, boardWidth-1, 0);
@@ -83,7 +83,7 @@ static inline void printCorners(screen_t screen, const int boardWidth, const int
     return;
 }
 
-void printBorder(screen_t screen, const int boardWidth, const int boardHeight){
+void printBorder(const screen_t* screen, const int boardWidth, const int boardHeight){
     for (int i = 1; i < boardWidth-1; i++){
         moveCursorScreen(screen, i, 0);
         printf("═");
@@ -100,7 +100,7 @@ void printBorder(screen_t screen, const int boardWidth, const int boardHeight){
     printCorners(screen, boardWidth, boardHeight);
 }
 
-void printBlock(screen_t screen, int columna, int fila, int yMult, int xMult, char* str, char* strMiddle){
+void printBlock(const screen_t* screen, int columna, int fila, int yMult, int xMult, char* str, char* strMiddle){
     for(int filaInner = 0; filaInner<yMult; filaInner++){
         for(int columnaInner = 0; columnaInner<xMult;columnaInner++){
             moveCursorScreen(screen,columna*xMult+columnaInner,fila*yMult+filaInner);
@@ -122,16 +122,16 @@ int checkPrintable(screen_t* screen, int width, int tableHeight, char* errStr, s
     if(screen->xWidth < width || screen->yHeight <  tableHeight){
         int ret = 0;
         if(screen->yHeight >= 1 && screen->xWidth >= errStrLen){
-            moveCursorScreen(*screen,0,0);
+            moveCursorScreen(screen,0,0);
             printf("%s",errStr);
             ret = -1;
         }
         fflush(stderr);
         return ret;
     }
-    *screen = modifyScreen(*screen,screen->xWidth/2 - width/2, 0);
-    printBorder(*screen,width,tableHeight);
-    *screen = modifyScreen(*screen, 1, 1);
+    *screen = buildScreenFromScreen(screen,screen->xWidth/2 - width/2, 0);
+    printBorder(screen,width,tableHeight);
+    *screen = buildScreenFromScreen(screen, 1, 1);
     return 1;
 }
 

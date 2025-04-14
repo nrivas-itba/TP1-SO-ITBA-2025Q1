@@ -46,11 +46,11 @@ typedef struct {
 signalHandler_t setGraphicsSignalHandler();
 void deleteGraphicsSignalHandler(signalHandler_t signalNumber);
 screen_t buildScreen(int xOffset, int yOffset);
-screen_t modifyScreen(screen_t screen, int xOffset, int yOffset); //TODO deberia ser screen_t*
-int moveCursorScreen(screen_t screen, int x, int y);
+screen_t buildScreenFromScreen(const screen_t* screen, int xOffset, int yOffset); //TODO deberia ser screen_t*
+int moveCursorScreen(const screen_t* screen, int x, int y);
 
-void printBorder(screen_t screen, const int boardWidth, const int boardHeight); //TODO deberia ser screen_t*
-void printBlock(screen_t screen, int columna, int fila, int yMult, int xMult, char* str, char* strMiddle); //TODO deberia ser screen_t* //TODO codigo en español
+void printBorder(const screen_t* screen, const int boardWidth, const int boardHeight); //TODO deberia ser screen_t*
+void printBlock(const screen_t* screen, int columna, int fila, int yMult, int xMult, char* str, char* strMiddle); //TODO deberia ser screen_t* //TODO codigo en español
 int checkPrintable(screen_t* screen, int width, int tableHeight, char* errStr, size_t errStrLen);
 
 const char* getPlayerColor(unsigned int playerIndex);
