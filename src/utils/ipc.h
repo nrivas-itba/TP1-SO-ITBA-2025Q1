@@ -3,6 +3,7 @@
 
 #include <semaphore.h>
 #include <stdio.h>
+#include <poll.h>
 
 #define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
 } while (0)
@@ -23,5 +24,7 @@ void sPost(sem_t* sem);
 void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int height, unsigned int decimalLenHeight);
 
 void dup2Fd(int from, int to);
+
+int pollWrapper(struct pollfd* pollFdArr, unsigned int nfd, int timeout);
 
 #endif

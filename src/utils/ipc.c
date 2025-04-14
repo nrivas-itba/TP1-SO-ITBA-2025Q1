@@ -7,6 +7,7 @@
 #include <sys/mman.h>
 #include <semaphore.h>
 #include <unistd.h>
+#include <poll.h>
 
 #include "ari.h"
 
@@ -127,4 +128,12 @@ void dup2Fd(int from, int to){
     if(dup2(from,to) == -1){
         errExit("dup2");
     }
+}
+
+int pollWrapper(struct pollfd* pollFdArr, unsigned int nfd, int timeout){
+    int ret = poll(pollFdArr, nfd, timeout);
+    if (ret == -1) {
+      errExit("poll");
+    }
+    return ret;
 }

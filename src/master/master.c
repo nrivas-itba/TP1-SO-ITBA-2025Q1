@@ -298,19 +298,12 @@ void endGame(gameState_t* gameState,gameSync_t* gameSync) {
   return;
 }
 
-int getNumberOfReadyPlayers(int timeout, unsigned int playerCount, struct pollfd* pollFdArr, time_t *timeStart) { //TODO es probable que se pueda simplificar. Ademas, solo lee un pipe, deberia tener un nombre generico no particular de player
-  int ret;
+int getNumberOfReadyPlayers(int timeout, unsigned int playerCount, struct pollfd* pollFdArr, time_t *timeStart) {
   int timeUntilTimeout = (timeout - difftime(time(NULL), *timeStart)) * 1000;
   if (timeUntilTimeout < 1) {
-    ret = 0;
+    return 0;
   }
-  else {
-    ret = poll(pollFdArr, playerCount, timeUntilTimeout);
-    if (ret == -1) {
-      errExit("poll");
-    }
-  }
-  return ret;
+  return pollWrapper(pollFdArr, playerCount, timeUntilTimeout);
 }
 
 int readPlayer(int fd,char *directionPtr) { //TODO es probable que se pueda simplificar. Ademas, solo lee un pipe, deberia tener un nombre generico no particular de player
