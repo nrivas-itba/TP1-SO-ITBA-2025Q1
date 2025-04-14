@@ -146,3 +146,20 @@ int getNumberOfReadyFd(int timeout, unsigned int nfd, struct pollfd* pollFdArr, 
   }
   return pollWrapper(pollFdArr, nfd, timeUntilTimeout);
 }
+
+void createPipes(unsigned int nfd, pipefd_t* pipefd) {
+  for(unsigned int i = 0; i<nfd; i++){
+    if(pipe((int*)&(pipefd[i])) == -1){
+        errExit(ARI_PIPE);
+    }
+  }
+}
+
+void closeForeignPipes(unsigned int excludedIndex, unsigned int nfd, pipefd_t* pipefd) {
+  for (unsigned int i = 0; i < nfd; i++) {
+    if (excludedIndex != i) {
+      closeFd(pipefd[i].read); 
+      closeFd(pipefd[i].write); 
+    }
+  }
+}

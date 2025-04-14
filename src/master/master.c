@@ -42,11 +42,6 @@ typedef struct {
 } gameConfig_t;
 
 typedef struct {
-    int read;
-    int write;
-} pipefd_t;
-
-typedef struct {
     unsigned int x;
     unsigned int y;
 } coords_t;
@@ -226,23 +221,6 @@ pid_t forkToView(char* view, unsigned int width, unsigned int height) {
     execveWithArgs(view, width, decimalLen(width), height, decimalLen(height));
   }
   return pid;
-}
-
-void createPipes(unsigned int playerCount, pipefd_t* pipefd) {
-  for(unsigned int i = 0; i<playerCount; i++){
-    if(pipe((int*)&(pipefd[i])) == -1){
-        errExit(ARI_PIPE);
-    }
-  }
-}
-
-void closeForeignPipes(unsigned int playerId, unsigned int playerCount, pipefd_t* pipefd) {
-  for (unsigned int i = 0; i < playerCount; i++) {
-    if (playerId != i) {
-      closeFd(pipefd[i].read); 
-      closeFd(pipefd[i].write); 
-    }
-  }
 }
 
 void spawnPlayerProcesses(gameState_t* gameState, char** playerPaths, pipefd_t* pipefd){

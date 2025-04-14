@@ -8,6 +8,11 @@
 #define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
 } while (0)
 
+typedef struct {
+    int read;
+    int write;
+} pipefd_t;
+
 void* createShm(char* name, size_t size, char isPublic, int* fd);
 
 void* openMem(char* name, size_t size, char readOnly, int* fd);
@@ -26,5 +31,8 @@ void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int 
 void dup2Fd(int from, int to);
 
 int getNumberOfReadyFd(int timeout, unsigned int nfd, struct pollfd* pollFdArr, time_t *timeStart);
+
+void createPipes(unsigned int nfd, pipefd_t* pipefd);
+void closeForeignPipes(unsigned int excludedIndex, unsigned int nfd, pipefd_t* pipefd);
 
 #endif
