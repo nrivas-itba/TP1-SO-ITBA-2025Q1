@@ -169,3 +169,13 @@ void closeWritePipes(unsigned int nfd,pipefd_t* pipefd) {
     closeFd(pipefd[i].write); 
   }
 }
+
+void setUpPollFdArr(unsigned int nfd, pipefd_t* pipefd, struct pollfd* pollFdArr){
+  for(unsigned int i = 0; i<nfd; i++){
+      pollFdArr[i] = (struct pollfd){
+          .fd = pipefd[i].read,
+          .events = POLLIN,
+          .revents = 0 //Important because we read this value before calling poll
+      };
+  }
+}

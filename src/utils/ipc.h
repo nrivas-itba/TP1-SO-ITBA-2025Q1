@@ -37,4 +37,6 @@ void closeForeignPipes(unsigned int excludedIndex, unsigned int nfd, pipefd_t* p
 
 void closeWritePipes(unsigned int nfd,pipefd_t* pipefd);
 
+void setUpPollFdArr(unsigned int nfd, pipefd_t* pipefd, struct pollfd* pollFdArr);
+
 #endif

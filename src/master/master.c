@@ -408,16 +408,6 @@ void processMove(gameState_t* gameState, gameSync_t* gameSync, unsigned int play
   }
 }
 
-void setUpPollFdArr(unsigned int playerCount, pipefd_t* pipefd, struct pollfd* pollFdArr){
-  for(unsigned int i = 0; i<playerCount; i++){
-      pollFdArr[i] = (struct pollfd){
-          .fd = pipefd[i].read,
-          .events = POLLIN,
-          .revents = 0 //Important because we read this value before calling poll
-      };
-  }
-}
-
 void game(gameConfig_t* gameConfig, pipefd_t* pipefd) {
   struct pollfd pollFdArr[MAX_PLAYERS];
 
