@@ -121,3 +121,10 @@ void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int 
       errExit(ARI_EXECVE);
     }
   }
+
+
+void dup2Fd(int from, int to){
+    if(dup2(from,to) == -1){
+        errExit("dup2");
+    }
+}

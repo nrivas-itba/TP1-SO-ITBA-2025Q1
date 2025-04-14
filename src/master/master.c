@@ -257,7 +257,7 @@ void spawnPlayerProcesses(gameState_t* gameState, char** playerPaths, pipefd_t* 
       }
       closeForeignPipes(i, gameState->playerCount, pipefd);
       closeFd(pipefd[i].read);
-      dup2(pipefd[i].write,1); //TODO err exit
+      dup2Fd(pipefd[i].write,1);
       closeFd(pipefd[i].write); //We validate this, even though ChompChamps (6b398ab0f1be541975002579f26f509f) doesn't
       execveWithArgs(playerPaths[i], gameState->width, decimalLen(gameState->width), gameState->height, decimalLen(gameState->height));
     }

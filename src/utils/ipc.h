@@ -22,4 +22,6 @@ void sPost(sem_t* sem);
 
 void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int height, unsigned int decimalLenHeight);
 
+void dup2Fd(int from, int to);
+
 #endif
