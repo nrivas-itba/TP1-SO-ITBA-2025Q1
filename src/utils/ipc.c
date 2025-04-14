@@ -163,3 +163,9 @@ void closeForeignPipes(unsigned int excludedIndex, unsigned int nfd, pipefd_t* p
     }
   }
 }
+
+void closeWritePipes(unsigned int nfd,pipefd_t* pipefd) {
+  for (unsigned int i = 0; i < nfd; i++) {
+    closeFd(pipefd[i].write); 
+  }
+}

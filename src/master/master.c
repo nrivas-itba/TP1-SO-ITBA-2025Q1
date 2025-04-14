@@ -245,12 +245,6 @@ void spawnPlayerProcesses(gameState_t* gameState, char** playerPaths, pipefd_t* 
   }
 }
 
-void closeWritePipes(unsigned int playerCount,pipefd_t* pipefd) {
-  for (unsigned int i = 0; i < playerCount; i++) {
-    closeFd(pipefd[i].write); 
-  }
-}
-
 void askViewToPrint(int delay,gameSync_t* gameSync) {
   sPost(&(gameSync->printNeeded));
   sWait(&(gameSync->printDone)); //ChompChamps (6b398ab0f1be541975002579f26f509f) does not check sem errors, but we check them.

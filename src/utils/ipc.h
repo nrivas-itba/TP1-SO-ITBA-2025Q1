@@ -35,4 +35,6 @@ int getNumberOfReadyFd(int timeout, unsigned int nfd, struct pollfd* pollFdArr, 
 void createPipes(unsigned int nfd, pipefd_t* pipefd);
 void closeForeignPipes(unsigned int excludedIndex, unsigned int nfd, pipefd_t* pipefd);
 
+void closeWritePipes(unsigned int nfd,pipefd_t* pipefd);
+
 #endif
