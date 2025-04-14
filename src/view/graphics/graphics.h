@@ -27,24 +27,10 @@ CSI 6n	DSR	Device Status Report	Reports the cursor position (CPR) by transmittin
 #include <stdio.h>
 //TODO esto es movimiento ABSOLUTO, tamb seria facil implementar movimiento RELATIVO (creo q este todo no es necesario, creo q no necesitamos movimiento relativo) 
 //TODO macros solo deberian generar strings, no ejecutar codigo. Si se quiere ejecutar codigo, meterlo en funcion
-#define MOVE_CURSOR_FORMAT "\033[%d;%dH"
-#define COLOR(R,G,B) "\033[38;2;" R ";" G ";" B "m"
 
-#define ERRASE_IN_DISPLAY "\033[2J"
 #define ENABLE_ALTERNATIVE_SCREEN_BUFFER "\033[?1049h"
 #define DISABLE_ALTERNATIVE_SCREEN_BUFFER "\033[?1049l"
 
-#define WHITE   COLOR("255", "255", "255")
-
-#define RED     COLOR("255", "0", "0")
-#define GREEN   COLOR("0", "255", "0")
-#define BLUE    COLOR("0", "0", "255")
-#define YELLOW  COLOR("255", "255", "0")
-#define MAGENTA COLOR("255", "0", "255")
-#define CYAN    COLOR("0", "255", "255")
-#define ORANGE  COLOR("255", "165", "0")
-#define PURPLE  COLOR("128", "0", "128")
-#define HOTPINK COLOR("255", "105", "180")
 
 typedef struct {
     int xWidth;
@@ -64,7 +50,9 @@ screen_t modifyScreen(screen_t screen, int xOffset, int yOffset); //TODO deberia
 int moveCursorScreen(screen_t screen, int x, int y);
 
 void printBorder(screen_t screen, const int boardWidth, const int boardHeight); //TODO deberia ser screen_t*
-void printBlock(screen_t screen, int columna, int fila, int yMult, int xMult, char* str, char* strMiddle); //TODO deberia ser screen_t*
+void printBlock(screen_t screen, int columna, int fila, int yMult, int xMult, char* str, char* strMiddle); //TODO deberia ser screen_t* //TODO codigo en español
 int checkPrintable(screen_t* screen, int width, int tableHeight, char* errStr, size_t errStrLen);
+
+const char* getPlayerColor(unsigned int playerIndex);
 
 #endif

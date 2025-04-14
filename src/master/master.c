@@ -20,6 +20,9 @@
 #define DEFAULT_TIMEOUT 10
 #define DEFAULT_SEED time(NULL)
 
+#define MAX_BOARD_VALUE 9
+#define MIN_BOARD_VALUE 1
+
 #define MIN_PLAYERS 1
 
 #define ARI_VIEW_EXIT "View exited (%d)\n"
@@ -56,7 +59,7 @@ typedef struct {
     unsigned int seed; //TODO este dato viene de atoi, q retorna int. Pero lo usa srand, q toma unsigned int :(
     int timeout;
     char* view;
-    char* playerPaths[9];
+    char* playerPaths[MAX_PLAYERS];
     gameState_t* state;
     gameSync_t* sync;
     int stateFd;
@@ -114,7 +117,7 @@ void initializeGameSync(gameSync_t* gameSync){
 void initializeRandomBoard(gameState_t* gameState, unsigned int seed) {
   srand(seed);
   for(unsigned int i = 0; i < gameState->height * gameState->width; i++){
-    gameState->board[i] = (rand() % 9) + 1; //TODO unhardcode 1, 9 (min and max board values)
+    gameState->board[i] = (rand() % MAX_BOARD_VALUE) + MIN_BOARD_VALUE;
   }
 }
 

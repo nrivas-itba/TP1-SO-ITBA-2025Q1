@@ -1,4 +1,3 @@
-
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdlib.h>
@@ -8,6 +7,27 @@
 #include "../../utils/utils.h"
 #include "graphics.h"
 #include <signal.h>
+
+
+#define MOVE_CURSOR_FORMAT "\033[%d;%dH"
+#define COLOR(R,G,B) "\033[38;2;" R ";" G ";" B "m"
+
+#define ERRASE_IN_DISPLAY "\033[2J"
+
+
+#define WHITE   COLOR("255", "255", "255")
+
+#define RED     COLOR("255", "0", "0")
+#define GREEN   COLOR("0", "255", "0")
+#define BLUE    COLOR("0", "0", "255")
+#define YELLOW  COLOR("255", "255", "0")
+#define MAGENTA COLOR("255", "0", "255")
+#define CYAN    COLOR("0", "255", "255")
+#define ORANGE  COLOR("255", "165", "0")
+#define PURPLE  COLOR("128", "0", "128")
+#define HOTPINK COLOR("255", "105", "180")
+
+
 void signalHandlerFunction(int signalNumber){
   printf(ERRASE_IN_DISPLAY);
   fflush(stdout);
@@ -112,4 +132,19 @@ int checkPrintable(screen_t* screen, int width, int tableHeight, char* errStr, s
     printBorder(*screen,width,tableHeight);
     *screen = modifyScreen(*screen, 1, 1);
     return 1;
+}
+
+const char* getPlayerColor(unsigned int playerIndex){
+    static const char*  playerColors[] = {
+        RED,
+        GREEN,
+        BLUE,
+        CYAN,
+        MAGENTA,
+        YELLOW,
+        ORANGE,
+        PURPLE,
+        HOTPINK
+    };
+    return playerIndex < (sizeof(playerColors)/sizeof(playerColors[0])) ? playerColors[playerIndex] : WHITE;
 }
