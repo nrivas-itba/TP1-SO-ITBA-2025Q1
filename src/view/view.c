@@ -6,6 +6,7 @@
 #include <string.h> //for mem cpy
 #include <semaphore.h>
 #include "../utils/utils.h"
+#include "../utils/ipc.h"
 #include "graphics/graphics.h"
 #include "gameGraphics/gameGraphics.h"
 

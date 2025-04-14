@@ -1,10 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
-
 #include <semaphore.h>
-
-#define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
-                                   } while (0)
 
 #define MAX_PLAYERS 9
 
@@ -50,18 +46,7 @@ typedef struct {
     gameState_t* state;
 } game_t;
 
-void* createShm(char* name, size_t size, char isPublic, int* fd);
-
-void closeMem(char* name, size_t size, void* address, int* fd);
-void closeFd(int fd);
-
-void semInit(sem_t* sem, unsigned int value);
-void semDestroy(sem_t* sem);
-
 game_t openGame(int argc, char* argv[]); //TODO no me gusta que una funcion reciva argc y argv
-
-void sWait(sem_t* sem);
-void sPost(sem_t* sem);
 
 unsigned int decimalLen(int number);
 

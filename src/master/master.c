@@ -7,12 +7,13 @@
 #include <string.h>
 #include <strings.h>
 #include <time.h>
-#include "../utils/utils.h"
 #include <libgen.h> //For __xpg_basename
 #include <math.h> //For sin and cos
 #include <unistd.h> //For fork
 #include <sys/wait.h> //For waitpid
 #include <poll.h> //for poll
+#include "../utils/utils.h"
+#include "../utils/ipc.h"
 
 #define DEFAULT_WIDTH 10
 #define DEFAULT_HEIGHT 10

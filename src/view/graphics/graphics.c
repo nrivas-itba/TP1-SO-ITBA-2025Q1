@@ -5,6 +5,7 @@
 #include <sys/ioctl.h> // Provides the definition of struct winsize
 #include <unistd.h>    // For functions like ioctl()
 #include "../../utils/utils.h"
+#include "../../utils/ipc.h"
 #include "graphics.h"
 #include <signal.h>
 

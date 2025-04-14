@@ -2,10 +2,10 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <unistd.h>
-#include "../utils/utils.h"
 #include <string.h> //for mem cpy
+#include "../utils/utils.h"
+#include "../utils/ipc.h"
 
 typedef struct {
     FILE* file;
