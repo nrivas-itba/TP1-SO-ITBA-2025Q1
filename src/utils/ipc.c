@@ -119,7 +119,7 @@ void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int 
     snprintf(arg1,decimalLenWidth+1,ARI_SNPRINTF,width); //This may be a little overkill, another aproach would be to use itoa. But ChompChamps original uses snprintf.
     snprintf(arg2,decimalLenHeight+1,ARI_SNPRINTF,height);
     char* envp[] = {(char*)0};
-    if (execve(process,argv,envp) == -1) { // TODO
+    if (execve(process,argv,envp) == -1) {
       errExit(ARI_EXECVE);
     }
   }

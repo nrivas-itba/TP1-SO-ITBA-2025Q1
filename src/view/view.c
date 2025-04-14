@@ -37,7 +37,7 @@ void printingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int play
 
 
 int main(int argc, char* argv[]){
-    game_t game = openGame(argc, argv); //TODO meter todas estas inicializaciones en un inicializador de view
+    game_t game = openGame(argc, argv);
     printf(ENABLE_ALTERNATIVE_SCREEN_BUFFER);
     signalHandler_t signalHandler = setGraphicsSignalHandler();
     

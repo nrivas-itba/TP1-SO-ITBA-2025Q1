@@ -46,7 +46,7 @@ typedef struct {
     gameState_t* state;
 } game_t;
 
-game_t openGame(int argc, char* argv[]); //TODO no me gusta que una funcion reciva argc y argv
+game_t openGame(int argc, char* argv[]);
 
 unsigned int decimalLen(int number);
 

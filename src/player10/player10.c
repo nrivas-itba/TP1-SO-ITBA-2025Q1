@@ -109,7 +109,7 @@ void closeConnection(connection_t* connection){
 }
 
 int main(int argc, char* argv[]){
-    game_t game = openGame(argc, argv); //TODO meter todas estas inicializaciones en un inicializador de view
+    game_t game = openGame(argc, argv);
     unsigned int me = getMe(&game);
     connection_t connection = openConnection();
     
