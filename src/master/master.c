@@ -23,6 +23,8 @@
 #define MAX_BOARD_VALUE 9
 #define MIN_BOARD_VALUE 1
 
+#define MAX_DIRECTION 7
+
 #define MIN_PLAYERS 1
 
 #define ARI_VIEW_EXIT "View exited (%d)\n"
@@ -446,7 +448,7 @@ char isDirectionValid(gameState_t* gameState, unsigned int playerIndex, char dir
 
 char hasAnyValidDirection(gameState_t* gameState, unsigned int playerIndex){
     coords_t coords;
-    for(char i = 0; i<8; i++){//TODO unhardcode max direction
+    for(char i = 0; i<=MAX_DIRECTION; i++){
         if(isDirectionValid(gameState, playerIndex, i, &coords)){
             return 1;
         }
