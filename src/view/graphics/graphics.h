@@ -41,16 +41,56 @@ typedef struct {
     void (*signalHandler)(int);
 } signalHandler_t;
 
+/// @brief Make graphics.h handle screen updates.
+/// @return A struct to be passed to deleteGraphicsSignalHandler at exit.
 signalHandler_t setGraphicsSignalHandler();
+
+/// @brief Remove the graphics handler (reset to initial state).
+/// @param signalNumber 
 void deleteGraphicsSignalHandler(signalHandler_t signalNumber);
+
+/// @brief Build a screen, (with newly updated width and height).
+/// @param xOffset 
+/// @param yOffset 
+/// @return A screen.
 screen_t buildScreen(int xOffset, int yOffset);
+
+/// @brief Build a screen from another screen.
+/// @param screen 
+/// @param xOffset 
+/// @param yOffset 
+/// @return A screen
 screen_t buildScreenFromScreen(const screen_t* screen, int xOffset, int yOffset);
+
+/// @brief Move a cursor to an absolute position of the terminal.
+/// @param screen 
+/// @param x 
+/// @param y 
+/// @return 
 int moveCursorScreen(const screen_t* screen, int x, int y);
 
-void printBorder(const screen_t* screen, const int boardWidth, const int boardHeight);
+/// @brief Print a block of a table.
+/// @param screen 
+/// @param xColumn 
+/// @param yRow 
+/// @param yMult 
+/// @param xMult 
+/// @param str 
+/// @param strMiddle 
 void printBlock(const screen_t* screen, int xColumn, int yRow, int yMult, int xMult, char* str, char* strMiddle);
+
+/// @brief Know if a board is printable, and draw a box around it.
+/// @param screen 
+/// @param width 
+/// @param tableHeight 
+/// @param errStr 
+/// @param errStrLen 
+/// @return 1 if it is printable, or the negative amount of printed chars.
 int checkPrintable(screen_t* screen, int width, int tableHeight, char* errStr, size_t errStrLen);
 
+/// @brief Get a color.
+/// @param playerIndex 
+/// @return A color.
 const char* getPlayerColor(unsigned int playerIndex);
 
 #endif

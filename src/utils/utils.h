@@ -46,8 +46,15 @@ typedef struct {
     gameState_t* state;
 } game_t;
 
+/// @brief Make the common intializations necessary before starting a game.
+/// @param argc 
+/// @param argv 
+/// @return A game.
 game_t openGame(int argc, char* argv[]);
 
+/// @brief Get the len of a decimal number.
+/// @param number 
+/// @return The number of characters that the number would ocuppy in a string.
 unsigned int decimalLen(int number);
 
 #endif

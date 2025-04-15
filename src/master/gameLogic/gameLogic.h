@@ -23,6 +23,9 @@ typedef struct {
     int syncFd;
 } gameConfig_t;
 
+/// @brief Main game loop.
+/// @param gameConfig 
+/// @param pipefd 
 void game(gameConfig_t* gameConfig, pipefd_t* pipefd);
 
 #endif
