@@ -166,7 +166,7 @@ void printArgs(gameConfig_t* gameConfig){
     for (int i = 0; i < gameConfig->state->playerCount; i++) {
         printf(ARI_PLAYER_NAME_STRING_FORMAT, gameConfig->playerPaths[i]);
     }
-    sleep(2);
+    sleep(ARI_SLEEP);
 }
 
 static inline double calculatePosition(double size, char isX, unsigned int i, unsigned int playerCount){

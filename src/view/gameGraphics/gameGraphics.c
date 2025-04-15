@@ -1,6 +1,8 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdio.h>
+#include <string.h> //for mem cpy
+#include <stdlib.h> //for qsort
 #include "gameGraphics.h"
 
 #define STRINGIZE_WRAPPED(x) #x
@@ -28,15 +30,37 @@
 
 //Chars stock █ ▓ ▒
 #define HEAD_CHAR "█"
-#define HEAD_SPECIAL_CHAR "+"
+#define HEAD_SPECIAL_CHAR "█"
 #define BODY_CHAR "▒"
+
+static int comparePlayer(const player_t* player1, const player_t* player2){
+    int ret = player2->score - player1->score;
+    if(ret){
+        return ret;
+    }
+    ret = player2->validMovementRequestsCount - player1->validMovementRequestsCount;
+    if(ret){
+        return ret;
+    }
+    return player2->invalidMovementRequestsCount - player1->invalidMovementRequestsCount;
+}
+
+void sortPlayers(unsigned int playerCount, player_t* playerList){
+    for(unsigned int i = 0; i<playerCount; i++){
+        playerList[i].pid = i;
+    }
+    qsort(playerList,playerCount,sizeof(playerList[0]),(int(*)(const void *, const void *))comparePlayer);
+}
 
 /*
     Prints the player stats table
     Returns how many lines where printed.
 */
 int printPlayerStats(player_t* playerList, unsigned int playerCount, const screen_t* screenOrg){
-    // TODO aux arr with indexes -> sort with criteria (complex)
+    player_t sortedPlayerList[playerCount];
+    memcpy(sortedPlayerList, playerList, sizeof(sortedPlayerList));
+    sortPlayers(playerCount, sortedPlayerList);
+
     screen_t screen = *screenOrg;
     const int tableHeight = 3+playerCount;
     const int tableWidth = 2+TABLE_FORMAT_LEN;
@@ -52,8 +76,8 @@ int printPlayerStats(player_t* playerList, unsigned int playerCount, const scree
 
     for (int row = 0; row < playerCount; row++){
         moveCursorScreen(&screen, 0, 1+row);
-        printf("%s",getPlayerColor(row));
-        printf(TABLE_FORMAT_ROW, playerList[row].name, NUMBER_FITS(playerList[row].score, SCORE_LEN), NUMBER_FITS(playerList[row].validMovementRequestsCount, VALID_REQUESTS_LEN), NUMBER_FITS(playerList[row].invalidMovementRequestsCount, INVALID_REQUESTS_LEN), (playerList[row].isBlocked ? BLOCKED_PLAYER : NON_BLOCKED_PLAYER)); 
+        printf("%s",getPlayerColor(sortedPlayerList[row].pid));
+        printf(TABLE_FORMAT_ROW, sortedPlayerList[row].name, NUMBER_FITS(sortedPlayerList[row].score, SCORE_LEN), NUMBER_FITS(sortedPlayerList[row].validMovementRequestsCount, VALID_REQUESTS_LEN), NUMBER_FITS(sortedPlayerList[row].invalidMovementRequestsCount, INVALID_REQUESTS_LEN), (sortedPlayerList[row].isBlocked ? BLOCKED_PLAYER : NON_BLOCKED_PLAYER)); 
         printf("%s",getPlayerColor(-1));
     }
 

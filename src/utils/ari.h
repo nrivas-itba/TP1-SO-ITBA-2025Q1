@@ -29,5 +29,6 @@
 #define ARI_WAIT "wait"
 #define ARI_SNPRINTF "%d"
 #define ARI_EXECVE "execve"
+#define ARI_SLEEP 2
 
 #endif

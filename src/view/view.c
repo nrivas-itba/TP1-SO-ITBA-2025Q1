@@ -4,9 +4,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h> //for mem cpy
+#include <unistd.h>
 #include <semaphore.h>
 #include "../utils/utils.h"
 #include "../utils/ipc.h"
+#include "../utils/ari.h"
 #include "graphics/graphics.h"
 #include "gameGraphics/gameGraphics.h"
 
@@ -30,6 +32,7 @@ void printingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int play
             sWait(&(game->sync->printNeeded)); //Waint until master wants to print
         }
         else{
+            sleep(ARI_SLEEP);
             break;
         }
     }
