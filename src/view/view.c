@@ -13,25 +13,25 @@
 #include "gameGraphics/gameGraphics.h"
 
 
-void printingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playerCount){
+void printingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playerCount) {
     player_t playerList[playerCount];
     int board[gameWidth][gameHeight];
     char isGameOver = 0;
-    while(1){
-        memcpy(playerList, game->state->playerList, sizeof(playerList[0])*playerCount);
-        memcpy(board,      game->state->board,      sizeof(board[0][0])*gameWidth*gameHeight);
+    while (1) {
+        memcpy(playerList, game->state->playerList, sizeof(playerList[0]) * playerCount);
+        memcpy(board, game->state->board, sizeof(board[0][0]) * gameWidth * gameHeight);
         isGameOver = game->state->isOver;
         sPost(&(game->sync->printDone));
-        screen_t screen = buildScreen(0,0);
+        screen_t screen = buildScreen(0, 0);
         screen = buildScreenFromScreen(&screen, 0, printPlayerStats(playerList, playerCount, &screen));
         screen = buildScreenFromScreen(&screen, 0, printGame(gameWidth, gameHeight, board, playerList, &screen));
-        moveCursorScreen(&screen,0,0);
+        moveCursorScreen(&screen, 0, 0);
         fflush(stdout);
 
-        if(!isGameOver){
+        if (!isGameOver) {
             sWait(&(game->sync->printNeeded));
         }
-        else{
+        else {
             sleep(ARI_SLEEP);
             break;
         }
@@ -39,14 +39,14 @@ void printingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int play
 }
 
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
     game_t game = openGame(argc, argv);
     printf(ENABLE_ALTERNATIVE_SCREEN_BUFFER);
     signalHandler_t signalHandler = setGraphicsSignalHandler();
-    
+
     sWait(&(game.sync->printNeeded));
     printingLoop(&game, game.gameWidth, game.gameHeight, game.state->playerCount);
-    
+
     deleteGraphicsSignalHandler(signalHandler);
     printf(DISABLE_ALTERNATIVE_SCREEN_BUFFER);
     return 0;

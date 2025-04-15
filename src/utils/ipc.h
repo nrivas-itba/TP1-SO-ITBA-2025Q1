@@ -30,15 +30,15 @@ void execveWithArgs(char* process, int width, unsigned int decimalLenWidth, int 
 
 void dup2Fd(int from, int to);
 
-int getNumberOfReadyFd(int timeout, unsigned int nfd, struct pollfd* pollFdArr, time_t *timeStart);
+int getNumberOfReadyFd(int timeout, unsigned int nfd, struct pollfd* pollFdArr, time_t* timeStart);
 
 void createPipes(unsigned int nfd, pipefd_t* pipefd);
 void closeForeignPipes(unsigned int excludedIndex, unsigned int nfd, pipefd_t* pipefd);
 
-void closeWritePipes(unsigned int nfd,pipefd_t* pipefd);
+void closeWritePipes(unsigned int nfd, pipefd_t* pipefd);
 
 void setUpPollFdArr(unsigned int nfd, pipefd_t* pipefd, struct pollfd* pollFdArr);
 
-int readPipe(int fd,char *directionPtr);
+int readPipe(int fd, char* directionPtr);
 
 #endif

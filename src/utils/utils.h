@@ -19,22 +19,22 @@ typedef struct {
 } gameSync_t;
 
 typedef struct {
-char name[MAX_PLAYER_NAME_LEN]; // Nombre del jugador
-unsigned int score; // Puntaje
-unsigned int invalidMovementRequestsCount; // Cantidad de solicitudes de movimientos inválidas realizadas
-unsigned int validMovementRequestsCount; // Cantidad de solicitudes de movimientos válidas realizadas
-unsigned short x, y; // Coordenadas x e y en el tablero
-pid_t pid; // Identificador de proceso
-char isBlocked; // Indica si el jugador tiene movimientos válidos disponibles
+    char name[MAX_PLAYER_NAME_LEN]; // Nombre del jugador
+    unsigned int score; // Puntaje
+    unsigned int invalidMovementRequestsCount; // Cantidad de solicitudes de movimientos inválidas realizadas
+    unsigned int validMovementRequestsCount; // Cantidad de solicitudes de movimientos válidas realizadas
+    unsigned short x, y; // Coordenadas x e y en el tablero
+    pid_t pid; // Identificador de proceso
+    char isBlocked; // Indica si el jugador tiene movimientos válidos disponibles
 } player_t;
 
 typedef struct {
-unsigned short width; // Ancho del tablero
-unsigned short height; // Alto del tablero
-unsigned int playerCount; // Cantidad de jugadores
-player_t playerList[MAX_PLAYERS]; // Lista de jugadores
-char isOver; // Indica si el juego se ha terminado
-int board[]; // Puntero al comienzo del tablero. fila-0, fila-1, ..., fila-n-1
+    unsigned short width; // Ancho del tablero
+    unsigned short height; // Alto del tablero
+    unsigned int playerCount; // Cantidad de jugadores
+    player_t playerList[MAX_PLAYERS]; // Lista de jugadores
+    char isOver; // Indica si el juego se ha terminado
+    int board[]; // Puntero al comienzo del tablero. fila-0, fila-1, ..., fila-n-1
 } gameState_t;
 
 typedef struct {

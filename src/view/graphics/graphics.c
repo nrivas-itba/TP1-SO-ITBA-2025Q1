@@ -29,86 +29,86 @@
 #define HOTPINK COLOR("255", "105", "180")
 
 
-void signalHandlerFunction(int signalNumber){
-  printf(ERRASE_IN_DISPLAY);
-  fflush(stdout);
+void signalHandlerFunction(int signalNumber) {
+    printf(ERRASE_IN_DISPLAY);
+    fflush(stdout);
 }
-signalHandler_t setGraphicsSignalHandler(){
-  signalHandler_t handler = (signalHandler_t){
-    .signalHandler = signal(SIGWINCH,signalHandlerFunction)
-  };
-  if (handler.signalHandler == (void (*)(int)) SIG_ERR){
-    errExit("signal");
-  }
-  return handler;
+signalHandler_t setGraphicsSignalHandler() {
+    signalHandler_t handler = (signalHandler_t){
+      .signalHandler = signal(SIGWINCH,signalHandlerFunction)
+    };
+    if (handler.signalHandler == (void (*)(int)) SIG_ERR) {
+        errExit("signal");
+    }
+    return handler;
 }
-void deleteGraphicsSignalHandler(signalHandler_t signalHandler){
-  if(signal(SIGWINCH, signalHandler.signalHandler) == (void (*)(int)) SIG_ERR){
-    errExit("signal");
-  }
+void deleteGraphicsSignalHandler(signalHandler_t signalHandler) {
+    if (signal(SIGWINCH, signalHandler.signalHandler) == (void (*)(int)) SIG_ERR) {
+        errExit("signal");
+    }
 }
 
 
-screen_t buildScreen(int xOffset,int yOffset){
+screen_t buildScreen(int xOffset, int yOffset) {
     struct winsize w;
     // Query terminal size
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1) {
         errExit("ioctl, is the stdOut connected to a console?");
     }
-    return (screen_t){
-        .xWidth = w.ws_col-xOffset,
-        .yHeight = w.ws_row-yOffset,
-        .xOffset = xOffset,
-        .yOffset = yOffset
+    return (screen_t) {
+        .xWidth = w.ws_col - xOffset,
+            .yHeight = w.ws_row - yOffset,
+            .xOffset = xOffset,
+            .yOffset = yOffset
     };
 }
 
-screen_t buildScreenFromScreen(const screen_t* screen, int xOffset, int yOffset){
+screen_t buildScreenFromScreen(const screen_t* screen, int xOffset, int yOffset) {
     return buildScreen(screen->xOffset + xOffset, screen->yOffset + yOffset);
 }
 
-int moveCursorScreen(const screen_t* screen, int x, int y){
-    return printf(MOVE_CURSOR_FORMAT, screen->yOffset+y+1, screen->xOffset+x+1); //+1 offset because screen starts at 1,1
+int moveCursorScreen(const screen_t* screen, int x, int y) {
+    return printf(MOVE_CURSOR_FORMAT, screen->yOffset + y + 1, screen->xOffset + x + 1); //+1 offset because screen starts at 1,1
 }
 
-static inline void printCorners(const screen_t* screen, const int boardWidth, const int boardHeight){
+static inline void printCorners(const screen_t* screen, const int boardWidth, const int boardHeight) {
     moveCursorScreen(screen, 0, 0);
     printf("╭");
-    moveCursorScreen(screen, boardWidth-1, 0);
+    moveCursorScreen(screen, boardWidth - 1, 0);
     printf("╮");
-    moveCursorScreen(screen, 0, boardHeight-1);
+    moveCursorScreen(screen, 0, boardHeight - 1);
     printf("╰");
-    moveCursorScreen(screen, boardWidth-1, boardHeight-1);
+    moveCursorScreen(screen, boardWidth - 1, boardHeight - 1);
     printf("╯");
     return;
 }
 
-void printBorder(const screen_t* screen, const int boardWidth, const int boardHeight){
-    for (int i = 1; i < boardWidth-1; i++){
+void printBorder(const screen_t* screen, const int boardWidth, const int boardHeight) {
+    for (int i = 1; i < boardWidth - 1; i++) {
         moveCursorScreen(screen, i, 0);
         printf("═");
-        moveCursorScreen(screen, i, boardHeight-1);
+        moveCursorScreen(screen, i, boardHeight - 1);
         printf("═");
     }
 
-    for (int j = 1; j < boardHeight-1; j++){
+    for (int j = 1; j < boardHeight - 1; j++) {
         moveCursorScreen(screen, 0, j);
         printf("║");
-        moveCursorScreen(screen, boardWidth-1, j);
+        moveCursorScreen(screen, boardWidth - 1, j);
         printf("║");
-    }   
+    }
     printCorners(screen, boardWidth, boardHeight);
 }
 
-void printBlock(const screen_t* screen, int column, int row, int yMult, int xMult, char* str, char* strMiddle){
-    for(int rowInner = 0; rowInner<yMult; rowInner++){
-        for(int columnInner = 0; columnInner<xMult;columnInner++){
-            moveCursorScreen(screen,column*xMult+columnInner,row*yMult+rowInner);
-            if(columnInner==xMult/2 && rowInner == yMult/2){
-                printf("%s",strMiddle);
+void printBlock(const screen_t* screen, int column, int row, int yMult, int xMult, char* str, char* strMiddle) {
+    for (int rowInner = 0; rowInner < yMult; rowInner++) {
+        for (int columnInner = 0; columnInner < xMult;columnInner++) {
+            moveCursorScreen(screen, column * xMult + columnInner, row * yMult + rowInner);
+            if (columnInner == xMult / 2 && rowInner == yMult / 2) {
+                printf("%s", strMiddle);
             }
-            else{
-                printf("%s",str);
+            else {
+                printf("%s", str);
             }
         }
     }
@@ -118,25 +118,25 @@ void printBlock(const screen_t* screen, int column, int row, int yMult, int xMul
 /*
     Returns the negative amount of writed lines.
 */
-int checkPrintable(screen_t* screen, int width, int tableHeight, char* errStr, size_t errStrLen){
-    if(screen->xWidth < width || screen->yHeight <  tableHeight){
+int checkPrintable(screen_t* screen, int width, int tableHeight, char* errStr, size_t errStrLen) {
+    if (screen->xWidth < width || screen->yHeight < tableHeight) {
         int ret = 0;
-        if(screen->yHeight >= 1 && screen->xWidth >= errStrLen){
-            moveCursorScreen(screen,0,0);
-            printf("%s",errStr);
+        if (screen->yHeight >= 1 && screen->xWidth >= errStrLen) {
+            moveCursorScreen(screen, 0, 0);
+            printf("%s", errStr);
             ret = -1;
         }
         fflush(stderr);
         return ret;
     }
-    *screen = buildScreenFromScreen(screen,screen->xWidth/2 - width/2, 0);
-    printBorder(screen,width,tableHeight);
+    *screen = buildScreenFromScreen(screen, screen->xWidth / 2 - width / 2, 0);
+    printBorder(screen, width, tableHeight);
     *screen = buildScreenFromScreen(screen, 1, 1);
     return 1;
 }
 
-const char* getPlayerColor(unsigned int playerIndex){
-    static const char*  playerColors[] = {
+const char* getPlayerColor(unsigned int playerIndex) {
+    static const char* playerColors[] = {
         RED,
         GREEN,
         BLUE,
@@ -147,5 +147,5 @@ const char* getPlayerColor(unsigned int playerIndex){
         PURPLE,
         HOTPINK
     };
-    return playerIndex < (sizeof(playerColors)/sizeof(playerColors[0])) ? playerColors[playerIndex] : WHITE;
+    return playerIndex < (sizeof(playerColors) / sizeof(playerColors[0])) ? playerColors[playerIndex] : WHITE;
 }

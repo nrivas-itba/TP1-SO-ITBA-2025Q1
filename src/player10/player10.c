@@ -11,20 +11,20 @@ typedef struct {
     FILE* file;
 } connection_t;
 
-unsigned int getMe(game_t* game){
+unsigned int getMe(game_t* game) {
     pid_t pid = getpid();
-    for(int i =0; i<MAX_PLAYERS; i++){
-        if(game->state->playerList[i].pid == pid){
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (game->state->playerList[i].pid == pid) {
             return i;
         }
     }
     errExit("I dont exist in the board");
 }
 
-char shouldITryToMove(player_t* me){
+char shouldITryToMove(player_t* me) {
     static unsigned int invalidMovementRequestsCount = -1;
     static unsigned int validMovementRequestsCount = -1;
-    if (!me->isBlocked  && (me->invalidMovementRequestsCount != invalidMovementRequestsCount || me->validMovementRequestsCount != validMovementRequestsCount)){
+    if (!me->isBlocked && (me->invalidMovementRequestsCount != invalidMovementRequestsCount || me->validMovementRequestsCount != validMovementRequestsCount)) {
         invalidMovementRequestsCount = me->invalidMovementRequestsCount;
         validMovementRequestsCount = me->validMovementRequestsCount;
         return 1;
@@ -32,69 +32,69 @@ char shouldITryToMove(player_t* me){
     return 0;
 }
 
-void waitToRead(gameSync_t* gameSync){
+void waitToRead(gameSync_t* gameSync) {
     sWait(&(gameSync->masterWantsToReadMutex));
     sPost(&(gameSync->masterWantsToReadMutex)); //In the 31/3/2025 class we saw that it should have this order
 
     sWait(&(gameSync->readersCountMutex));
     gameSync->readersCount++;
-    if(gameSync->readersCount == 1){
+    if (gameSync->readersCount == 1) {
         sWait(&(gameSync->readGameStateMutex));
     }
     sPost(&(gameSync->readersCountMutex));
 }
 
-void finishReading(gameSync_t* gameSync){
+void finishReading(gameSync_t* gameSync) {
     sWait(&(gameSync->readersCountMutex));
     gameSync->readersCount--;
-    if(gameSync->readersCount == 0){
+    if (gameSync->readersCount == 0) {
         sPost(&(gameSync->readGameStateMutex));
     }
     sPost(&(gameSync->readersCountMutex));
 }
 
-char getNextMove(connection_t* connection){
+char getNextMove(connection_t* connection) {
     unsigned char random_byte;
-    if (fread(&random_byte, 1, 1, connection->file) == 0){
+    if (fread(&random_byte, 1, 1, connection->file) == 0) {
         errExit("fread");
     }
     return random_byte;
 }
 
-void playingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playerCount, unsigned int me, connection_t* connection){
+void playingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playerCount, unsigned int me, connection_t* connection) {
     player_t playerList[playerCount];
     int board[gameWidth][gameHeight];
     char isGameOver = 0;
 
-    while(!isGameOver) {
-        memcpy(playerList, game->state->playerList, sizeof(playerList[0])*playerCount);
-        memcpy(board,      game->state->board,      sizeof(board[0][0])*gameWidth*gameHeight);
+    while (!isGameOver) {
+        memcpy(playerList, game->state->playerList, sizeof(playerList[0]) * playerCount);
+        memcpy(board, game->state->board, sizeof(board[0][0]) * gameWidth * gameHeight);
         isGameOver = game->state->isOver;
         finishReading(game->sync);
 
-        if(shouldITryToMove(&(playerList[me]))){
-            char nextMove = getNextMove(connection)%9;
-            if(nextMove!=8){
+        if (shouldITryToMove(&(playerList[me]))) {
+            char nextMove = getNextMove(connection) % 9;
+            if (nextMove != 8) {
                 printf("%c", nextMove);
                 fflush(stdout);
             }
-            else{
-                shouldITryToMove(&((player_t){
-                    .validMovementRequestsCount=-1
+            else {
+                shouldITryToMove(&((player_t) {
+                    .validMovementRequestsCount = -1
                 }));
             }
         }
 
-        if(!isGameOver){
+        if (!isGameOver) {
             waitToRead(game->sync);
         }
-        else{
+        else {
             break;
         }
     }
 }
 
-connection_t openConnection(){
+connection_t openConnection() {
     connection_t ret = (connection_t){
         .file = fopen("/dev/random", "rb")
     };
@@ -104,18 +104,18 @@ connection_t openConnection(){
     return ret;
 }
 
-void closeConnection(connection_t* connection){
+void closeConnection(connection_t* connection) {
     fclose(connection->file);
 }
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
     game_t game = openGame(argc, argv);
     unsigned int me = getMe(&game);
     connection_t connection = openConnection();
-    
+
     waitToRead(game.sync);
     playingLoop(&game, game.gameWidth, game.gameHeight, game.state->playerCount, me, &connection);
-    
+
     closeConnection(&connection);
     return 0;
 }
