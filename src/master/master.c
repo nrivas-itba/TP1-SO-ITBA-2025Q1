@@ -251,7 +251,7 @@ void waitAllPlayers(player_t* playerList, unsigned int playerCount) {
     printf(ARI_PLAYER_EXIT,
       playerList[playerNumber].name,
       playerNumber,
-      WEXITSTATUS(statLoc),
+      statLoc,
       playerList[playerNumber].score,
       playerList[playerNumber].validMovementRequestsCount,
       playerList[playerNumber].invalidMovementRequestsCount

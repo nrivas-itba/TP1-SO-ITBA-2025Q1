@@ -117,5 +117,6 @@ int main(int argc, char* argv[]) {
     playingLoop(&game, game.gameWidth, game.gameHeight, game.state->playerCount, me, &connection);
 
     closeConnection(&connection);
+    closeGame(&game);
     return 0;
 }

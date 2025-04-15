@@ -52,9 +52,13 @@ typedef struct {
 /// @return A game.
 game_t openGame(int argc, char* argv[]);
 
+/// @brief Close the game
+/// @param game 
+void closeGame(game_t* game);
+
 /// @brief Get the len of a decimal number.
 /// @param number 
-/// @return The number of characters that the number would ocuppy in a string.
+/// @return The number of characters that the number would occupy in a string.
 unsigned int decimalLen(int number);
 
 #endif

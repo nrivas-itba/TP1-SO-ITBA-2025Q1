@@ -49,5 +49,6 @@ int main(int argc, char* argv[]) {
 
     deleteGraphicsSignalHandler(signalHandler);
     printf(DISABLE_ALTERNATIVE_SCREEN_BUFFER);
+    closeGame(&game);
     return 0;
 }
