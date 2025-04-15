@@ -2,8 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdlib.h>
 #include <stdint.h>
-#include <sys/ioctl.h> // Provides the definition of struct winsize
-#include <unistd.h>    // For functions like ioctl()
+#include <sys/ioctl.h>
+#include <unistd.h>
 #include "../../utils/utils.h"
 #include "../../utils/ipc.h"
 #include "graphics.h"

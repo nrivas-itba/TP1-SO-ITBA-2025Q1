@@ -6,11 +6,11 @@
 #include <string.h>
 #include <strings.h>
 #include <time.h>
-#include <libgen.h> //For __xpg_basename
-#include <math.h> //For sin and cos
-#include <unistd.h> //For fork
-#include <sys/wait.h> //For waitpid
-#include <poll.h> //for poll
+#include <libgen.h>
+#include <math.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <poll.h>
 #include "gameLogic/gameLogic.h"
 #include "../utils/utils.h"
 #include "../utils/ipc.h"
@@ -132,7 +132,7 @@ void configureGame(int argc, char* argv[], gameConfig_t* gameConfig){
       fprintf(stderr, ARI_NO_VIEW); 
     }
 
-    gameConfig->sync = createShm(GAME_SYNC, //BUG the player crashes on shm_open
+    gameConfig->sync = createShm(GAME_SYNC,
         sizeof(*(gameConfig->sync)),
         1,
         &gameConfig->syncFd
@@ -282,10 +282,6 @@ void unconfigureGame(gameConfig_t* gameConfig){
 }
 
 int main(int argc, char* argv[]){
-    // printf("%d\n\n",sizeof(gameConfig_t));
-    // char* temp[sizeof(gameState_t) + (width * height)*sizeof(int)];
-    // gameConfig_t gameConfig = (gameState_t*)((void*)temp);
-
     gameConfig_t gameConfig = {
         .delay = DEFAULT_DELAY,
         .seed = DEFAULT_SEED,
@@ -294,7 +290,7 @@ int main(int argc, char* argv[]){
         .playerPaths = {0}
     };
     
-    system(ARI_CLEAR); //I dont like this, I would use CSI 2 J, But the profesor's bynary uses system()
+    system(ARI_CLEAR); //I dont like this, I would use CSI 2 J ("\033[2J"), But the profesor's bynary uses system()
     configureGame(argc, argv, &gameConfig);
     printArgs(&gameConfig);
 
@@ -308,7 +304,7 @@ int main(int argc, char* argv[]){
     pipefd_t pipefd[MAX_PLAYERS]; //TODO quizas no es necesario guardar el read end aca, y se puede guardar directo en poll fd arr (aunque quizas seria mala modularizacion? ( TODO discutir))
     createPipes(gameConfig.state->playerCount, pipefd);
     spawnPlayerProcesses(gameConfig.state, gameConfig.playerPaths, pipefd);
-    closeWritePipes(gameConfig.state->playerCount, pipefd); //I dont know why original chomp champs separates this and does not make it inside spawn players.
+    closeWritePipes(gameConfig.state->playerCount, pipefd); //The original chomp champs separates this outside of player spawn
 
     game(&gameConfig, pipefd);
 

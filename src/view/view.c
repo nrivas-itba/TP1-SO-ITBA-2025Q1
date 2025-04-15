@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <string.h> //for mem cpy
+#include <string.h>
 #include <unistd.h>
 #include <semaphore.h>
 #include "../utils/utils.h"
@@ -21,7 +21,7 @@ void printingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int play
         memcpy(playerList, game->state->playerList, sizeof(playerList[0])*playerCount);
         memcpy(board,      game->state->board,      sizeof(board[0][0])*gameWidth*gameHeight);
         isGameOver = game->state->isOver;
-        sPost(&(game->sync->printDone)); //Tell the master that we have finished printing.
+        sPost(&(game->sync->printDone));
         screen_t screen = buildScreen(0,0);
         screen = buildScreenFromScreen(&screen, 0, printPlayerStats(playerList, playerCount, &screen));
         screen = buildScreenFromScreen(&screen, 0, printGame(gameWidth, gameHeight, board, playerList, &screen));
@@ -29,7 +29,7 @@ void printingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int play
         fflush(stdout);
 
         if(!isGameOver){
-            sWait(&(game->sync->printNeeded)); //Waint until master wants to print
+            sWait(&(game->sync->printNeeded));
         }
         else{
             sleep(ARI_SLEEP);
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
     printf(ENABLE_ALTERNATIVE_SCREEN_BUFFER);
     signalHandler_t signalHandler = setGraphicsSignalHandler();
     
-    sWait(&(game.sync->printNeeded)); //Waint until master wants to print
+    sWait(&(game.sync->printNeeded));
     printingLoop(&game, game.gameWidth, game.gameHeight, game.state->playerCount);
     
     deleteGraphicsSignalHandler(signalHandler);

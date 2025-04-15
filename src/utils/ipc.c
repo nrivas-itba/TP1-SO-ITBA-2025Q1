@@ -101,12 +101,12 @@ void* openMem(char* name, size_t size, char readOnly, int* fd){
 }
 
 void sWait(sem_t* sem){
-    if (sem_wait(sem) == -1){ //Waint until master wants to print
+    if (sem_wait(sem) == -1){
         errExit("sem_wait");
     }
 }
 void sPost(sem_t* sem){
-    if (sem_post(sem) == -1){ //Tell the master that we have finished printing.
+    if (sem_post(sem) == -1){
         errExit("sem_post");
     }
 }
@@ -180,7 +180,7 @@ void setUpPollFdArr(unsigned int nfd, pipefd_t* pipefd, struct pollfd* pollFdArr
   }
 }
 
-int readPipe(int fd,char *directionPtr) { //TODO es probable que se pueda simplificar. Ademas, solo lee un pipe, deberia tener un nombre generico no particular de player
+int readPipe(int fd,char *directionPtr) {
   int numberOfReadedChars;
   numberOfReadedChars = read(fd,directionPtr,1);
   if (numberOfReadedChars == -1) {

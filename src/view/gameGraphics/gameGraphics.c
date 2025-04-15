@@ -1,8 +1,8 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdio.h>
-#include <string.h> //for mem cpy
-#include <stdlib.h> //for qsort
+#include <string.h>
+#include <stdlib.h>
 #include "gameGraphics.h"
 
 #define STRINGIZE_WRAPPED(x) #x
@@ -100,7 +100,7 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], p
     int xRealWidth = gameWidth*xMult + 2;
     int yRealHeight = gameHeight*yMult + 2;
     if(yMult<1 || xMult <1){
-        xRealWidth = screen.xWidth+1; //This forces checkPrintableToExit
+        xRealWidth = screen.xWidth+1;
     }
 
     int ret = checkPrintable(&screen, xRealWidth, yRealHeight, NOT_ENOUGH_SPACE_TO_PRINT_MATRIX, sizeof(NOT_ENOUGH_SPACE_TO_PRINT_MATRIX)-1);
@@ -108,11 +108,10 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], p
         return -ret;
     }
 
-    // Upper boarder
    char numberStr[2] = {0};
    for (int row = 0; row < gameHeight; row++){
         for (int column = 0; column < gameWidth; column++){
-            int boardValue = ((int*)board)[row*gameWidth+column];//board[column][row];
+            int boardValue = ((int*)board)[row*gameWidth+column];
             if (boardValue > 0){
                 numberStr[0] = '0'+(boardValue%10);
                 printBlock(&screen, column, row, yMult, xMult, " ", numberStr);
@@ -121,7 +120,7 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], p
                 printf("%s", getPlayerColor(-boardValue));
                 isThisAPlayerHead(playerList, boardValue, column, row) ?
                     printBlock(&screen, column, row, yMult, xMult, HEAD_CHAR, HEAD_SPECIAL_CHAR):
-                    printBlock(&screen, column, row, yMult, xMult, BODY_CHAR, BODY_CHAR); //isThisAPlayerHead(playerList, boardValue, column, row) ? "▓" : "▓"
+                    printBlock(&screen, column, row, yMult, xMult, BODY_CHAR, BODY_CHAR);
                 printf("%s", getPlayerColor(-1));
             }
         }

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <string.h> //for mem cpy
+#include <string.h>
 #include "../utils/utils.h"
 #include "../utils/ipc.h"
 
@@ -34,12 +34,12 @@ char shouldITryToMove(player_t* me){
 
 void waitToRead(gameSync_t* gameSync){
     sWait(&(gameSync->masterWantsToReadMutex));
-    sPost(&(gameSync->masterWantsToReadMutex)); //In the 31/3/2025 we saw that it should have this order
+    sPost(&(gameSync->masterWantsToReadMutex)); //In the 31/3/2025 class we saw that it should have this order
 
     sWait(&(gameSync->readersCountMutex));
     gameSync->readersCount++;
     if(gameSync->readersCount == 1){
-        sWait(&(gameSync->readGameStateMutex)); //First reader locks writes
+        sWait(&(gameSync->readGameStateMutex));
     }
     sPost(&(gameSync->readersCountMutex));
 }
@@ -48,7 +48,7 @@ void finishReading(gameSync_t* gameSync){
     sWait(&(gameSync->readersCountMutex));
     gameSync->readersCount--;
     if(gameSync->readersCount == 0){
-        sPost(&(gameSync->readGameStateMutex)); //Last readers unlocks writes
+        sPost(&(gameSync->readGameStateMutex));
     }
     sPost(&(gameSync->readersCountMutex));
 }
@@ -75,7 +75,7 @@ void playingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playe
         if(shouldITryToMove(&(playerList[me]))){
             char nextMove = getNextMove(connection)%9;
             if(nextMove!=8){
-                printf("%c", nextMove); // Print a random value
+                printf("%c", nextMove);
                 fflush(stdout);
             }
             else{
