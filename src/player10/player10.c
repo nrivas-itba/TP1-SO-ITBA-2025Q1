@@ -6,11 +6,7 @@
 #include <string.h>
 #include "../utils/utils.h"
 #include "../utils/ipc.h"
-
-typedef struct {
-    FILE* file;
-} connection_t;
-
+#include "../utils/gameLogic.h"
 unsigned int getMe(game_t* game) {
     pid_t pid = getpid();
     for (int i = 0; i < MAX_PLAYERS; i++) {
@@ -53,27 +49,32 @@ void finishReading(gameSync_t* gameSync) {
     sPost(&(gameSync->readersCountMutex));
 }
 
-char getNextMove(connection_t* connection) {
-    unsigned char random_byte;
-    if (fread(&random_byte, 1, 1, connection->file) == 0) {
-        errExit("fread");
+char getMove(int me, gameState_t* state) {
+    static int direction = 0;
+    coords_t coords;
+    if(!hasAnyValidDirection(state,me)){
+        return 8;
     }
-    return random_byte;
+    if (!isDirectionValid(state,me,direction,&coords)){
+        direction = (direction+1) % 8;
+    }
+    return direction;
+    
 }
 
-void playingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playerCount, unsigned int me, connection_t* connection) {
+void playingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playerCount, unsigned int me) {
     player_t playerList[playerCount];
-    int board[gameWidth][gameHeight];
     char isGameOver = 0;
+    char state[sizeof(gameState_t)+ sizeof(int)*gameWidth*gameHeight];
 
     while (!isGameOver) {
         memcpy(playerList, game->state->playerList, sizeof(playerList[0]) * playerCount);
-        memcpy(board, game->state->board, sizeof(board[0][0]) * gameWidth * gameHeight);
+        memcpy(state, game->state, sizeof(gameState_t)+ sizeof(int)*gameWidth*gameHeight);
         isGameOver = game->state->isOver;
         finishReading(game->sync);
 
         if (shouldITryToMove(&(playerList[me]))) {
-            char nextMove = getNextMove(connection) % 9;
+            char nextMove = getMove(me, (void*)state) % 9;
             if (nextMove != 8) {
                 printf("%c", nextMove);
                 fflush(stdout);
@@ -94,29 +95,14 @@ void playingLoop(game_t* game, int gameWidth, int gameHeight, unsigned int playe
     }
 }
 
-connection_t openConnection() {
-    connection_t ret = (connection_t){
-        .file = fopen("/dev/random", "rb")
-    };
-    if (ret.file == NULL) {
-        errExit("Error opening /dev/random");
-    }
-    return ret;
-}
-
-void closeConnection(connection_t* connection) {
-    fclose(connection->file);
-}
 
 int main(int argc, char* argv[]) {
     game_t game = openGame(argc, argv);
     unsigned int me = getMe(&game);
-    connection_t connection = openConnection();
 
     waitToRead(game.sync);
-    playingLoop(&game, game.gameWidth, game.gameHeight, game.state->playerCount, me, &connection);
+    playingLoop(&game, game.gameWidth, game.gameHeight, game.state->playerCount, me);
 
-    closeConnection(&connection);
     closeGame(&game);
     return 0;
 }

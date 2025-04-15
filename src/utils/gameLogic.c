@@ -3,13 +3,8 @@
 #include "gameLogic.h"
 #include <time.h>
 #include <unistd.h>
-#include "../../utils/utils.h"
-#include "../../utils/ipc.h"
-
-typedef struct {
-  unsigned int x;
-  unsigned int y;
-} coords_t;
+#include "utils.h"
+#include "ipc.h"
 
 void askViewToPrint(int delay, gameSync_t* gameSync) {
   sPost(&(gameSync->printNeeded));

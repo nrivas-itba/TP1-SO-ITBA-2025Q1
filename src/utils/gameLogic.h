@@ -1,8 +1,8 @@
 #ifndef GAME_LOGIC_H
 #define GAME_LOGIC_H
 #include "gameLogic.h"
-#include "../../utils/utils.h"
-#include "../../utils/ipc.h"
+#include "utils.h"
+#include "ipc.h"
 
 #define MAX_BOARD_VALUE 9
 #define MIN_BOARD_VALUE 1
@@ -10,6 +10,11 @@
 #define MAX_DIRECTION 7
 
 #define MIN_PLAYERS 1
+
+typedef struct {
+    unsigned int x;
+    unsigned int y;
+} coords_t;
 
 typedef struct {
     int delay;
@@ -27,5 +32,9 @@ typedef struct {
 /// @param gameConfig 
 /// @param pipefd 
 void game(gameConfig_t* gameConfig, pipefd_t* pipefd);
+
+char isDirectionValid(gameState_t* gameState, unsigned int playerIndex, char direction, coords_t* coords);
+
+char hasAnyValidDirection(gameState_t* gameState, unsigned int playerIndex);
 
 #endif

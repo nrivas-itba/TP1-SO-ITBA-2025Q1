@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <poll.h>
-#include "gameLogic/gameLogic.h"
+#include "../utils/gameLogic.h"
 #include "../utils/utils.h"
 #include "../utils/ipc.h"
 #include "../utils/ari.h"
