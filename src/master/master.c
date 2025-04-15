@@ -301,7 +301,7 @@ int main(int argc, char* argv[]){
         viewPid = forkToView(gameConfig.view, gameConfig.state->width, gameConfig.state->height);
     }
 
-    pipefd_t pipefd[MAX_PLAYERS]; //TODO quizas no es necesario guardar el read end aca, y se puede guardar directo en poll fd arr (aunque quizas seria mala modularizacion? ( TODO discutir))
+    pipefd_t pipefd[MAX_PLAYERS];
     createPipes(gameConfig.state->playerCount, pipefd);
     spawnPlayerProcesses(gameConfig.state, gameConfig.playerPaths, pipefd);
     closeWritePipes(gameConfig.state->playerCount, pipefd); //The original chomp champs separates this outside of player spawn
