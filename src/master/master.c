@@ -59,7 +59,7 @@ void initializeGameSync(gameSync_t* gameSync) {
 void initializeRandomBoard(gameState_t* gameState, unsigned int seed) {
   srand(seed);
   for (unsigned int i = 0; i < gameState->height * gameState->width; i++) {
-    gameState->board[i] = (rand() % MAX_BOARD_VALUE) + MIN_BOARD_VALUE;
+    gameState->board[i] = (rand() % (MAX_BOARD_VALUE+1)) + MIN_BOARD_VALUE;
   }
 }
 

@@ -112,7 +112,10 @@ int printGame(int gameWidth, int gameHeight, int board[gameWidth][gameHeight], p
     for (int row = 0; row < gameHeight; row++) {
         for (int column = 0; column < gameWidth; column++) {
             int boardValue = ((int*)board)[row * gameWidth + column];
-            if (boardValue > 0) {
+            if (boardValue == 10) {
+                printBlock(&localScreen, column, row, yMult, xMult, HEAD_CHAR, HEAD_CHAR);
+            }
+            else if (boardValue > 0) {
                 numberStr[0] = '0' + (boardValue % 10);
                 printBlock(&localScreen, column, row, yMult, xMult, " ", numberStr);
             }
