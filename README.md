@@ -2,6 +2,27 @@
 
 Grupo 10 <!-- Que se quiere sacar 10 -->
 
+## Nota ![8.5](https://img.shields.io/badge/8.5-32CD32)
+
+
+* Deadline. [**1/1** punto]
+* Funcionalidad (Mandatorio). [**4/4** puntos]
+* Calidad de código. [**1.5/3** puntos]
+    <details>
+        <summary>Comentarios</summary>
+        <ul>
+        <li>Entiendo que intentaron replicar el master, pero ARI no es un nombre representativo para constantes</li>
+        <li> Valoro el esfuerzo de separar el código en diferentes unidades de compilación, pero hay algunas incoherencias. askViewToPrint no forma parte de la la lógica del juego (un)lockGameStateReads tampoco y a la vez waitToRead y finishReading están en player directamente. Podría haber una UC destinada a sync.</li>
+        <li> ipc.c junta TODOS los ipcs usados, pero podría estar perfectamente separado shm, de pipes y sem</li>
+        <li> Esta falta de separación se observa también en utils.h que junta todos los structs.</li>
+        <li> utils no es el nombre más feliz para esa carpeta</li>
+        <li> Si algo hay que ponerle de nombre "varios" o "utils" porque no hay un nombre específico más adecuado, es un claro síntoma de que hace falta un refactor y se están mezclando responsabilidades.</li>
+    </ul>   
+    </details>
+* Limpieza de recursos del sistema. [**1/1** punto]
+* Informe. [**1/1** punto]
+![game screenshot](screenshot.bmp)
+
 ```md
 ▄▖▌        ▄▖▌          
 ▌ ▛▌▛▌▛▛▌▛▌▌ ▛▌▀▌▛▛▌▛▌▛▘
